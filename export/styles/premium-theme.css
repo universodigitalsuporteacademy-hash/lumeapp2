@@ -1,0 +1,177 @@
+/* ── Lumé Premium · theme + base ──────────────────────────────────────
+   Editorial, restrained, trust-first. Three premium palettes via [data-dir].
+   arena  = cálido premium (crema / clay / dorado)
+   noche  = oscuro premium (carbón cálido / ámbar)
+   jardin = sereno premium (marfil / verde profundo / oro)
+*/
+
+:root {
+  --maxw: 1240px;
+  --gutter: 40px;
+  --r-lg: 20px;
+  --r-md: 14px;
+  --r-sm: 10px;
+  --pill: 999px;
+  --ease: cubic-bezier(.22, .61, .36, 1);
+  --font-display: "Newsreader", Georgia, serif;
+  --font-body: "Hanken Grotesk", system-ui, sans-serif;
+  --type-scale: 1;
+  /* layered, soft premium shadows */
+  --sh-1: 0 1px 2px rgba(30,20,14,.04), 0 2px 6px rgba(30,20,14,.05);
+  --sh-2: 0 4px 12px rgba(30,20,14,.06), 0 14px 40px -16px rgba(30,20,14,.18);
+  --sh-3: 0 30px 90px -34px rgba(30,20,14,.34);
+}
+
+/* ARENA — warm premium (default) */
+[data-dir="arena"] {
+  --bg: #EFE7DB;
+  --paper: #F7F1E8;
+  --surface: #FFFFFF;
+  --surface-2: #F1E7D9;
+  --ink: #1F160F;
+  --ink-2: #574638;
+  --muted: #8C7868;
+  --line: #E4D7C6;
+  --line-2: #D8C7B1;
+  --primary: #A8492A;
+  --primary-2: #883A1E;
+  --on-primary: #FBF3EB;
+  --gold: #AD8643;
+  --gold-soft: #E6CFA1;
+  --sage: #788869;
+  --tint: #E7D8C2;
+  --halo: rgba(168,73,42,.14);
+  --invert-bg: #1F160F;
+  --invert-ink: #EFE7DB;
+}
+
+/* NOCHE — dark premium */
+[data-dir="noche"] {
+  --bg: #181310;
+  --paper: #1F1814;
+  --surface: #261E18;
+  --surface-2: #2E251E;
+  --ink: #F4EADD;
+  --ink-2: #C9B7A5;
+  --muted: #9A8775;
+  --line: #382C24;
+  --line-2: #45372D;
+  --primary: #D9824F;
+  --primary-2: #C26C3A;
+  --on-primary: #1A130E;
+  --gold: #CDA869;
+  --gold-soft: #4A3B28;
+  --sage: #93A07C;
+  --tint: #241B15;
+  --halo: rgba(217,130,79,.18);
+  --invert-bg: #F4EADD;
+  --invert-ink: #181310;
+}
+
+/* JARDIN — serene premium */
+[data-dir="jardin"] {
+  --bg: #EDF0E8;
+  --paper: #F5F7F0;
+  --surface: #FFFFFF;
+  --surface-2: #EAEEE1;
+  --ink: #1C261D;
+  --ink-2: #41513F;
+  --muted: #67755F;
+  --line: #DCE3D2;
+  --line-2: #CBD6BD;
+  --primary: #3C6B4E;
+  --primary-2: #2C543B;
+  --on-primary: #F3F8F1;
+  --gold: #B98F3E;
+  --gold-soft: #E4D2A6;
+  --sage: #7C8C6B;
+  --tint: #E4EAD9;
+  --halo: rgba(60,107,78,.13);
+  --invert-bg: #1C261D;
+  --invert-ink: #EDF0E8;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 92px; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: calc(17px * var(--type-scale));
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 500; line-height: 1.06; letter-spacing: -.015em; margin: 0; text-wrap: balance; }
+p { text-wrap: pretty; }
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+::selection { background: var(--halo); }
+
+/* Fine paper grain overlay for tactile premium feel */
+body::after {
+  content: "";
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  opacity: .045; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-dir="noche"] body::after { mix-blend-mode: screen; opacity: .05; }
+
+.wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
+@media (max-width: 680px) { :root { --gutter: 22px; } }
+
+/* Reveal — transform only (never hides content) */
+.reveal { opacity: 1; }
+.reveal.in { animation: pRevealIn .7s var(--ease) both; }
+@keyframes pRevealIn { from { transform: translateY(20px); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .reveal.in { animation: none; } html { scroll-behavior: auto; } }
+
+/* ── Eyebrow with index ──────────────────────────────────────── */
+.eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--primary); }
+.eyebrow::before { content: ""; width: 26px; height: 1px; background: currentColor; opacity: .5; }
+.eyebrow.center::before { display: none; }
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+.btn { display: inline-flex; align-items: center; gap: .55em; font-family: var(--font-body); font-weight: 600; font-size: calc(15px * var(--type-scale)); padding: 15px 26px; border-radius: var(--pill); border: 1px solid transparent; cursor: pointer; transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .2s; white-space: nowrap; }
+.btn svg { width: 1.05em; height: 1.05em; }
+.btn-primary { background: var(--primary); color: var(--on-primary); box-shadow: 0 12px 30px -12px var(--primary); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -14px var(--primary); }
+.btn-line { background: transparent; color: var(--ink); border-color: var(--line-2); }
+.btn-line:hover { transform: translateY(-2px); border-color: var(--ink); }
+.btn-lg { padding: 17px 32px; font-size: calc(16px * var(--type-scale)); }
+
+.stars { display: inline-flex; gap: 2px; color: var(--gold); }
+.stars svg { width: 16px; height: 16px; fill: currentColor; }
+
+/* ── Sections shell ──────────────────────────────────────────── */
+.section { padding: 104px 0; }
+.section-sm { padding: 72px 0; }
+.section-paper { background: var(--paper); }
+.sec-head { max-width: 660px; }
+.sec-head.center { margin: 0 auto; text-align: center; }
+.sec-title { font-size: clamp(32px, 4.4vw, 52px); margin-top: 18px; }
+.sec-lead { font-size: clamp(17px, 1.5vw, 19px); color: var(--ink-2); margin: 20px 0 0; line-height: 1.6; }
+.center .sec-lead { margin-left: auto; margin-right: auto; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--sh-1); }
+
+/* ── Glass (frosted) ─────────────────────────────────────────── */
+.glass {
+  background: color-mix(in srgb, var(--surface) 42%, transparent);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid color-mix(in srgb, var(--surface) 70%, transparent);
+  box-shadow:
+    0 28px 64px -18px color-mix(in srgb, var(--primary) 50%, transparent),
+    0 12px 30px -10px color-mix(in srgb, var(--gold) 55%, transparent),
+    inset 0 1px 0 rgba(255,255,255,.55);
+}
+[data-dir="noche"] .glass {
+  background: color-mix(in srgb, var(--surface) 38%, transparent);
+  border-color: color-mix(in srgb, #fff 13%, transparent);
+  box-shadow:
+    0 28px 64px -18px color-mix(in srgb, var(--primary) 46%, transparent),
+    0 12px 30px -10px color-mix(in srgb, var(--gold) 42%, transparent),
+    inset 0 1px 0 rgba(255,255,255,.12);
+}

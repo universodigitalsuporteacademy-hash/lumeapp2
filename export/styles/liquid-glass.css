@@ -1,0 +1,317 @@
+/* ── Lumé · Liquid Glass — mínimo y correcto ──────────────────────────
+   Regla cardinal: NUNCA !important en transform ni en transition.
+   El blur necesita color detrás → fortalecemos los blobs existentes.
+   El borde gradiente usa padding + mask xor sobre ::before.
+──────────────────────────────────────────────────────────────────────── */
+
+/* ════════════════════════════════════════════════════════════════════
+   ARENA — glass blanco sobre fondo cálido
+   ════════════════════════════════════════════════════════════════════ */
+
+/* 1. Blobs del vp-band más saturados → el blur tiene algo que difuminar */
+[data-dir="arena"] .vp-band::before {
+  background: radial-gradient(circle, rgba(168,73,42,.44) 0%, transparent 64%) !important;
+  width: 600px !important;
+  height: 600px !important;
+  opacity: 1 !important;
+}
+[data-dir="arena"] .vp-band::after {
+  background: radial-gradient(circle, rgba(212,175,80,.44) 0%, transparent 66%) !important;
+  width: 540px !important;
+  height: 540px !important;
+  opacity: 1 !important;
+}
+
+/* Blobs para sección de testimonios */
+[data-dir="arena"] .tst-section::before {
+  background:
+    radial-gradient(ellipse 55% 50% at 85% 10%, rgba(168,73,42,.36) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 10% 90%, rgba(212,175,80,.32) 0%, transparent 60%) !important;
+  opacity: 1 !important;
+}
+
+/* Blob para sección precios */
+[data-dir="arena"] #precios {
+  background:
+    radial-gradient(ellipse 55% 50% at 8% 20%, rgba(168,73,42,.22) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 45% at 92% 80%, rgba(212,175,80,.22) 0%, transparent 55%),
+    var(--bg) !important;
+}
+
+/* Blob para FAQ */
+[data-dir="arena"] .faq-premium::before {
+  background:
+    radial-gradient(ellipse 55% 50% at 90% 10%, rgba(168,73,42,.22) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 45% at 5% 88%, rgba(212,175,80,.22) 0%, transparent 60%) !important;
+  opacity: 1 !important;
+}
+
+/* 2. .glass → más transparente + blur fuerte */
+[data-dir="arena"] .glass {
+  background: rgba(255,255,255,.38) !important;
+  backdrop-filter: blur(28px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+  border: none !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.96),
+    inset 0 -1px  0 rgba(255,255,255,.42),
+    0 18px 48px rgba(168,73,42,.14),
+    0 6px 14px  rgba(168,73,42,.07) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* 3. Gradient stroke border — la firma del liquid glass */
+[data-dir="arena"] .glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(
+    176deg,
+    rgba(255,255,255,.96) 0%,
+    rgba(255,255,255,.52) 22%,
+    rgba(255,255,255,.18) 42%,
+    rgba(255,255,255,.18) 58%,
+    rgba(255,255,255,.52) 78%,
+    rgba(255,255,255,.96) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 4. Hover de vp cards — solo box-shadow, transform lo maneja .vp:hover */
+[data-dir="arena"] .vp.glass:hover {
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.99),
+    inset 0 -1px  0 rgba(255,255,255,.55),
+    0 34px 72px rgba(168,73,42,.22),
+    0 10px 22px rgba(168,73,42,.11) !important;
+}
+
+/* 5. Testimonial cards — glass */
+[data-dir="arena"] .tst-card {
+  background: rgba(255,255,255,.46) !important;
+  backdrop-filter: blur(28px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+  border: none !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.96),
+    inset 0 -1px  0 rgba(255,255,255,.44),
+    0 14px 44px rgba(168,73,42,.13),
+    0 4px 12px  rgba(168,73,42,.07) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+[data-dir="arena"] .tst-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(176deg,
+    rgba(255,255,255,.96) 0%, rgba(255,255,255,.50) 22%,
+    rgba(255,255,255,.16) 42%, rgba(255,255,255,.16) 58%,
+    rgba(255,255,255,.50) 78%, rgba(255,255,255,.96) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+/* Hover de tst-card — solo box-shadow, transform lo maneja su onMouseLeave JS */
+[data-dir="arena"] .tst-card:hover {
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.99),
+    0 26px 64px rgba(168,73,42,.20),
+    0 8px 20px  rgba(168,73,42,.10) !important;
+}
+[data-dir="arena"] .tst-card figcaption {
+  border-top-color: rgba(168,73,42,.12) !important;
+}
+
+/* 6. Pricing cards no-feat → glass */
+[data-dir="arena"] .price:not(.feat) {
+  background: rgba(255,255,255,.42) !important;
+  backdrop-filter: blur(28px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+  border: none !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.96),
+    inset 0 -1px  0 rgba(255,255,255,.44),
+    0 10px 32px rgba(168,73,42,.11) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+[data-dir="arena"] .price:not(.feat)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  padding: 1.4px;
+  background: linear-gradient(176deg,
+    rgba(255,255,255,.96) 0%, rgba(255,255,255,.50) 22%,
+    rgba(255,255,255,.16) 42%, rgba(255,255,255,.16) 58%,
+    rgba(255,255,255,.50) 78%, rgba(255,255,255,.96) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+[data-dir="arena"] .price:not(.feat):hover {
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.99),
+    0 22px 56px rgba(168,73,42,.18),
+    0 8px 18px  rgba(168,73,42,.09) !important;
+}
+
+/* 7. Featured pricing card — refuerzo glass */
+[data-dir="arena"] .price.feat {
+  backdrop-filter: blur(50px) saturate(220%) !important;
+  -webkit-backdrop-filter: blur(50px) saturate(220%) !important;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.90),
+    inset 0 -1px 0 rgba(255,255,255,.55),
+    0 28px 64px rgba(0,0,0,.22),
+    0 0 0 1px rgba(212,175,80,.30) !important;
+}
+
+/* 8. Trust strip — vidrio sutil */
+[data-dir="arena"] .trust {
+  background: rgba(255,255,255,.40) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border-top: 1px solid rgba(255,255,255,.80) !important;
+  border-bottom: 1px solid rgba(255,255,255,.80) !important;
+}
+[data-dir="arena"] .trust-pillar {
+  border-right-color: rgba(255,255,255,.55) !important;
+  border-bottom-color: rgba(255,255,255,.55) !important;
+}
+[data-dir="arena"] .trust-pillar:hover {
+  background: rgba(255,255,255,.22) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   NOCHE — glass oscuro (sin cambios estructurales)
+   ════════════════════════════════════════════════════════════════════ */
+
+[data-dir="noche"] .nav {
+  background: rgba(14,9,7,.65) !important;
+  backdrop-filter: blur(32px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(180%) !important;
+  box-shadow: inset 0 -1px 0 rgba(255,255,255,.08), 0 4px 28px rgba(0,0,0,.44) !important;
+}
+[data-dir="noche"] .nav.solid {
+  background: rgba(10,6,4,.85) !important;
+}
+[data-dir="noche"] .glass {
+  background: rgba(255,255,255,.045) !important;
+  backdrop-filter: blur(28px) saturate(170%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(170%) !important;
+  border: none !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.26),
+    inset 0 -1px  0 rgba(255,255,255,.08),
+    0 22px 60px rgba(0,0,0,.42) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+[data-dir="noche"] .glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(176deg,
+    rgba(255,255,255,.55) 0%, rgba(255,255,255,.18) 22%,
+    rgba(255,255,255,.00) 42%, rgba(255,255,255,.00) 58%,
+    rgba(255,255,255,.15) 78%, rgba(255,255,255,.48) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+[data-dir="noche"] .tst-card {
+  background: rgba(255,255,255,.04) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: none !important;
+  box-shadow: inset 0 1.5px 0 rgba(255,255,255,.22), 0 16px 48px rgba(0,0,0,.34) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+[data-dir="noche"] .tst-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(176deg, rgba(255,255,255,.50) 0%, rgba(255,255,255,.14) 22%, rgba(255,255,255,.00) 58%, rgba(255,255,255,.42) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+[data-dir="noche"] .tst-card figcaption { border-top-color: rgba(255,255,255,.09) !important; }
+[data-dir="noche"] .price:not(.feat) {
+  background: rgba(255,255,255,.045) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: none !important;
+  box-shadow: inset 0 1.5px 0 rgba(255,255,255,.20), 0 12px 40px rgba(0,0,0,.30) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+[data-dir="noche"] .price:not(.feat)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  padding: 1.4px;
+  background: linear-gradient(176deg, rgba(255,255,255,.46) 0%, rgba(255,255,255,.14) 22%, rgba(255,255,255,.00) 58%, rgba(255,255,255,.38) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+[data-dir="noche"] .price.feat {
+  backdrop-filter: blur(50px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(50px) saturate(180%) !important;
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.30), 0 30px 72px rgba(0,0,0,.52), 0 0 0 1px rgba(212,175,80,.26) !important;
+}
+[data-dir="noche"] .price-name  { color: rgba(244,234,221,.95) !important; }
+[data-dir="noche"] .price-tag   { color: rgba(244,234,221,.50) !important; }
+[data-dir="noche"] .price-feats li { color: rgba(244,234,221,.78) !important; }
+[data-dir="noche"] .vp-band     { background: linear-gradient(180deg, rgba(30,22,16,.90) 0%, rgba(24,19,16,.97) 62%) !important; }
+[data-dir="noche"] .section-paper { background: rgba(31,24,20,.85) !important; }
+[data-dir="noche"] .tst-section { background: linear-gradient(180deg, rgba(24,19,16,.96) 0%, rgba(18,12,8,.99) 100%) !important; }
+[data-dir="noche"] #faq         { background: linear-gradient(160deg, rgba(24,19,16,.99) 0%, rgba(18,12,8,.99) 100%) !important; }
+[data-dir="noche"] #faq::after  { display: none !important; }
+[data-dir="noche"] .trust       { background: rgba(24,19,16,.72) !important; backdrop-filter: blur(14px) !important; -webkit-backdrop-filter: blur(14px) !important; border-top: 1px solid rgba(255,255,255,.06) !important; border-bottom: 1px solid rgba(255,255,255,.06) !important; }
+[data-dir="noche"] .tst-fade-l  { background: linear-gradient(to right, #181310, transparent) !important; }
+[data-dir="noche"] .tst-fade-r  { background: linear-gradient(to left, #181310, transparent) !important; }
+[data-dir="noche"] .hero-overlay { background: linear-gradient(108deg, rgba(24,19,16,.98) 0%, rgba(24,19,16,.88) 34%, rgba(24,19,16,.50) 62%, transparent 82%) !important; }
+[data-dir="noche"] .show-copy h2 { color: rgba(244,234,221,.96) !important; }
+[data-dir="noche"] .show-copy p  { color: rgba(244,234,221,.65) !important; }
+
+/* ════════════════════════════════════════════════════════════════════
+   GLOBAL — blur-in reveal animado
+   ════════════════════════════════════════════════════════════════════ */
+
+.reveal.in {
+  animation: lm-reveal .75s cubic-bezier(.22,.61,.36,1) both !important;
+}
+@keyframes lm-reveal {
+  from { opacity: 0; filter: blur(8px); transform: translateY(20px); }
+  to   { opacity: 1; filter: blur(0px); transform: translateY(0);    }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal.in { animation: none !important; }
+}

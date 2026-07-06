@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Lumé — Video Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="animations.jsx"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { background: #1a0a04; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: 'DM Sans', sans-serif; }
+  #root { width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { Stage, Sprite, useTime, useSprite, Easing, interpolate, animate, clamp } = window;
+
+const W = 390, H = 760, DUR = 30;
+
+// ─── helpers ───────────────────────────────────────────
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+const easeInOut = t => t < .5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+const easeBack = t => { const c1=1.70158,c3=c1+1; return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2); };
+
+function fadeIn(t, dur=0.6) { return clamp(t/dur, 0, 1); }
+function fadeOut(t, dur=0.6) { return clamp(1-(t/dur),0,1); }
+
+// ─── Scene 1: Brand Intro (0-4s) ───────────────────────
+function SceneBrand() {
+  const { localTime: t } = useSprite();
+  const appear = easeOut(clamp(t/1.2, 0, 1));
+  const logoScale = lerp(0.7, 1, easeBack(clamp(t/1.0, 0, 1)));
+  const taglineOp = clamp((t-0.8)/0.8, 0, 1);
+  const taglineY = lerp(10, 0, easeOut(clamp((t-0.8)/0.8, 0, 1)));
+  return (
+    <div style={{position:'absolute',inset:0,background:'linear-gradient(165deg,#1a0804 0%,#3d1a0e 50%,#5a2a10 100%)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',overflow:'hidden'}}>
+      {/* BG orb */}
+      <div style={{position:'absolute',top:'30%',left:'50%',transform:'translate(-50%,-50%)',width:300,height:300,borderRadius:'50%',background:'radial-gradient(circle,rgba(168,73,42,.25) 0%,transparent 70%)',opacity:appear,pointerEvents:'none'}}/>
+      {/* Logo */}
+      <div style={{transform:`scale(${logoScale})`,opacity:appear,display:'flex',flexDirection:'column',alignItems:'center',gap:16}}>
+        <img src="uploads/logo-lume.png" style={{width:80,height:80,objectFit:'contain'}}/>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:52,fontWeight:500,color:'#fff',letterSpacing:'-0.02em',lineHeight:1}}>Lumé</div>
+      </div>
+      {/* Tagline */}
+      <div style={{opacity:taglineOp,transform:`translateY(${taglineY}px)`,marginTop:20,fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontStyle:'italic',color:'rgba(230,207,161,.8)',textAlign:'center',lineHeight:1.4}}>
+        Tu embarazo,<br/>acompañado.
+      </div>
+      {/* Gold line */}
+      <div style={{position:'absolute',bottom:60,left:'50%',transform:'translateX(-50%)',height:1,background:'linear-gradient(90deg,transparent,rgba(230,207,161,.4),transparent)',width:Math.min(200*appear, 200),opacity:appear}}/>
+    </div>
+  );
+}
+
+// ─── Scene 2: Phone + Tracker (3.5-9s) ──────────────────
+function SceneTracker() {
+  const { localTime: t } = useSprite();
+  const phoneIn = easeBack(clamp(t/1.2, 0, 1));
+  const phoneY = lerp(120, 0, phoneIn);
+  const contentOp = clamp((t-0.6)/0.5, 0, 1);
+  const barW = lerp(0, 50, easeOut(clamp((t-0.8)/1.2, 0, 1)));
+  const fruitScale = lerp(0.5, 1, easeBack(clamp((t-0.4)/0.8, 0, 1)));
+  const textOp = clamp((t-1.2)/0.5, 0, 1);
+  return (
+    <div style={{position:'absolute',inset:0,background:'linear-gradient(165deg,#f9f1eb 0%,#efe7db 100%)',display:'flex',flexDirection:'column',alignItems:'center',overflow:'hidden'}}>
+      {/* Headline */}
+      <div style={{textAlign:'center',padding:'56px 32px 0',opacity:clamp(t/0.8,0,1),transform:`translateY(${lerp(-10,0,easeOut(clamp(t/0.8,0,1)))}px)`}}>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:38,fontWeight:500,color:'#3d1a0e',lineHeight:1.1}}>Semana a semana,<br/><em style={{color:'#A8492A'}}>siempre contigo.</em></div>
+      </div>
+      {/* Phone */}
+      <div style={{transform:`translateY(${phoneY}px)`,marginTop:28,position:'relative',width:220,height:420,borderRadius:38,background:'linear-gradient(165deg,#f9f1eb,#f0e2d6)',border:'2px solid rgba(255,255,255,.3)',boxShadow:'0 40px 80px rgba(61,26,14,.3), 0 0 0 1px rgba(0,0,0,.2)'}}>
+        {/* Notch */}
+        <div style={{position:'absolute',top:8,left:'50%',transform:'translateX(-50%)',width:80,height:22,background:'#1a0804',borderRadius:16,zIndex:10}}/>
+        {/* Screen */}
+        <div style={{position:'absolute',inset:0,borderRadius:36,overflow:'hidden',background:'linear-gradient(165deg,#f9f1eb,#f0e2d6)'}}>
+          {/* Status bar */}
+          <div style={{height:38,display:'flex',alignItems:'flex-end',justifyContent:'space-between',padding:'0 18px 5px',fontSize:9,fontWeight:700,color:'#3d1a0e',background:'rgba(249,241,235,.9)'}}>
+            <span>9:41</span><span>●●●●</span>
+          </div>
+          {/* Week hero card */}
+          <div style={{margin:'6px 10px 0',background:'linear-gradient(135deg,#3d1a0e,#8B3520)',borderRadius:14,padding:'12px 14px',position:'relative',overflow:'hidden',opacity:contentOp}}>
+            <div style={{position:'absolute',top:-15,right:-10,width:70,height:70,borderRadius:'50%',background:'radial-gradient(circle,rgba(200,149,42,.3),transparent 70%)'}}/>
+            <div style={{fontSize:7,fontWeight:800,letterSpacing:'.1em',color:'rgba(255,255,255,.5)',textTransform:'uppercase',marginBottom:3}}>SEMANA ACTUAL</div>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:700,lineHeight:1,color:'#fff'}}>20</div>
+            <div style={{fontSize:8,color:'rgba(255,255,255,.6)',marginTop:2,fontStyle:'italic'}}>del tamaño de un mango 🥭</div>
+            <div style={{height:3,borderRadius:99,background:'rgba(255,255,255,.15)',marginTop:8}}>
+              <div style={{height:'100%',width:`${barW}%`,borderRadius:99,background:'rgba(255,255,255,.8)',transition:'none'}}/>
+            </div>
+          </div>
+          {/* Fruit + stats */}
+          <div style={{opacity:textOp,margin:'8px 10px 0',display:'flex',gap:6}}>
+            {[{l:'Citas',v:'Jue'},{l:'Nombres',v:'♥ 3'},{l:'Puntos',v:'126'}].map(({l,v})=>(
+              <div key={l} style={{flex:1,background:'rgba(255,255,255,.7)',borderRadius:10,padding:'7px 5px',textAlign:'center',border:'1px solid rgba(255,255,255,.9)'}}>
+                <div style={{fontSize:7,fontWeight:700,color:'#a08070',textTransform:'uppercase',letterSpacing:'.05em'}}>{l}</div>
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:14,fontWeight:700,color:'#3d1a0e'}}>{v}</div>
+              </div>
+            ))}
+          </div>
+          {/* Baby card */}
+          <div style={{opacity:textOp,margin:'7px 10px 0',background:'linear-gradient(135deg,#1a2e40,#0d1a28)',borderRadius:12,padding:'10px 12px',display:'flex',alignItems:'center',gap:8}}>
+            <div style={{transform:`scale(${fruitScale})`,fontSize:26,lineHeight:1,flexShrink:0}}>🥭</div>
+            <div>
+              <div style={{fontSize:7,fontWeight:800,color:'rgba(255,255,255,.45)',letterSpacing:'.08em',textTransform:'uppercase'}}>Tu bebé</div>
+              <div style={{fontSize:10,fontWeight:700,color:'#fff',marginTop:1}}>Desarrolla el oído</div>
+              <div style={{fontSize:8,color:'rgba(255,255,255,.5)',marginTop:1}}>25 cm · 300 g</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Scene 3: IA Chat (8-15s) ───────────────────────────
+function SceneIA() {
+  const { localTime: t } = useSprite();
+  const phoneIn = easeOut(clamp(t/0.8, 0, 1));
+  // Typing simulation
+  const fullQ = "¿Es normal el cansancio que siento?";
+  const qLen = Math.floor(lerp(0, fullQ.length, easeOut(clamp((t-0.5)/1.5, 0, 1))));
+  const qText = fullQ.slice(0, qLen);
+  const resp1Op = clamp((t-2.2)/0.6, 0, 1);
+  const resp1Y = lerp(8, 0, easeOut(clamp((t-2.2)/0.6, 0, 1)));
+  const resp2Op = clamp((t-3.5)/0.6, 0, 1);
+  const resp2Y = lerp(8, 0, easeOut(clamp((t-3.5)/0.6, 0, 1)));
+  const badgeOp = clamp((t-4.5)/0.5, 0, 1);
+  return (
+    <div style={{position:'absolute',inset:0,background:'linear-gradient(165deg,#0a2030 0%,#1a4050 45%,#2e6858 100%)',display:'flex',flexDirection:'column',alignItems:'center',overflow:'hidden'}}>
+      <div style={{position:'absolute',top:-60,right:-40,width:240,height:240,borderRadius:'50%',background:'radial-gradient(circle,rgba(77,182,160,.15),transparent 70%)'}}/>
+      {/* Headline */}
+      <div style={{textAlign:'center',padding:'56px 32px 0',opacity:clamp(t/0.7,0,1),transform:`translateY(${lerp(-10,0,easeOut(clamp(t/0.7,0,1)))}px)`}}>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:38,fontWeight:500,color:'#fff',lineHeight:1.1}}>Pregunta lo que<br/><em style={{color:'#7ee8d4'}}>sientes.</em></div>
+        <div style={{fontSize:13,color:'rgba(255,255,255,.5)',marginTop:10}}>Respuestas reales, sin juicios.</div>
+      </div>
+      {/* Phone */}
+      <div style={{transform:`translateY(${lerp(100,0,phoneIn)}px)`,marginTop:24,position:'relative',width:220,height:400,borderRadius:38,boxShadow:'0 40px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(0,0,0,.2)'}}>
+        <div style={{position:'absolute',top:8,left:'50%',transform:'translateX(-50%)',width:80,height:22,background:'#060e14',borderRadius:16,zIndex:10}}/>
+        <div style={{position:'absolute',inset:0,borderRadius:36,overflow:'hidden',background:'linear-gradient(180deg,#0d1a24,#0a1520)'}}>
+          <div style={{height:38,display:'flex',alignItems:'flex-end',justifyContent:'space-between',padding:'0 18px 5px',fontSize:9,fontWeight:700,color:'rgba(255,255,255,.5)',background:'rgba(13,26,36,.9)'}}>
+            <span>9:41</span><span>●●●●</span>
+          </div>
+          <div style={{padding:'6px 10px',display:'flex',flexDirection:'column',gap:8}}>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:13,fontWeight:600,color:'#fff',textAlign:'center',marginBottom:2}}>Asistente Lumé</div>
+            {/* User question bubble */}
+            <div style={{background:'rgba(58,128,112,.28)',border:'1px solid rgba(58,128,112,.45)',borderRadius:'12px 12px 12px 3px',padding:'8px 10px',fontSize:9.5,color:'rgba(255,255,255,.88)',lineHeight:1.5,minHeight:32}}>
+              {qText}{qLen < fullQ.length ? <span style={{opacity:Math.sin(t*8)>0?1:0}}>|</span> : null}
+            </div>
+            {/* Response 1 */}
+            <div style={{opacity:resp1Op,transform:`translateY(${resp1Y}px)`,background:'rgba(255,255,255,.07)',border:'1px solid rgba(255,255,255,.12)',borderRadius:'12px 12px 3px 12px',padding:'8px 10px',fontSize:9,color:'rgba(255,255,255,.78)',lineHeight:1.55,alignSelf:'flex-end'}}>
+              ¡Muy normal! En el 2.º trimestre el cuerpo trabaja intensamente. El aumento de volumen sanguíneo y el crecimiento rápido del bebé consumen mucha energía. 💚
+            </div>
+            {/* Response 2 */}
+            <div style={{opacity:resp2Op,transform:`translateY(${resp2Y}px)`,background:'rgba(255,255,255,.07)',border:'1px solid rgba(255,255,255,.12)',borderRadius:'12px 12px 3px 12px',padding:'8px 10px',fontSize:9,color:'rgba(255,255,255,.78)',lineHeight:1.55,alignSelf:'flex-end'}}>
+              Descansa cuando puedas, hidrátate bien y cuéntaselo a tu ginecóloga en la próxima visita. 🌿
+            </div>
+            {/* 24/7 badge */}
+            <div style={{opacity:badgeOp,display:'flex',alignItems:'center',justifyContent:'center',gap:6,padding:'6px 12px',borderRadius:99,background:'rgba(77,182,160,.15)',border:'1px solid rgba(77,182,160,.3)',alignSelf:'center'}}>
+              <div style={{width:6,height:6,borderRadius:'50%',background:'#7ee8d4',boxShadow:'0 0 6px #7ee8d4'}}/>
+              <span style={{fontSize:8,fontWeight:700,color:'#7ee8d4',letterSpacing:'.06em'}}>DISPONIBLE 24/7</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Scene 4: Síntomas (14.5-20s) ────────────────────────
+function SceneSintomas() {
+  const { localTime: t } = useSprite();
+  const SX = [
+    {n:'Náuseas',c:'#3A8070'},{n:'Cansancio',c:'#4080D0'},
+    {n:'Acidez',c:'#C8961A'},{n:'Dolor lumbar',c:'#A8492A'},
+    {n:'Hinchazón',c:'#8B5A9E'},{n:'Mareo',c:'#D06090'},
+  ];
+  const phoneIn = easeOut(clamp(t/0.8, 0, 1));
+  const btnPulse = t > 3.5 ? 1 + Math.sin((t-3.5)*4)*0.04 : 1;
+  return (
+    <div style={{position:'absolute',inset:0,background:'linear-gradient(165deg,#2a1030 0%,#4a1850 45%,#7a3a90 100%)',display:'flex',flexDirection:'column',alignItems:'center',overflow:'hidden'}}>
+      <div style={{position:'absolute',top:-40,right:-30,width:200,height:200,borderRadius:'50%',background:'radial-gradient(circle,rgba(180,140,210,.2),transparent 70%)'}}/>
+      <div style={{textAlign:'center',padding:'56px 32px 0',opacity:clamp(t/0.7,0,1),transform:`translateY(${lerp(-10,0,easeOut(clamp(t/0.7,0,1)))}px)`}}>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:38,fontWeight:500,color:'#fff',lineHeight:1.1}}>Registra cómo<br/><em style={{color:'#d4b8f0'}}>te sientes.</em></div>
+        <div style={{fontSize:13,color:'rgba(255,255,255,.5)',marginTop:10}}>+3 puntos por cada registro.</div>
+      </div>
+      <div style={{transform:`translateY(${lerp(80,0,phoneIn)}px)`,marginTop:24,position:'relative',width:220,height:400,borderRadius:38,boxShadow:'0 40px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(0,0,0,.2)'}}>
+        <div style={{position:'absolute',top:8,left:'50%',transform:'translateX(-50%)',width:80,height:22,background:'#1a0828',borderRadius:16,zIndex:10}}/>
+        <div style={{position:'absolute',inset:0,borderRadius:36,overflow:'hidden',background:'linear-gradient(165deg,#f9f1eb,#f0e2d6)'}}>
+          <div style={{height:38,display:'flex',alignItems:'flex-end',justifyContent:'space-between',padding:'0 18px 5px',fontSize:9,fontWeight:700,color:'#3d1a0e',background:'rgba(249,241,235,.9)'}}>
+            <span>9:41</span><span>●●●●</span>
+          </div>
+          <div style={{padding:'6px 10px',display:'flex',flexDirection:'column',gap:7}}>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:13,fontWeight:700,color:'#3d1a0e',textAlign:'center'}}>¿Cómo te sientes hoy?</div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:5}}>
+              {SX.map(({n,c},i)=>{
+                const on = clamp((t-0.4-(i*0.25))/0.4, 0, 1) > 0.5 && i < 4;
+                const scale = on ? lerp(1, 1.04, easeBack(clamp((t-0.4-(i*0.25))/0.4,0,1))) : 1;
+                return (
+                  <div key={n} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:3,padding:'7px 3px 6px',borderRadius:10,border:`1.5px solid ${on?c+'55':'rgba(168,73,42,.1)'}`,background:on?`${c}22`:'rgba(255,255,255,.6)',transform:`scale(${scale})`,transition:'transform .1s'}}>
+                    <div style={{width:20,height:20,borderRadius:'50%',background:`${c}18`,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                      <div style={{width:6,height:6,borderRadius:'50%',background:c,opacity:on?1:.35}}/>
+                    </div>
+                    <span style={{fontSize:7,fontWeight:on?700:500,color:on?c:'#a08070',textAlign:'center',lineHeight:1.2}}>{n}</span>
+                    {on && <div style={{width:12,height:2,borderRadius:99,background:c}}/>}
+                  </div>
+                );
+              })}
+            </div>
+            {/* Advice */}
+            <div style={{opacity:clamp((t-2)/0.5,0,1),background:'rgba(139,90,158,.1)',border:'1px solid rgba(139,90,158,.25)',borderRadius:10,padding:'7px 9px'}}>
+              <div style={{fontSize:7,fontWeight:800,color:'#8B5A9E',letterSpacing:'.08em',textTransform:'uppercase',marginBottom:2}}>Orientación · Náuseas</div>
+              <div style={{fontSize:8.5,color:'#5a3a2a',lineHeight:1.5}}>Come algo ligero antes de levantarte. El jengibre en snacks pequeños ayuda.</div>
+            </div>
+            {/* Save button */}
+            <div style={{background:`linear-gradient(135deg,#c4693a,#A8492A)`,borderRadius:11,padding:'10px',textAlign:'center',fontSize:10,fontWeight:700,color:'#fff',boxShadow:'0 6px 16px rgba(168,73,42,.4)',transform:`scale(${clamp((t-3.5)/0.4,0,1)*0.04+0.96+Math.max(0,btnPulse-1)})`}}>
+              Guardar en mi bitácora →
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Scene 5: Recompensas +50pts (19.5-25s) ──────────────
+function SceneRecompensas() {
+  const { localTime: t } = useSprite();
+  const bigScale = easeBack(clamp(t/0.9, 0, 1));
+  const numOp = clamp(t/0.6, 0, 1);
+  const sparkle1 = clamp((t-0.3)/0.4, 0, 1);
+  const sparkle2 = clamp((t-0.6)/0.4, 0, 1);
+  const textOp = clamp((t-0.8)/0.6, 0, 1);
+  const barW = lerp(0, 42, easeOut(clamp((t-1.2)/1.5, 0, 1)));
+  const phoneIn = easeOut(clamp(t/0.8, 0, 1));
+  return (
+    <div style={{position:'absolute',inset:0,background:'linear-gradient(165deg,#1a0804 0%,#3a1a06 40%,#8B3520 80%,#C8952A 100%)',display:'flex',flexDirection:'column',alignItems:'center',overflow:'hidden'}}>
+      <div style={{position:'absolute',top:'40%',left:'50%',transform:'translate(-50%,-50%)',width:320,height:320,borderRadius:'50%',background:'radial-gradient(circle,rgba(200,149,42,.2) 0%,transparent 70%)',pointerEvents:'none'}}/>
+      <div style={{textAlign:'center',padding:'56px 32px 0',opacity:clamp(t/0.7,0,1),transform:`translateY(${lerp(-10,0,easeOut(clamp(t/0.7,0,1)))}px)`}}>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:36,fontWeight:500,color:'#fff',lineHeight:1.1}}>Cuídate<br/><em style={{color:'#E6CFA1'}}>y gana recompensas.</em></div>
+      </div>
+      {/* Big +50 pts pop */}
+      <div style={{marginTop:28,display:'flex',flexDirection:'column',alignItems:'center',position:'relative'}}>
+        <div style={{transform:`scale(${bigScale})`,opacity:numOp,fontFamily:"'Cormorant Garamond',serif",fontSize:96,fontWeight:700,color:'#fff',lineHeight:1,letterSpacing:'-0.02em',textShadow:'0 8px 32px rgba(200,149,42,.5)'}}>
+          +50
+        </div>
+        <div style={{transform:`scale(${bigScale})`,opacity:numOp,fontFamily:"'Cormorant Garamond',serif",fontSize:28,color:'rgba(230,207,161,.8)',marginTop:-6,letterSpacing:'.04em'}}>
+          puntos
+        </div>
+        {/* Sparkles */}
+        {[{x:-70,y:-20,d:0.3},{x:70,y:-30,d:0.6},{x:0,y:-60,d:0.45},{x:-50,y:20,d:0.55},{x:55,y:15,d:0.35}].map((s,i)=>(
+          <div key={i} style={{position:'absolute',left:'50%',top:'50%',transform:`translate(calc(-50% + ${s.x}px), calc(-50% + ${s.y}px))`,opacity:clamp((t-s.d)/0.5,0,1)*clamp(1-(t-s.d-0.8)/0.6,0,1),fontSize:16}}>✦</div>
+        ))}
+      </div>
+      {/* Progress bar */}
+      <div style={{opacity:textOp,width:220,marginTop:24}}>
+        <div style={{display:'flex',justifyContent:'space-between',marginBottom:6,fontSize:11,color:'rgba(255,255,255,.6)',fontWeight:600}}>
+          <span>Nivel Bronce</span><span>500 pts → Plata</span>
+        </div>
+        <div style={{height:6,borderRadius:99,background:'rgba(255,255,255,.15)',overflow:'hidden'}}>
+          <div style={{height:'100%',width:`${barW}%`,borderRadius:99,background:'linear-gradient(90deg,#E6CFA1,#C8952A)',boxShadow:'0 0 8px rgba(200,149,42,.5)'}}/>
+        </div>
+        <div style={{fontSize:11,color:'rgba(255,255,255,.5)',textAlign:'center',marginTop:8}}>Canjéalos por meditaciones, nutrición y más</div>
+      </div>
+      {/* Phone mini */}
+      <div style={{opacity:clamp((t-2)/0.5,0,1),transform:`translateY(${lerp(20,0,phoneIn)}px) scale(0.7)`,marginTop:12,position:'relative',width:220,height:140,borderRadius:38,boxShadow:'0 20px 40px rgba(0,0,0,.35)'}}>
+        <div style={{position:'absolute',top:8,left:'50%',transform:'translateX(-50%)',width:60,height:16,background:'#1a0804',borderRadius:12,zIndex:10}}/>
+        <div style={{position:'absolute',inset:0,borderRadius:36,overflow:'hidden',background:'linear-gradient(145deg,#5E1C08,#A8492A,#B85A32)',padding:'30px 14px 14px'}}>
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:42,fontWeight:700,color:'#fff',textAlign:'center',lineHeight:1}}>176</div>
+          <div style={{fontSize:10,color:'rgba(255,255,255,.55)',textAlign:'center',letterSpacing:'.08em',textTransform:'uppercase'}}>puntos acumulados</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Scene 6: Brand Closing (24.5-30s) ──────────────────
+function SceneClose() {
+  const { localTime: t } = useSprite();
+  const logoIn = easeBack(clamp(t/1.0, 0, 1));
+  const lineW = lerp(0, 240, easeOut(clamp((t-0.5)/1.0, 0, 1)));
+  const tagOp = clamp((t-1.0)/0.8, 0, 1);
+  const tagY = lerp(10, 0, easeOut(clamp((t-1.0)/0.8, 0, 1)));
+  const ctaOp = clamp((t-2.0)/0.8, 0, 1);
+  const ctaScale = easeBack(clamp((t-2.0)/0.8, 0, 1));
+  const badgesOp = clamp((t-2.8)/0.6, 0, 1);
+  return (
+    <div style={{position:'absolute',inset:0,background:'linear-gradient(165deg,#1a0804 0%,#3d1a0e 50%,#5a2a10 100%)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',overflow:'hidden'}}>
+      <div style={{position:'absolute',top:'35%',left:'50%',transform:'translate(-50%,-50%)',width:340,height:340,borderRadius:'50%',background:'radial-gradient(circle,rgba(168,73,42,.2) 0%,transparent 70%)'}}/>
+      {/* Logo */}
+      <div style={{transform:`scale(${logoIn})`,display:'flex',flexDirection:'column',alignItems:'center',gap:14}}>
+        <img src="uploads/logo-lume.png" style={{width:88,height:88,objectFit:'contain'}}/>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:58,fontWeight:500,color:'#fff',letterSpacing:'-0.02em',lineHeight:1}}>Lumé</div>
+      </div>
+      {/* Gold line */}
+      <div style={{height:1,background:'linear-gradient(90deg,transparent,rgba(230,207,161,.5),transparent)',width:lineW,marginTop:18}}/>
+      {/* Tagline */}
+      <div style={{opacity:tagOp,transform:`translateY(${tagY}px)`,marginTop:16,fontFamily:"'Cormorant Garamond',serif",fontSize:24,fontStyle:'italic',color:'rgba(230,207,161,.85)',textAlign:'center',lineHeight:1.45}}>
+        Tu embarazo, acompañado.
+      </div>
+      {/* CTA button */}
+      <div style={{opacity:ctaOp,transform:`scale(${ctaScale})`,marginTop:32,padding:'14px 36px',borderRadius:16,background:'linear-gradient(135deg,#c4693a,#A8492A)',boxShadow:'0 12px 32px rgba(168,73,42,.45)',fontFamily:"'DM Sans',sans-serif",fontSize:16,fontWeight:700,color:'#fff',letterSpacing:'.01em'}}>
+        Descárgala gratis
+      </div>
+      <div style={{opacity:ctaOp,marginTop:10,fontSize:13,color:'rgba(255,255,255,.4)',fontFamily:"'DM Sans',sans-serif"}}>
+        7 días gratis · Sin tarjeta
+      </div>
+      {/* App store badges */}
+      <div style={{opacity:badgesOp,marginTop:24,display:'flex',gap:12,alignItems:'center'}}>
+        {['App Store','Google Play'].map(s=>(
+          <div key={s} style={{padding:'7px 16px',borderRadius:10,background:'rgba(255,255,255,.1)',border:'1px solid rgba(255,255,255,.18)',fontSize:11,fontWeight:600,color:'rgba(255,255,255,.7)',fontFamily:"'DM Sans',sans-serif"}}>
+            {s}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Main App ────────────────────────────────────────────
+function LumeVideo() {
+  return (
+    <Stage width={W} height={H} duration={DUR} background="#1a0804" autoplay loop={false}>
+      <Sprite start={0} end={4.5}><SceneBrand/></Sprite>
+      <Sprite start={3.5} end={9.5}><SceneTracker/></Sprite>
+      <Sprite start={8.5} end={15.5}><SceneIA/></Sprite>
+      <Sprite start={14.5} end={21}><SceneSintomas/></Sprite>
+      <Sprite start={20} end={26}><SceneRecompensas/></Sprite>
+      <Sprite start={25} end={30}><SceneClose/></Sprite>
+    </Stage>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<LumeVideo/>);
+</script>
+</body>
+</html>

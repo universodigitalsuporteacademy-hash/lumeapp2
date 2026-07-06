@@ -1,0 +1,173 @@
+/* ── Lumé · Design tokens ─────────────────────────────────────────
+   Tres direcciones visuales intercambiables via [data-dir].
+   aura   = terracota / crema dorada (branding Lumé)
+   sereno = rosa palo / lavanda suave
+   fresco = verde / coral / marfil
+*/
+
+:root {
+  --maxw: 1180px;
+  --radius: 24px;
+  --radius-sm: 16px;
+  --radius-pill: 999px;
+  --ease: cubic-bezier(.22, .61, .36, 1);
+  --shadow-sm:    0 1px 3px rgba(80,30,15,.05), 0 2px 8px rgba(80,30,15,.04);
+  --shadow-md:    0 4px 16px rgba(80,30,15,.08), 0 14px 42px rgba(80,30,15,.06);
+  --shadow-lg:    0 24px 72px -18px rgba(80,30,15,.32);
+  --shadow-glass: 0 4px 24px rgba(100,40,20,.09), 0 1px 0 rgba(255,255,255,.88) inset;
+  --type-scale: 1;
+
+  /* Paleta de acentos por función (juego de color) */
+  --c-rose:   #C0433F;
+  --c-blue:   #3A5AC8;
+  --c-violet: #6E45C0;
+  --c-teal:   #1E8C9B;
+  --c-green:  #2E8A4A;
+  --c-gold:   #C8952A;
+  --c-slate:  #4A5C7D;
+  --c-coral:  #C84878;
+}
+
+/* ── AURA — Lumé terracota / crema dorada ────────────────────── */
+[data-dir="aura"] {
+  --bg:           #F2E4D4;
+  --bg-tint:      #EAD4BE;
+  --surface:      #FFFAF2;
+  --surface-2:    rgba(240,225,205,.72);
+  --primary:      #A8492A;
+  --primary-deep: #7A3218;
+  --on-primary:   #FFF2E8;
+  --accent:       #C8952A;
+  --accent-soft:  #EDD9B8;
+  --secondary:    #6A8C58;
+  --ink:          #2A1408;
+  --ink-soft:     #5A3020;
+  --muted:        #8C6252;
+  --line:         rgba(168,73,42,.1);
+  --halo:         rgba(168,73,42,.14);
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body:    "DM Sans", system-ui, sans-serif;
+  --display-weight: 600;
+  --display-italic-ok: 1;
+}
+
+/* ── SERENO — rosa palo / lavanda ────────────────────────────── */
+[data-dir="sereno"] {
+  --bg:           #F4EEF2;
+  --bg-tint:      #EAE0E8;
+  --surface:      #FFFCFD;
+  --surface-2:    rgba(236,226,232,.72);
+  --primary:      #A85878;
+  --primary-deep: #8A3F5A;
+  --on-primary:   #FFF6FA;
+  --accent:       #B8A0D2;
+  --accent-soft:  #D8CFEA;
+  --secondary:    #8AB298;
+  --ink:          #38283A;
+  --ink-soft:     #5E4A5A;
+  --muted:        #9A8898;
+  --line:         rgba(168,88,120,.1);
+  --halo:         rgba(168,88,120,.14);
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body:    "DM Sans", system-ui, sans-serif;
+  --display-weight: 600;
+  --display-italic-ok: 1;
+}
+
+/* ── FRESCO — verde / coral / marfil ─────────────────────────── */
+[data-dir="fresco"] {
+  --bg:           #EEF4EE;
+  --bg-tint:      #DEEADE;
+  --surface:      #FAFDF8;
+  --surface-2:    rgba(222,234,220,.72);
+  --primary:      #2A7A5A;
+  --primary-deep: #1A5A40;
+  --on-primary:   #F2FAF6;
+  --accent:       #D4902A;
+  --accent-soft:  #EAD9B5;
+  --secondary:    #C86845;
+  --ink:          #182818;
+  --ink-soft:     #355032;
+  --muted:        #607A68;
+  --line:         rgba(42,122,90,.1);
+  --halo:         rgba(42,122,90,.14);
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body:    "DM Sans", system-ui, sans-serif;
+  --display-weight: 600;
+  --display-italic-ok: 0;
+}
+
+/* ── Base reset + typography ─────────────────────────────────── */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  line-height: 1.08;
+  letter-spacing: -.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+p { text-wrap: pretty; }
+a { color: inherit; text-decoration: none; }
+::selection { background: var(--halo); }
+
+.wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+
+.kicker {
+  font-family: var(--font-body);
+  font-size: 11.5px; font-weight: 700;
+  letter-spacing: .13em; text-transform: uppercase;
+  color: var(--primary);
+}
+
+/* ── Botones ─────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: .55em;
+  font-family: var(--font-body); font-weight: 600; font-size: 15px;
+  padding: 14px 24px; border-radius: var(--radius-pill);
+  border: 1px solid transparent; cursor: pointer;
+  transition: transform .22s var(--ease), box-shadow .22s var(--ease);
+  white-space: nowrap;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-deep) 0%, var(--primary) 55%, color-mix(in srgb, var(--primary) 78%, var(--accent)) 100%);
+  color: var(--on-primary);
+  box-shadow: 0 8px 26px -8px var(--primary), 0 1px 0 rgba(255,255,255,.2) inset;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 34px -10px var(--primary); }
+.btn-ghost {
+  background: rgba(255,255,255,.58); backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--ink); border-color: rgba(255,255,255,.5);
+}
+.btn-ghost:hover { background: var(--surface); transform: translateY(-2px); }
+
+/* ── Card base ───────────────────────────────────────────────── */
+.card {
+  background: rgba(255,250,244,.82);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255,255,255,.7);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-glass);
+}
+
+/* ── Reveal animation ────────────────────────────────────────── */
+.reveal { opacity: 1; }
+.reveal.in { animation: revealIn .6s var(--ease) both; }
+@keyframes revealIn { from { transform: translateY(18px); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .reveal.in { animation: none; }
+  html { scroll-behavior: auto; }
+}

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>¡Bienvenida a Lumé! — Confirmación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: linear-gradient(160deg, #f9f1eb 0%, #f0e2d6 50%, #e8d5c6 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 480px;
+    background: rgba(255,255,255,.72);
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    border: 1px solid rgba(255,255,255,.9);
+    border-radius: 32px;
+    padding: 48px 40px 40px;
+    box-shadow: 0 32px 80px rgba(168,73,42,.16), 0 2px 0 rgba(255,255,255,.95) inset;
+    text-align: center;
+    animation: fadeUp .6s cubic-bezier(.23,1,.32,1);
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(24px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  @keyframes popIn {
+    0%   { transform: scale(0); opacity:0; }
+    70%  { transform: scale(1.12); opacity:1; }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  .check-ring {
+    width: 88px; height: 88px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(46,138,74,.15), rgba(46,138,74,.06));
+    border: 2px solid rgba(46,138,74,.3);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 28px;
+    animation: popIn .55s .15s cubic-bezier(.34,1.56,.64,1) both;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: #3d1a0e;
+    line-height: 1.15;
+    margin-bottom: 10px;
+    letter-spacing: -.02em;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: #8a6a5a;
+    line-height: 1.65;
+    margin-bottom: 32px;
+    max-width: 340px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .plan-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 18px;
+    border-radius: 99px;
+    background: linear-gradient(90deg, rgba(168,73,42,.12), rgba(200,149,42,.1));
+    border: 1px solid rgba(168,73,42,.2);
+    font-size: 13px;
+    font-weight: 700;
+    color: #A8492A;
+    margin-bottom: 32px;
+  }
+
+  .summary-box {
+    background: rgba(255,255,255,.55);
+    border: 1px solid rgba(168,73,42,.1);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 28px;
+    text-align: left;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 0;
+    font-size: 13.5px;
+  }
+
+  .summary-row + .summary-row {
+    border-top: 1px solid rgba(168,73,42,.07);
+  }
+
+  .summary-label { color: #8a6a5a; }
+  .summary-value { font-weight: 700; color: #3d1a0e; }
+  .summary-value.green { color: #2e8a4a; }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: rgba(168,73,42,.05);
+    border: 1px solid rgba(168,73,42,.08);
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: #5a3a2a;
+  }
+
+  .cta-btn {
+    display: block;
+    width: 100%;
+    padding: 17px;
+    border-radius: 99px;
+    border: none;
+    background: linear-gradient(90deg, #A8492A, #8B3520);
+    color: #fff5ee;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 14px 40px rgba(168,73,42,.38);
+    text-decoration: none;
+    margin-bottom: 14px;
+    transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+    letter-spacing: -.01em;
+  }
+
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 48px rgba(168,73,42,.45);
+  }
+
+  .secondary-link {
+    display: block;
+    font-size: 12.5px;
+    color: #a08070;
+    text-decoration: none;
+    margin-bottom: 32px;
+  }
+
+  .secondary-link:hover { color: #A8492A; }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  .logo img {
+    width: 36px; height: 36px;
+    object-fit: contain;
+  }
+
+  .logo-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #3d1a0e;
+    letter-spacing: -.02em;
+  }
+
+  .guarantee-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: #a08070;
+    padding-top: 20px;
+    border-top: 1px solid rgba(168,73,42,.08);
+  }
+
+  .shimmer-text {
+    background: linear-gradient(90deg, #A8492A 0%, #C8952A 30%, #A8492A 60%, #C8952A 90%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear infinite;
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 36px 24px 32px; border-radius: 24px; }
+    h1 { font-size: 28px; }
+    .features-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <!-- Logo -->
+  <div class="logo">
+    <img src="uploads/logo-lume.png" alt="Lumé" onerror="this.style.display='none'"/>
+    <span class="logo-text">Lumé</span>
+  </div>
+
+  <!-- Check -->
+  <div class="check-ring">
+    <svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke="#2e8a4a" stroke-width="2.2" stroke-linecap="round">
+      <path d="M5 13l4 4L19 7"/>
+    </svg>
+  </div>
+
+  <!-- Headline -->
+  <h1>¡Bienvenida a <span class="shimmer-text">Lumé</span>!</h1>
+  <p class="subtitle">Tu suscripción está activa. Empieza hoy con 7 días completamente gratis — tu embarazo merece lo mejor.</p>
+
+  <!-- Plan pill -->
+  <div class="plan-pill" id="planPill">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <path d="M12 3c.6 3.8 1.6 4.8 5.4 5.4-3.8.6-4.8 1.6-5.4 5.4-.6-3.8-1.6-4.8-5.4-5.4C10.4 7.8 11.4 6.8 12 3Z"/>
+    </svg>
+    <span id="planLabel">Plan Bienestar activo</span>
+  </div>
+
+  <!-- Resumen -->
+  <div class="summary-box">
+    <div class="summary-row">
+      <span class="summary-label">Plan</span>
+      <span class="summary-value" id="planName">Lumé Bienestar</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Prueba gratuita</span>
+      <span class="summary-value green">7 días · 0,00€</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Primer cobro</span>
+      <span class="summary-value" id="firstCharge">9$/mes · día 8</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Confirmación enviada a</span>
+      <span class="summary-value" id="userEmail">tu@email.com</span>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="features-grid">
+    <div class="feature-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Asistente IA 24/7
+    </div>
+    <div class="feature-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a5 5 0 1 0 0 10A5 5 0 0 0 12 2z"/><path d="M6.3 14.5A9 9 0 0 0 3 21h18a9 9 0 0 0-3.3-6.5"/></svg>
+      Nutrición perinatal
+    </div>
+    <div class="feature-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2.5" stroke-linecap="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+      Meditaciones prenatales
+    </div>
+    <div class="feature-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      Música para tu bebé
+    </div>
+    <div class="feature-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Tracker semanal
+    </div>
+    <div class="feature-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2.5" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Modo pareja
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <a href="Lume App.html" class="cta-btn">Abrir Lumé →</a>
+  <a href="Lume Landing FINAL.html" class="secondary-link">Ver todos los beneficios de tu plan</a>
+
+  <!-- Guarantee -->
+  <div class="guarantee-strip">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2" stroke-linecap="round">
+      <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/>
+      <path d="M9 12l2 2 4-4"/>
+    </svg>
+    Cancela antes del día 8 y no se realizará ningún cobro &nbsp;·&nbsp;
+    <a href="Lume Legal.html" style="color:#A8492A;font-weight:700;text-decoration:none;">Ver condiciones</a>
+  </div>
+</div>
+
+<script>
+  // Leer plan del localStorage
+  try {
+    const plan = localStorage.getItem('lume_plan') || 'bienestar';
+    const email = localStorage.getItem('lume_nombre') ? localStorage.getItem('lume_nombre') + '@email.com' : 'tu@email.com';
+    const PLAN_DATA = {
+      esencial:    { label:'Plan Esencial activo',    name:'Lumé Esencial',    charge:'Gratis · siempre' },
+      bienestar:   { label:'Plan Bienestar activo',   name:'Lumé Bienestar',   charge:'9$/mes · día 8' },
+      profesional: { label:'Plan Profesional activo', name:'Lumé Profesional', charge:'19$/mes · día 8' }
+    };
+    const d = PLAN_DATA[plan] || PLAN_DATA.bienestar;
+    document.getElementById('planLabel').textContent = d.label;
+    document.getElementById('planName').textContent  = d.name;
+    document.getElementById('firstCharge').textContent = d.charge;
+    document.getElementById('userEmail').textContent = email;
+  } catch(e) {}
+</script>
+</body>
+</html>
