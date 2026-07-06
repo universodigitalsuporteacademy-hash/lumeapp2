@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumé — Investigación: Monetización Plan Gratuito</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --terra: #A8492A;
+      --terra-dark: #8B3520;
+      --cream: #F9F1EB;
+      --cream-dark: #EFE7DB;
+      --paper: #FBF3EB;
+      --gold: #E6CFA1;
+      --gold-dark: #D4AF80;
+      --ink: #3d1a0e;
+      --ink-soft: #5a3a2a;
+      --ink-muted: #8a6a5a;
+      --green: #4A7C59;
+      --green-bg: #EDF5EE;
+      --yellow: #B58B00;
+      --yellow-bg: #FFF8E1;
+      --red: #C0392B;
+      --red-bg: #FDECEA;
+      --blue: #2563EB;
+      --blue-bg: #EFF6FF;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background: var(--ink);
+      color: var(--gold);
+      padding: 40px 48px 36px;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 260px; height: 260px;
+      background: radial-gradient(circle, rgba(168,73,42,.25) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .header-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(230,207,161,.15);
+      border: 1px solid rgba(230,207,161,.3);
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+    header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 42px;
+      font-weight: 500;
+      line-height: 1.15;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    header h1 span { color: var(--gold); }
+    header p {
+      color: rgba(255,255,255,.65);
+      font-size: 15px;
+      max-width: 520px;
+    }
+    .header-meta {
+      display: flex;
+      gap: 24px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    .meta-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      color: rgba(255,255,255,.8);
+    }
+    .meta-chip strong { color: #fff; }
+
+    /* ─── NAV TABS ─── */
+    nav {
+      background: var(--paper);
+      border-bottom: 1px solid var(--cream-dark);
+      padding: 0 48px;
+      display: flex;
+      gap: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      overflow-x: auto;
+    }
+    nav a {
+      text-decoration: none;
+      color: var(--ink-muted);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 14px 18px;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color .2s, border-color .2s;
+    }
+    nav a:hover { color: var(--terra); }
+    nav a.active { color: var(--terra); border-bottom-color: var(--terra); }
+
+    /* ─── LAYOUT ─── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 48px 80px;
+    }
+
+    section {
+      margin-bottom: 56px;
+    }
+
+    /* ─── SECTION TITLES ─── */
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-weight: 500;
+      color: var(--ink);
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    .section-intro {
+      color: var(--ink-soft);
+      max-width: 680px;
+      margin-bottom: 28px;
+      font-size: 15px;
+    }
+
+    /* ─── CARDS GRID ─── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+    /* ─── STRATEGY CARD ─── */
+    .strategy-card {
+      background: #fff;
+      border: 1px solid rgba(168,73,42,.1);
+      border-radius: 14px;
+      padding: 24px;
+      position: relative;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .strategy-card:hover {
+      box-shadow: 0 8px 32px rgba(168,73,42,.1);
+      transform: translateY(-2px);
+    }
+    .strategy-card.recommended {
+      border-color: var(--terra);
+      box-shadow: 0 0 0 1px var(--terra), 0 8px 24px rgba(168,73,42,.12);
+    }
+    .recommend-badge {
+      position: absolute;
+      top: -10px; right: 16px;
+      background: var(--terra);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 10px;
+    }
+    .card-icon {
+      width: 44px; height: 44px;
+      background: var(--cream);
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 14px;
+    }
+    .strategy-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .strategy-card p {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    /* ─── PROS/CONS ─── */
+    .pros-cons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .pro-list, .con-list {
+      background: var(--cream);
+      border-radius: 9px;
+      padding: 12px 14px;
+    }
+    .pro-list { background: var(--green-bg); }
+    .con-list { background: var(--red-bg); }
+    .pro-list .list-title { color: var(--green); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+    .con-list .list-title { color: var(--red); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+    .pro-list li, .con-list li {
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      list-style: none;
+      padding: 2px 0 2px 14px;
+      position: relative;
+    }
+    .pro-list li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+    .con-list li::before { content: '✗'; position: absolute; left: 0; color: var(--red); }
+
+    /* ─── COMPATIBILITY BADGE ─── */
+    .compat-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .compat-badge {
+      font-size: 11.5px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    .compat-badge.alta { background: var(--green-bg); color: var(--green); }
+    .compat-badge.media { background: var(--yellow-bg); color: var(--yellow); }
+    .compat-badge.baja { background: var(--red-bg); color: var(--red); }
+
+    /* ─── eCPM TABLE ─── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(168,73,42,.1);
+    }
+    .data-table th {
+      background: var(--ink);
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 12px 16px;
+      text-align: left;
+    }
+    .data-table td {
+      padding: 12px 16px;
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      border-bottom: 1px solid rgba(168,73,42,.07);
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: var(--cream); }
+    .data-table .highlight td { background: rgba(168,73,42,.04); font-weight: 500; color: var(--ink); }
+    .ecpm-val { font-weight: 700; color: var(--terra); font-size: 15px; }
+    .ecpm-low { color: var(--ink-muted); font-size: 13px; }
+
+    /* ─── CALLOUT ─── */
+    .callout {
+      border-radius: 12px;
+      padding: 20px 22px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .callout.info { background: var(--blue-bg); border: 1px solid rgba(37,99,235,.15); }
+    .callout.warn { background: var(--yellow-bg); border: 1px solid rgba(181,139,0,.2); }
+    .callout.success { background: var(--green-bg); border: 1px solid rgba(74,124,89,.2); }
+    .callout.danger { background: var(--red-bg); border: 1px solid rgba(192,57,43,.15); }
+    .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .callout-body strong { display: block; font-size: 14px; margin-bottom: 3px; color: var(--ink); }
+    .callout-body p { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+
+    /* ─── RANKING ─── */
+    .ranking-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      background: #fff;
+      border: 1px solid rgba(168,73,42,.1);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 12px;
+      transition: box-shadow .2s;
+    }
+    .ranking-item:hover { box-shadow: 0 4px 16px rgba(168,73,42,.08); }
+    .rank-num {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .rank-1 { background: #FFF3E0; color: #E65100; }
+    .rank-2 { background: #F3E5F5; color: #6A1B9A; }
+    .rank-3 { background: var(--green-bg); color: var(--green); }
+    .rank-4 { background: var(--blue-bg); color: var(--blue); }
+    .rank-5 { background: var(--yellow-bg); color: var(--yellow); }
+    .rank-body h4 { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+    .rank-body p { font-size: 13px; color: var(--ink-soft); }
+    .rank-tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+    .rank-tag {
+      font-size: 11px; padding: 2px 8px; border-radius: 5px; font-weight: 500;
+      background: var(--cream); color: var(--ink-soft);
+    }
+    .rank-tag.green { background: var(--green-bg); color: var(--green); }
+    .rank-tag.orange { background: #FFF3E0; color: #E65100; }
+    .rank-tag.blue { background: var(--blue-bg); color: var(--blue); }
+    .rank-tag.yellow { background: var(--yellow-bg); color: var(--yellow); }
+
+    /* ─── REVENUE CALC ─── */
+    .calc-box {
+      background: var(--ink);
+      border-radius: 16px;
+      padding: 32px;
+      color: #fff;
+    }
+    .calc-box h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .calc-scenario {
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .calc-scenario .s-label { font-size: 11px; color: var(--gold); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+    .calc-scenario .s-users { font-size: 13px; color: rgba(255,255,255,.6); margin-bottom: 8px; }
+    .calc-scenario .s-rev { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 500; color: #fff; line-height: 1; }
+    .calc-scenario .s-sub { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 4px; }
+    .calc-note { font-size: 12px; color: rgba(255,255,255,.5); text-align: center; }
+
+    /* ─── COMPARISON TABLE ─── */
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(168,73,42,.12);
+    }
+    .comp-table th {
+      background: var(--cream-dark);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      padding: 12px 16px;
+      text-align: left;
+    }
+    .comp-table th:first-child { text-align: left; }
+    .comp-table td {
+      padding: 13px 16px;
+      font-size: 13px;
+      color: var(--ink-soft);
+      border-bottom: 1px solid rgba(168,73,42,.06);
+      vertical-align: top;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:hover td { background: var(--cream); }
+    .comp-table .yes { color: var(--green); font-weight: 600; }
+    .comp-table .no { color: var(--red); }
+    .comp-table .maybe { color: var(--yellow); }
+    .comp-table .row-name { font-weight: 600; color: var(--ink); font-size: 14px; }
+    .comp-table tr.winner td { background: rgba(168,73,42,.04); }
+    .comp-table tr.winner .row-name::after {
+      content: ' ★';
+      color: var(--terra);
+    }
+
+    /* ─── AFFILIATE TABLE ─── */
+    .aff-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(168,73,42,.1);
+    }
+    .aff-table th {
+      background: var(--terra);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 10px 14px;
+      text-align: left;
+    }
+    .aff-table td {
+      padding: 11px 14px;
+      font-size: 13px;
+      color: var(--ink-soft);
+      border-bottom: 1px solid rgba(168,73,42,.07);
+    }
+    .aff-table tr:last-child td { border-bottom: none; }
+    .aff-table .brand { font-weight: 600; color: var(--ink); }
+    .aff-rate { color: var(--green); font-weight: 700; }
+
+    /* ─── IMPLEMENTATION STEPS ─── */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(168,73,42,.1);
+      position: relative;
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      width: 36px; height: 36px;
+      background: var(--terra);
+      color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .step-content h4 { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+    .step-content p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; }
+    .step-content .step-tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+    .step-tag { font-size: 11px; padding: 2px 8px; border-radius: 5px; background: var(--cream); color: var(--ink-soft); }
+    .step-tag.phase1 { background: rgba(168,73,42,.1); color: var(--terra); font-weight: 600; }
+    .step-tag.phase2 { background: rgba(74,124,89,.1); color: var(--green); font-weight: 600; }
+    .step-tag.phase3 { background: rgba(37,99,235,.1); color: var(--blue); font-weight: 600; }
+
+    /* ─── WARNING BOX ─── */
+    .warning-box {
+      background: var(--yellow-bg);
+      border: 1px solid rgba(181,139,0,.25);
+      border-radius: 12px;
+      padding: 20px 22px;
+    }
+    .warning-box h4 { font-size: 14px; font-weight: 700; color: var(--yellow); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .warning-box ul { padding-left: 18px; }
+    .warning-box li { font-size: 13px; color: var(--ink-soft); margin-bottom: 4px; }
+
+    /* ─── DIVIDER ─── */
+    hr { border: none; border-top: 1px solid rgba(168,73,42,.12); margin: 40px 0; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--ink);
+      color: rgba(255,255,255,.5);
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+    }
+    footer span { color: var(--gold); }
+
+    @media (max-width: 700px) {
+      main { padding: 24px 20px 60px; }
+      header { padding: 28px 20px; }
+      header h1 { font-size: 30px; }
+      nav { padding: 0 12px; }
+      .grid-2, .grid-3, .calc-grid { grid-template-columns: 1fr; }
+      .pros-cons { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-tag">📊 Research · Julio 2026</div>
+  <h1>Monetización del<br><span>Plan Gratuito</span> — Lumé</h1>
+  <p>Investigación profunda sobre las mejores estrategias de ingresos para usuarios free, sin comprometer la experiencia premium.</p>
+  <div class="header-meta">
+    <div class="meta-chip">📱 App de embarazo</div>
+    <div class="meta-chip">🎯 Audiencia: mujeres embarazadas</div>
+    <div class="meta-chip">💎 Posicionamiento: premium</div>
+    <div class="meta-chip">📈 Health & Fitness → 9.4% conversión trial</div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav>
+  <a href="#contexto" class="active">Contexto</a>
+  <a href="#formatos">Formatos de Ads</a>
+  <a href="#alternativas">Sin Ads Tradicionales</a>
+  <a href="#ecpm">Datos & eCPM</a>
+  <a href="#ranking">Recomendación</a>
+  <a href="#implementacion">Implementación</a>
+</nav>
+
+<main>
+
+  <!-- ─── SECCIÓN 1: CONTEXTO ─── -->
+  <section id="contexto">
+    <div class="section-label">01 · Contexto</div>
+    <h2>¿Qué hacen las apps de embarazo hoy?</h2>
+    <p class="section-intro">Estudio sobre 35 apps de embarazo activas en App Store y Google Play (BMC Pregnancy & Childbirth, 2024).</p>
+
+    <div class="grid-3" style="margin-bottom: 20px;">
+      <div class="strategy-card" style="text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:600;color:var(--terra);line-height:1;">63%</div>
+        <div style="font-size:13px;color:var(--ink-soft);margin-top:4px;">muestran algún tipo de publicidad</div>
+        <div style="font-size:12px;color:var(--ink-muted);margin-top:4px;">22 de 35 apps</div>
+      </div>
+      <div class="strategy-card" style="text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:600;color:var(--terra);line-height:1;">43%</div>
+        <div style="font-size:13px;color:var(--ink-soft);margin-top:4px;">usan affiliate marketing</div>
+        <div style="font-size:12px;color:var(--ink-muted);margin-top:4px;">15 de 35 apps</div>
+      </div>
+      <div class="strategy-card" style="text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:600;color:var(--terra);line-height:1;">26%</div>
+        <div style="font-size:13px;color:var(--ink-soft);margin-top:4px;">permiten quitar ads pagando</div>
+        <div style="font-size:12px;color:var(--ink-muted);margin-top:4px;">9 de 35 apps</div>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body">
+        <strong>El modelo híbrido domina en 2025</strong>
+        <p>Más del 60% de las apps top-grossing combinan publicidad in-app + compras in-app + suscripciones. Los usuarios free generan ingresos por ads, los intermedios pagan por upgrades puntuales, y los comprometidos se suscriben. Esto hace el negocio más resiliente.</p>
+      </div>
+    </div>
+
+    <div class="callout success">
+      <div class="callout-icon">🌟</div>
+      <div class="callout-body">
+        <strong>Buenas noticias: Health & Fitness convierte muy bien</strong>
+        <p>La categoría Health & Fitness tiene una de las tasas de conversión de trial más altas: <strong>hasta 40% trial-to-paid</strong>, y 9.4% de download-to-trial. Lumé tiene un público muy comprometido (embarazadas que usan la app diario), lo que aumenta el valor de cada usuario free.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ─── SECCIÓN 2: FORMATOS DE ADS ─── -->
+  <section id="formatos">
+    <div class="section-label">02 · Formatos de Publicidad</div>
+    <h2>Los 6 tipos de ads y su fit con Lumé</h2>
+    <p class="section-intro">No todos los formatos son iguales. Para una app premium de embarazo, el formato elegido impacta directamente en la retención y en la conversión a premium.</p>
+
+    <div class="grid-2">
+
+      <!-- REWARDED VIDEO -->
+      <div class="strategy-card recommended">
+        <div class="recommend-badge">★ Más recomendado</div>
+        <div class="card-icon">🎁</div>
+        <h3>Rewarded Video Ads</h3>
+        <p>El usuario elige ver un video corto (15-30 seg) a cambio de un beneficio dentro de la app. En Lumé: <strong>ganar Puntos Lumé, desbloquear un consejo premium, o recuperar una función avanzada por 24h</strong>.</p>
+        <div class="pros-cons">
+          <div class="pro-list">
+            <div class="list-title">Ventajas</div>
+            <ul>
+              <li>100% voluntario</li>
+              <li>eCPM más alto: ~$19</li>
+              <li>Usuarios 4.5x más proclives a comprar premium después</li>
+              <li>Percepción positiva</li>
+            </ul>
+          </div>
+          <div class="con-list">
+            <div class="list-title">Desventajas</div>
+            <ul>
+              <li>Requiere diseñar el sistema de recompensas</li>
+              <li>Puede usarse como "truco" para no pagar</li>
+            </ul>
+          </div>
+        </div>
+        <div class="compat-row">
+          <span class="compat-badge alta">Alta compatibilidad con Lumé ✓</span>
+          <span class="compat-badge alta">UX no intrusiva ✓</span>
+        </div>
+      </div>
+
+      <!-- NATIVE ADS -->
+      <div class="strategy-card recommended">
+        <div class="recommend-badge">★ Muy recomendado</div>
+        <div class="card-icon">🪄</div>
+        <h3>Native Ads</h3>
+        <p>Anuncios que imitan visualmente el contenido de la app. Aparecen como "Recomendado para ti" en el home, mezclados con contenido editorial. Marcas de maternidad, suplementos, ropa de bebé.</p>
+        <div class="pros-cons">
+          <div class="pro-list">
+            <div class="list-title">Ventajas</div>
+            <ul>
+              <li>CTR 20-30% más alto que banners</li>
+              <li>No interrumpe la UX</li>
+              <li>Mantiene look premium</li>
+              <li>Relevancia alta para el target</li>
+            </ul>
+          </div>
+          <div class="con-list">
+            <div class="list-title">Desventajas</div>
+            <ul>
+              <li>Puede confundir si no está bien marcado</li>
+              <li>Requiere curación de anunciantes</li>
+            </ul>
+          </div>
+        </div>
+        <div class="compat-row">
+          <span class="compat-badge alta">Alta compatibilidad ✓</span>
+          <span class="compat-badge media">Diseño cuidadoso requerido</span>
+        </div>
+      </div>
+
+      <!-- INTERSTITIALS -->
+      <div class="strategy-card">
+        <div class="card-icon">📱</div>
+        <h3>Interstitial Ads</h3>
+        <p>Anuncios a pantalla completa que aparecen en <em>transiciones naturales</em> (ej: al abrir la app, al cambiar de pantalla después de registrar un dato). eCPM alto pero riesgo de frustración si se abusan.</p>
+        <div class="pros-cons">
+          <div class="pro-list">
+            <div class="list-title">Ventajas</div>
+            <ul>
+              <li>eCPM alto: $10-15</li>
+              <li>Alta visibilidad</li>
+              <li>Fácil de implementar</li>
+            </ul>
+          </div>
+          <div class="con-list">
+            <div class="list-title">Desventajas</div>
+            <ul>
+              <li>Interrumpe el flujo</li>
+              <li>Riesgo de desinstalar</li>
+              <li>No encaja bien con look premium</li>
+            </ul>
+          </div>
+        </div>
+        <div class="compat-row">
+          <span class="compat-badge media">Compatibilidad media — usar con moderación</span>
+        </div>
+      </div>
+
+      <!-- BANNER ADS -->
+      <div class="strategy-card">
+        <div class="card-icon">🔲</div>
+        <h3>Banner Ads</h3>
+        <p>Banners fijos en la parte inferior o superior de la pantalla. El formato más antiguo y menos efectivo. Los usuarios desarrollan "banner blindness" y simplemente los ignoran.</p>
+        <div class="pros-cons">
+          <div class="pro-list">
+            <div class="list-title">Ventajas</div>
+            <ul>
+              <li>Fácil de implementar</li>
+              <li>No interrumpe</li>
+              <li>Ingreso pasivo constante</li>
+            </ul>
+          </div>
+          <div class="con-list">
+            <div class="list-title">Desventajas</div>
+            <ul>
+              <li>eCPM muy bajo</li>
+              <li>Se ignoran (ad blindness)</li>
+              <li>Destruye el look premium</li>
+              <li>Poca relevancia</li>
+            </ul>
+          </div>
+        </div>
+        <div class="compat-row">
+          <span class="compat-badge baja">❌ No recomendado para Lumé</span>
+        </div>
+      </div>
+
+      <!-- APP OPEN ADS -->
+      <div class="strategy-card">
+        <div class="card-icon">🚀</div>
+        <h3>App Open Ads</h3>
+        <p>Anuncio que aparece cuando el usuario abre la app, sobre el splash screen. Alta visibilidad pero puede generar rechazo inmediato, especialmente en una app de salud donde el usuario quiere ver sus datos de inmediato.</p>
+        <div class="pros-cons">
+          <div class="pro-list">
+            <div class="list-title">Ventajas</div>
+            <ul>
+              <li>Alta visibilidad garantizada</li>
+              <li>No interrumpe el flujo interno</li>
+            </ul>
+          </div>
+          <div class="con-list">
+            <div class="list-title">Desventajas</div>
+            <ul>
+              <li>Primera impresión negativa</li>
+              <li>Rompe la magia del onboarding</li>
+              <li>Muy intrusivo para premium</li>
+            </ul>
+          </div>
+        </div>
+        <div class="compat-row">
+          <span class="compat-badge baja">❌ No recomendado para Lumé</span>
+        </div>
+      </div>
+
+      <!-- SPONSORED CONTENT -->
+      <div class="strategy-card recommended">
+        <div class="recommend-badge">★ Recomendado</div>
+        <div class="card-icon">🤝</div>
+        <h3>Sponsored Content / Patrocinios</h3>
+        <p>Marcas afines (vitaminas prenatales, ropa materna, carriolas) patrocinan secciones o contenido específico de la app. Ej: "Consejo de nutrición patrocinado por Elevit". Muy compatible con el tono premium de Lumé.</p>
+        <div class="pros-cons">
+          <div class="pro-list">
+            <div class="list-title">Ventajas</div>
+            <ul>
+              <li>Muy alineado con la audiencia</li>
+              <li>No parece publicidad masiva</li>
+              <li>Ingresos mayores por deal directo</li>
+              <li>Mantiene look editorial premium</li>
+            </ul>
+          </div>
+          <div class="con-list">
+            <div class="list-title">Desventajas</div>
+            <ul>
+              <li>Requiere ventas directas</li>
+              <li>Escalabilidad limitada al inicio</li>
+            </ul>
+          </div>
+        </div>
+        <div class="compat-row">
+          <span class="compat-badge alta">Muy alineado con Lumé ✓</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ─── SECCIÓN 3: ALTERNATIVAS SIN ADS ─── -->
+  <section id="alternativas">
+    <div class="section-label">03 · Alternativas sin Publicidad Tradicional</div>
+    <h2>Monetización que no se siente como "publicidad"</h2>
+    <p class="section-intro">Para una app premium como Lumé, estas opciones generan ingresos sin comprometer la percepción de marca.</p>
+
+    <div class="grid-2" style="margin-bottom: 20px;">
+
+      <div class="strategy-card recommended">
+        <div class="recommend-badge">★ Top opción</div>
+        <div class="card-icon">🛍️</div>
+        <h3>Affiliate Marketing</h3>
+        <p>Lumé recomienda productos relevantes (ropa de maternidad, suplementos, carriolas, libros de embarazo) con un link de afiliado. Si el usuario compra, Lumé recibe comisión.</p>
+        <p style="margin-top:8px;"><strong>43% de las apps de embarazo ya lo hacen</strong>, especialmente links a Amazon. Es natural porque las mamás embarazadas <em>ya están comprando</em> estos productos.</p>
+        <div class="compat-row" style="margin-top:12px;">
+          <span class="compat-badge alta">Comisión: 3-8% por venta</span>
+          <span class="compat-badge alta">Muy congruente con Lumé</span>
+        </div>
+      </div>
+
+      <div class="strategy-card">
+        <div class="card-icon">🏥</div>
+        <h3>B2B / Enterprise Licensing</h3>
+        <p>Vender acceso a Lumé a clínicas de ginecología, hospitales, aseguradoras de salud. El médico recomienda la app a sus pacientes como herramienta de seguimiento. Modelo de alto valor por contrato.</p>
+        <div class="compat-row" style="margin-top:12px;">
+          <span class="compat-badge media">Largo plazo — requiere ventas B2B</span>
+          <span class="compat-badge alta">Alto valor por deal</span>
+        </div>
+      </div>
+
+      <div class="strategy-card">
+        <div class="card-icon">📊</div>
+        <h3>Datos Anonimizados</h3>
+        <p>Venta de insights agregados y anonimizados a investigadores, marcas de salud o aseguradoras. <strong>⚠️ Requiere total transparencia en los términos y cumplimiento GDPR/LOPD.</strong> No recomendado sin asesoría legal.</p>
+        <div class="compat-row" style="margin-top:12px;">
+          <span class="compat-badge baja">Riesgo legal alto</span>
+          <span class="compat-badge media">Solo con asesoría legal</span>
+        </div>
+      </div>
+
+      <div class="strategy-card">
+        <div class="card-icon">🎓</div>
+        <h3>Cursos & Contenido Premium</h3>
+        <p>Contenido adicional como "Curso de preparación al parto", "Guía de nutrición trimestre por trimestre" o "Masterclass con experta" vendidos como compras únicas dentro del plan gratuito.</p>
+        <div class="compat-row" style="margin-top:12px;">
+          <span class="compat-badge alta">Sin ads — puro valor</span>
+          <span class="compat-badge media">Requiere producción de contenido</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Affiliate table -->
+    <h3 style="font-family:'Cormorant Garamond',serif;font-size:22px;margin-bottom:14px;">Programas de Afiliados relevantes para Lumé</h3>
+    <table class="aff-table">
+      <thead>
+        <tr>
+          <th>Marca / Programa</th>
+          <th>Categoría</th>
+          <th>Comisión</th>
+          <th>Fit con Lumé</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="brand">Amazon Afiliados</td>
+          <td>Todo tipo de productos bebé/mamá</td>
+          <td class="aff-rate">3-4%</td>
+          <td>⭐⭐⭐⭐⭐ — las mamás ya compran aquí</td>
+        </tr>
+        <tr>
+          <td class="brand">Materna / Elevit (vitaminas)</td>
+          <td>Suplementos prenatales</td>
+          <td class="aff-rate">8-12%</td>
+          <td>⭐⭐⭐⭐⭐ — muy relevante</td>
+        </tr>
+        <tr>
+          <td class="brand">Mustela / Weleda</td>
+          <td>Skincare mamá & bebé</td>
+          <td class="aff-rate">5-8%</td>
+          <td>⭐⭐⭐⭐ — alta afinidad</td>
+        </tr>
+        <tr>
+          <td class="brand">Cybex / Joie (carriolas)</td>
+          <td>Equipo de bebé</td>
+          <td class="aff-rate">3-5%</td>
+          <td>⭐⭐⭐⭐ — ticket alto</td>
+        </tr>
+        <tr>
+          <td class="brand">Prenatal / Seraphine</td>
+          <td>Ropa de maternidad</td>
+          <td class="aff-rate">5-10%</td>
+          <td>⭐⭐⭐⭐ — muy alineado</td>
+        </tr>
+        <tr>
+          <td class="brand">Udemy / MasterClass</td>
+          <td>Cursos de parto, lactancia</td>
+          <td class="aff-rate">15-20%</td>
+          <td>⭐⭐⭐ — contenido educativo</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr>
+
+  <!-- ─── SECCIÓN 4: DATOS & eCPM ─── -->
+  <section id="ecpm">
+    <div class="section-label">04 · Datos de Mercado</div>
+    <h2>eCPM por formato y potencial de ingresos</h2>
+    <p class="section-intro">Referencia de cuánto paga cada formato por 1,000 impresiones (eCPM) en mercados relevantes para Lumé.</p>
+
+    <table class="data-table" style="margin-bottom:24px;">
+      <thead>
+        <tr>
+          <th>Formato</th>
+          <th>eCPM USA</th>
+          <th>eCPM España/LATAM</th>
+          <th>Intrusividad</th>
+          <th>Recomendado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight">
+          <td><strong>Rewarded Video (Android)</strong></td>
+          <td class="ecpm-val">$19.21</td>
+          <td class="ecpm-val">$4–8</td>
+          <td>Ninguna (voluntario)</td>
+          <td style="color:var(--green);font-weight:700;">✓ Sí</td>
+        </tr>
+        <tr class="highlight">
+          <td><strong>Interstitial (iOS)</strong></td>
+          <td class="ecpm-val">$12–15</td>
+          <td class="ecpm-val">$3–6</td>
+          <td>Media</td>
+          <td style="color:var(--yellow);font-weight:700;">⚠ Con límites</td>
+        </tr>
+        <tr>
+          <td>Native Ads</td>
+          <td class="ecpm-val">$8–12</td>
+          <td class="ecpm-val">$2–5</td>
+          <td>Baja</td>
+          <td style="color:var(--green);font-weight:700;">✓ Sí</td>
+        </tr>
+        <tr>
+          <td>App Open Ads</td>
+          <td class="ecpm-val">$7–10</td>
+          <td class="ecpm-val">$2–4</td>
+          <td>Alta</td>
+          <td style="color:var(--red);font-weight:700;">✗ No</td>
+        </tr>
+        <tr>
+          <td>Banner Ads</td>
+          <td class="ecpm-low">$0.50–1.50</td>
+          <td class="ecpm-low">$0.20–0.80</td>
+          <td>Media-baja</td>
+          <td style="color:var(--red);font-weight:700;">✗ No</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Revenue calculator -->
+    <div class="calc-box">
+      <h3>Estimación de ingresos mensuales por publicidad</h3>
+      <div class="calc-grid">
+        <div class="calc-scenario">
+          <div class="s-label">Inicio</div>
+          <div class="s-users">1,000 usuarios free activos</div>
+          <div class="s-rev">$150–$400</div>
+          <div class="s-sub">combinando rewarded + native</div>
+        </div>
+        <div class="calc-scenario">
+          <div class="s-label">Crecimiento</div>
+          <div class="s-users">10,000 usuarios free</div>
+          <div class="s-rev">$1,500–$4,000</div>
+          <div class="s-sub">+ingresos afiliados ~$500</div>
+        </div>
+        <div class="calc-scenario">
+          <div class="s-label">Escala</div>
+          <div class="s-users">100,000 usuarios free</div>
+          <div class="s-rev">$15K–$100K</div>
+          <div class="s-sub">según optimización y mercado</div>
+        </div>
+      </div>
+      <div class="calc-note">* Basado en eCPM de mercados hispanohablantes (España, México, Argentina). El eCPM en USA es 3-5x mayor.</div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ─── SECCIÓN 5: RANKING RECOMENDACIÓN ─── -->
+  <section id="ranking">
+    <div class="section-label">05 · Recomendación para Lumé</div>
+    <h2>Las mejores opciones, ordenadas por fit</h2>
+    <p class="section-intro">Considerando el posicionamiento premium de Lumé, la sensibilidad del público (mamás embarazadas) y la necesidad de no dañar la conversión a plan de pago.</p>
+
+    <div class="ranking-item">
+      <div class="rank-num rank-1">1</div>
+      <div class="rank-body">
+        <h4>Rewarded Ads ligados al sistema de Puntos Lumé</h4>
+        <p>El usuario ve un anuncio voluntario de 15-30 seg y gana Puntos Lumé que ya existen en la app. Puede canjearlos por desbloquear un consejo premium, acceso temporal a una función, o acumular hacia recompensas. <strong>La clave: que se sienta como beneficio, no como castigo.</strong></p>
+        <div class="rank-tags">
+          <span class="rank-tag green">eCPM más alto</span>
+          <span class="rank-tag green">No intrusivo</span>
+          <span class="rank-tag green">Ya tienes el sistema de puntos</span>
+          <span class="rank-tag orange">Fácil de implementar</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ranking-item">
+      <div class="rank-num rank-2">2</div>
+      <div class="rank-body">
+        <h4>Affiliate Marketing — "Productos para tu semana X"</h4>
+        <p>En la pantalla de inicio, debajo del tracker de semanas: "Esta semana puedes necesitar…" con 2-3 productos de afiliado (ej: almohada de embarazo en semana 20, vitaminas en el 1er trimestre, carriola en el 3er trimestre). Contextual, útil, y no se siente como publicidad.</p>
+        <div class="rank-tags">
+          <span class="rank-tag green">Alta relevancia contextual</span>
+          <span class="rank-tag green">Comisión por venta</span>
+          <span class="rank-tag blue">Encaja perfectamente en el Home</span>
+          <span class="rank-tag orange">No requiere SDK de ads</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ranking-item">
+      <div class="rank-num rank-3">3</div>
+      <div class="rank-body">
+        <h4>Native Ads en el feed de contenido</h4>
+        <p>En la sección de "Consejo del día" o "Nutrición", insertar 1 card cada 4-5 que sea un anuncio nativo, visualmente idéntico pero con etiqueta "Patrocinado". Marcas curadas previamente (sin competidores directos, sin contenido médico cuestionable).</p>
+        <div class="rank-tags">
+          <span class="rank-tag green">Se integra al diseño</span>
+          <span class="rank-tag yellow">Requiere curación de marcas</span>
+          <span class="rank-tag blue">CTR 2-3x banners</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ranking-item">
+      <div class="rank-num rank-4">4</div>
+      <div class="rank-body">
+        <h4>Sponsored Content / Secciones patrocinadas</h4>
+        <p>Una marca como Elevit (vitaminas prenatales) patrocina la sección de Nutrición. El header dice: "Sección de Nutrición, con el apoyo de Elevit". Deal directo, sin intermediarios, ingresos más altos y más control editorial.</p>
+        <div class="rank-tags">
+          <span class="rank-tag green">Más premium que ads masivos</span>
+          <span class="rank-tag yellow">Requiere ventas directas</span>
+          <span class="rank-tag blue">Escala más lento pero mejor</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ranking-item">
+      <div class="rank-num rank-5">5</div>
+      <div class="rank-body">
+        <h4>Interstitials en transiciones — máximo 1-2 por sesión</h4>
+        <p>Solo si los anteriores no generan suficiente ingreso. Un interstitial al guardar el registro de peso o patadas, con botón de cierre claro a los 5 segundos. El usuario premium no los ve. Límite estricto: 1 por sesión, nunca durante momentos de ansiedad (registro de síntomas, ultrasonido).</p>
+        <div class="rank-tags">
+          <span class="rank-tag green">Alto eCPM</span>
+          <span class="rank-tag yellow">Riesgo de fricción</span>
+          <span class="rank-tag yellow">Usar con mucho cuidado</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div class="callout warn">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <strong>Lo que definitivamente NO hacer en Lumé</strong>
+          <p>Banners fijos (destruyen look premium), App Open Ads (primera impresión terrible), más de 2 ads por sesión, publicidad durante momentos sensibles (síntomas, citas médicas), ads de competidores directos, o cualquier ad de contenido médico no verificado.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ─── SECCIÓN 6: COMPARATIVA ─── -->
+  <section>
+    <div class="section-label">06 · Comparativa de estrategias</div>
+    <h2>Tabla comparativa final</h2>
+
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Estrategia</th>
+          <th>Ingresos</th>
+          <th>UX Premium</th>
+          <th>Facilidad impl.</th>
+          <th>Impulsa Premium</th>
+          <th>Escalable</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="winner">
+          <td class="row-name">Rewarded Ads + Puntos</td>
+          <td class="yes">Alto ★</td>
+          <td class="yes">Sí ✓</td>
+          <td class="yes">Media</td>
+          <td class="yes">Sí — mucho ✓</td>
+          <td class="yes">Sí ✓</td>
+        </tr>
+        <tr class="winner">
+          <td class="row-name">Affiliate Marketing</td>
+          <td class="maybe">Medio</td>
+          <td class="yes">Sí ✓</td>
+          <td class="yes">Fácil ✓</td>
+          <td class="maybe">Indirectamente</td>
+          <td class="yes">Sí ✓</td>
+        </tr>
+        <tr>
+          <td class="row-name">Native Ads</td>
+          <td class="maybe">Medio-alto</td>
+          <td class="maybe">Con cuidado</td>
+          <td class="maybe">Media</td>
+          <td class="yes">Sí ✓</td>
+          <td class="yes">Sí ✓</td>
+        </tr>
+        <tr>
+          <td class="row-name">Sponsored Content</td>
+          <td class="yes">Alto</td>
+          <td class="yes">Sí ✓</td>
+          <td class="no">Difícil</td>
+          <td class="yes">Sí ✓</td>
+          <td class="no">Limitado</td>
+        </tr>
+        <tr>
+          <td class="row-name">Interstitials</td>
+          <td class="yes">Alto ★</td>
+          <td class="no">No</td>
+          <td class="yes">Fácil</td>
+          <td class="maybe">Algo</td>
+          <td class="yes">Sí</td>
+        </tr>
+        <tr>
+          <td class="row-name">Banner Ads</td>
+          <td class="no">Muy bajo</td>
+          <td class="no">No</td>
+          <td class="yes">Muy fácil</td>
+          <td class="no">No</td>
+          <td class="yes">Sí</td>
+        </tr>
+        <tr>
+          <td class="row-name">Cursos premium (IAP)</td>
+          <td class="yes">Alto</td>
+          <td class="yes">Sí ✓</td>
+          <td class="no">Difícil</td>
+          <td class="yes">Sí ✓</td>
+          <td class="maybe">Media</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr>
+
+  <!-- ─── SECCIÓN 7: IMPLEMENTACIÓN ─── -->
+  <section id="implementacion">
+    <div class="section-label">07 · Plan de Implementación</div>
+    <h2>Hoja de ruta sugerida</h2>
+    <p class="section-intro">Un camino gradual que empieza por las opciones menos intrusivas y más fáciles, y escala hacia las más complejas conforme crece la base de usuarios.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Affiliate links en el Home — "Productos para tu semana"</h4>
+          <p>Lo más rápido de implementar. Debajo del tracker de semana en la pantalla de Inicio, mostrar 2-3 productos relevantes via Amazon Afiliados según el trimestre. Sin SDK externo, sin código complejo — solo links con parámetros de afiliado.</p>
+          <div class="step-tags">
+            <span class="step-tag phase1">Fase 1 — semanas 1-4</span>
+            <span class="step-tag">Sin SDK</span>
+            <span class="step-tag">Bajo riesgo</span>
+            <span class="step-tag">Alta relevancia</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Rewarded Ads conectados al sistema de Puntos Lumé</h4>
+          <p>Agregar un botón "Ganar puntos" en la pantalla de Recompensas o en el Home. El usuario ve un video de 30 seg y gana 50 puntos Lumé. Integrar Google AdMob Rewarded o AppLovin para servir los videos. Los premium no ven la opción.</p>
+          <div class="step-tags">
+            <span class="step-tag phase1">Fase 1 — semanas 3-6</span>
+            <span class="step-tag">AdMob SDK</span>
+            <span class="step-tag">Alto eCPM</span>
+            <span class="step-tag">Mejora engagement</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Native Ads en secciones de contenido editorial</h4>
+          <p>En la pantalla de Nutrición o Consejos, insertar 1 card "Patrocinado" cada 5 contenidos. Usar AdMob Native Ads o curar manualmente con marcas directas. Siempre etiquetado claramente. Bloquear anuncios de categorías sensibles (alcohol, medicamentos sin prescripción).</p>
+          <div class="step-tags">
+            <span class="step-tag phase2">Fase 2 — mes 2-3</span>
+            <span class="step-tag">Diseño cuidadoso</span>
+            <span class="step-tag">Curación de marcas</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Negociación directa con marcas para sponsorships</h4>
+          <p>Una vez con 5,000+ usuarios, contactar directamente a marcas como Elevit, Mustela, o tiendas de bebé para que patrocinen secciones enteras. Deal directo = ingresos más altos y más control de calidad. Precio: ~$500-$2,000/mes por sección según audiencia.</p>
+          <div class="step-tags">
+            <span class="step-tag phase2">Fase 2 — mes 3-6</span>
+            <span class="step-tag">5,000+ MAU mínimo</span>
+            <span class="step-tag">Alto valor</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h4>Contenido premium vendido por separado (IAP)</h4>
+          <p>Crear cursos o guías adicionales: "Guía completa de nutrición trimestre a trimestre" ($4.99), "Preparación para el parto" ($7.99). Compras únicas, no suscripción. El usuario free puede comprarlos sin suscribirse al plan premium. Esto también sirve como upsell hacia el plan completo.</p>
+          <div class="step-tags">
+            <span class="step-tag phase3">Fase 3 — mes 6+</span>
+            <span class="step-tag">Requiere producción de contenido</span>
+            <span class="step-tag">Sin ads</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Advertencia final -->
+    <div style="margin-top:28px;">
+      <div class="warning-box">
+        <h4>⚠️ Reglas de oro para no dañar la experiencia Lumé</h4>
+        <ul>
+          <li>Nunca mostrar ads durante momentos de ansiedad o registro de síntomas</li>
+          <li>Siempre que el usuario premium no vea <strong>ningún</strong> anuncio — es una ventaja clave del upgrade</li>
+          <li>Límite de 1 interstitial por sesión (si se implementan) — nunca al abrir la app</li>
+          <li>Bloquear categorías de anunciantes: alcohol, tabaco, medicamentos, competidores directos</li>
+          <li>Curar manualmente cualquier contenido de afiliado — no recomendar productos de baja calidad</li>
+          <li>Etiquetar siempre claramente el contenido "Patrocinado" o "Publicidad"</li>
+          <li>A/B testear el impacto en conversión a premium — si los ads bajan el upgrade, ajustar</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div class="callout success">
+        <div class="callout-icon">🎯</div>
+        <div class="callout-body">
+          <strong>El objetivo: que los ads hagan querer pagar, no huir</strong>
+          <p>Los rewarded ads y el affiliate marketing bien implementados no solo generan ingresos — también le recuerdan al usuario free todo lo que se está perdiendo con el plan premium, impulsando la conversión. Spotify lo hace perfecto: la experiencia free con ads <em>vende</em> el premium.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Lumé — Investigación de Monetización · Generado <span>Julio 2026</span> · Uso interno
+</footer>
+
+<script>
+  // Nav tab highlight based on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = link.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (target) {
+        const offset = 60;
+        const top = target.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

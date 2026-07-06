@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lumé — Tu compañera de embarazo</title>
+<!-- ── Google Analytics: reemplaza G-XXXXXXXX con tu Measurement ID real (analytics.google.com) ── -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXX');
+</script>
+<meta name="description" content="Lumé — La app de acompañamiento de embarazo más completa en español. Asistente IA, tracker semanal, nutrición prenatal y planes desde gratis." />
+<!-- ── Open Graph: cuando publiques, cambia lume-app.com por tu dominio real ── -->
+<meta property="og:title" content="Lumé — Tu compañera de embarazo" />
+<meta property="og:description" content="Acompañamiento premium semana a semana con IA, nutrición y meditación. Empieza gratis." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://lume-app.com/uploads/og-lume.png" />
+<meta property="og:locale" content="es_ES" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Lumé — Tu compañera de embarazo" />
+<meta name="twitter:description" content="La app de embarazo más completa en español. Asistente IA, tracker semanal. Empieza gratis." />
+<meta name="theme-color" content="#A8492A" />
+<link rel="icon" type="image/png" href="uploads/logo-lume.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Hanken+Grotesk:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Mulish:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles/premium-theme.css?v=5" />
+<link rel="stylesheet" href="styles/premium-sections.css?v=5" />
+<link rel="stylesheet" href="styles/liquid-glass.css?v=11" />
+<style>
+/* ── Glass inline — bypasa caché completamente ─────────────────── */
+
+/* Fondo cálido con blobs en arena para que backdrop-filter tenga algo que difuminar */
+[data-dir="arena"] body {
+  background:
+    radial-gradient(ellipse 58% 48% at 2% 6%,   rgba(188,76,40,.32)  0%, transparent 52%),
+    radial-gradient(ellipse 52% 44% at 98% 94%,  rgba(196,148,68,.28) 0%, transparent 52%),
+    radial-gradient(ellipse 46% 38% at 52% 48%,  rgba(212,175,80,.22) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 32% at 18% 75%,  rgba(168,73,42,.20)  0%, transparent 55%),
+    linear-gradient(158deg, #f5dfca 0%, #efe7db 48%, #f0e5d0 100%) !important;
+  background-attachment: fixed !important;
+}
+
+/* Secciones transparentes para que se vea el gradiente del body a través del vidrio */
+[data-dir="arena"] .vp-band,
+[data-dir="arena"] .tst-section,
+[data-dir="arena"] #precios,
+[data-dir="arena"] .faq-premium,
+[data-dir="arena"] .section-paper {
+  background: transparent !important;
+}
+[data-dir="arena"] .trust {
+  background: rgba(255,255,255,.42) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-top: 1px solid rgba(255,255,255,.75) !important;
+  border-bottom: 1px solid rgba(255,255,255,.75) !important;
+}
+
+/* .glass — vidrio blanco traslúcido con borde gradiente */
+[data-dir="arena"] .glass {
+  background: rgba(255,255,255,.36) !important;
+  backdrop-filter: blur(28px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+  border: none !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.95),
+    inset 0 -1px  0 rgba(255,255,255,.38),
+    0 18px 48px rgba(168,73,42,.14),
+    0 6px 14px  rgba(168,73,42,.07) !important;
+}
+/* Elementos que deben ser relative para ::before y clip */
+[data-dir="arena"] .vp.glass,
+[data-dir="arena"] .tst-card,
+[data-dir="arena"] .wk-panel { position: relative !important; overflow: hidden !important; }
+/* fc-week y show-tag DEBEN ser absolute */
+[data-dir="arena"] .fc-week.glass { position: absolute !important; overflow: hidden !important; }
+[data-dir="arena"] .show-tag.glass { position: absolute !important; overflow: hidden !important; }
+[data-dir="arena"] .glass::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  padding: 1.4px !important;
+  background: linear-gradient(176deg,
+    rgba(255,255,255,.95) 0%,
+    rgba(255,255,255,.50) 22%,
+    rgba(255,255,255,.15) 42%,
+    rgba(255,255,255,.15) 58%,
+    rgba(255,255,255,.50) 78%,
+    rgba(255,255,255,.95) 100%
+  ) !important;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0) !important;
+  -webkit-mask-composite: xor !important;
+  mask-composite: exclude !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+/* Testimonial cards */
+[data-dir="arena"] .tst-card {
+  background: rgba(255,255,255,.44) !important;
+  backdrop-filter: blur(28px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+  border: none !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.95),
+    inset 0 -1px  0 rgba(255,255,255,.38),
+    0 14px 44px rgba(168,73,42,.13),
+    0 4px 12px  rgba(168,73,42,.06) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+[data-dir="arena"] .tst-card::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  padding: 1.4px !important;
+  background: linear-gradient(176deg, rgba(255,255,255,.95) 0%, rgba(255,255,255,.48) 22%, rgba(255,255,255,.14) 42%, rgba(255,255,255,.14) 58%, rgba(255,255,255,.48) 78%, rgba(255,255,255,.95) 100%) !important;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0) !important;
+  -webkit-mask-composite: xor !important;
+  mask-composite: exclude !important;
+  pointer-events: none !important;
+}
+[data-dir="arena"] .tst-card figcaption { border-top-color: rgba(168,73,42,.12) !important; }
+
+/* Pricing cards — overflow:visible para que el badge NO se recorte */
+[data-dir="arena"] .price:not(.feat) {
+  background: rgba(255,255,255,.40) !important;
+  backdrop-filter: blur(28px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+  border: 1.5px solid rgba(255,255,255,.80) !important;
+  overflow: visible !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.95),
+    inset 0 -1px  0 rgba(255,255,255,.35),
+    0 10px 32px rgba(168,73,42,.11) !important;
+}
+[data-dir="arena"] .price.feat {
+  backdrop-filter: blur(50px) saturate(220%) !important;
+  -webkit-backdrop-filter: blur(50px) saturate(220%) !important;
+  overflow: visible !important;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.90),
+    0 28px 64px rgba(0,0,0,.22),
+    0 0 0 1px rgba(212,175,80,.30) !important;
+}
+/* El grid mismo tampoco debe recortar */
+[data-dir="arena"] .price-grid { overflow: visible !important; }
+
+/* FAQ items — glass */
+[data-dir="arena"] .faq-item {
+  background: rgba(255,255,255,.44) !important;
+  backdrop-filter: blur(28px) !important;
+  -webkit-backdrop-filter: blur(28px) !important;
+  border: 1.5px solid rgba(255,255,255,.82) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.95),
+    0 6px 24px rgba(168,73,42,.08) !important;
+}
+[data-dir="arena"] .faq-item.open {
+  background: rgba(255,255,255,.62) !important;
+  border-color: rgba(168,73,42,.28) !important;
+}
+[data-dir="arena"] .faq-item:hover {
+  background: rgba(255,255,255,.56) !important;
+  border-color: rgba(255,255,255,.90) !important;
+}
+
+/* Reveal: blur-in */
+.reveal.in {
+  animation: lm-reveal .75s cubic-bezier(.22,.61,.36,1) both !important;
+}
+@keyframes lm-reveal {
+  from { opacity: 0; filter: blur(8px); transform: translateY(20px); }
+  to   { opacity: 1; filter: blur(0);   transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) { .reveal.in { animation: none !important; } }
+
+/* ── fc-week: forzar siempre a la derecha ─────────────────────── */
+.fc-week {
+  left: auto !important;
+  right: clamp(16px, 4vw, 72px) !important;
+  bottom: 20px !important;
+  width: 236px !important;
+  max-width: calc(100% - 32px) !important;
+}
+
+/* ── Hero overlay: más translúcido para ver el video ──────────── */
+.hero-overlay {
+  background: linear-gradient(108deg,
+    color-mix(in srgb, var(--bg) 74%, transparent) 0%,
+    color-mix(in srgb, var(--bg) 52%, transparent) 30%,
+    color-mix(in srgb, var(--bg) 12%, transparent) 58%,
+    transparent 78%) !important;
+}
+/* Btn-line en hero legible sobre video */
+.hero-cta .btn-line {
+  color: rgba(255,255,255,.92) !important;
+  border-color: rgba(255,255,255,.55) !important;
+  background: rgba(255,255,255,.12) !important;
+  backdrop-filter: blur(8px) !important;
+}
+.hero-cta .btn-line:hover {
+  background: rgba(255,255,255,.22) !important;
+  border-color: rgba(255,255,255,.80) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* ── VP cards: tilt 3D al hover via CSS perspective ──────────── */
+.vp.glass {
+  transition: transform .32s cubic-bezier(.23,1,.32,1), box-shadow .32s !important;
+  transform-style: preserve-3d !important;
+  will-change: transform !important;
+}
+.vp.glass:hover {
+  transform: perspective(700px) rotateX(-4deg) rotateY(3deg) translateY(-8px) scale(1.02) !important;
+}
+
+/* ── fc-week: SIEMPRE a la derecha, nunca izquierda ──────────── */
+.fc.fc-week {
+  position: absolute !important;
+  left: auto !important;
+  right: clamp(16px, 4vw, 72px) !important;
+  bottom: 20px !important;
+  width: 236px !important;
+  max-width: calc(100% - 32px) !important;
+}
+
+/* ── Experts fiches — hover interactivo ─────────────────────── */
+.expert-fiche {
+  transition: transform .22s cubic-bezier(.23,1,.32,1), background .22s, box-shadow .22s, border-color .22s !important;
+  cursor: default !important;
+}
+.expert-fiche:hover {
+  transform: translateY(-3px) scale(1.015) !important;
+  background: rgba(255,255,255,.16) !important;
+  border-color: rgba(255,255,255,.34) !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.18) !important;
+}
+.expert-fiche:hover .expert-check {
+  background: rgba(130,220,100,.28) !important;
+  border-color: rgba(130,220,100,.65) !important;
+  transform: scale(1.15) !important;
+}
+/* Estadísticas de expertos — hover */
+.exp-stat {
+  transition: transform .28s cubic-bezier(.23,1,.32,1), box-shadow .28s, border-top-color .28s !important;
+  cursor: default !important;
+}
+.exp-stat:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 20px 48px rgba(0,0,0,.35), 0 0 0 1px rgba(212,175,80,.35) !important;
+  border-top-color: rgba(212,175,80,1) !important;
+}
+
+/* Precio badge: overflow visible siempre */
+.price, .price.feat, .price:not(.feat) { overflow: visible !important; }
+.price-grid { overflow: visible !important; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="image-slot.js?v=5"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="js/supabase-client.js"></script>
+<script type="text/babel" src="tweaks-panel.jsx?v=5"></script>
+<script type="text/babel" src="js/premium.jsx?v=12"></script>
+
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "dir": "arena",
+  "display": "fraunces",
+  "eyebrow": "Tu viaje, iluminado",
+  "heroTitle": "El embarazo, \u003cem>acompañado\u003c\/em> como mereces.",
+  "heroSub": "La guía semana a semana más completa en español: inteligencia con calidez, basada en guías médicas de referencia.",
+  "ctaText": "Empezar gratis"
+}/*EDITMODE-END*/;
+
+const APP_HREF = "app.html";
+const DISPLAY_FONTS = {
+  newsreader: '"Newsreader", Georgia, serif',
+  fraunces: '"Fraunces", Georgia, serif',
+  grotesk: '"Bricolage Grotesque", system-ui, sans-serif',
+};
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  useReveal();
+
+  React.useEffect(() => {
+    const r = document.documentElement;
+    r.setAttribute("data-dir", t.dir);
+    r.style.setProperty("--font-display", DISPLAY_FONTS[t.display] || DISPLAY_FONTS.newsreader);
+  }, [t.dir, t.display]);
+
+  React.useEffect(() => {
+    const onClick = (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      const id = a.getAttribute("href");
+      if (!id || id.length < 2) return;
+      const el = document.querySelector(id);
+      if (!el) return;
+      const sc = document.scrollingElement || document.documentElement;
+      const at = sc.scrollTop; sc.scrollTop = at + 1; const ok = sc.scrollTop !== at; sc.scrollTop = at;
+      if (!ok) return;
+      e.preventDefault();
+      const start = sc.scrollTop, dist = el.getBoundingClientRect().top - 84;
+      const dur = 620, ease = (p) => 1 - Math.pow(1 - p, 3); let t0;
+      const step = (ts) => { if (!t0) t0 = ts; const p = Math.min(1, (ts - t0) / dur); sc.scrollTop = start + dist * ease(p); if (p < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, []);
+
+  return (
+    <div>
+      <TopBar />
+      <Nav appHref={APP_HREF} />
+      <main>
+        <Hero t={t} appHref={APP_HREF} />
+        <Trust />
+        <ValueProps />
+        <Showcase />
+        <Experts />
+        <Testimonials />
+        <DescargaSection appHref={APP_HREF} />
+        <Pricing appHref={APP_HREF} />
+        <FAQ />
+        <FinalCTA appHref={APP_HREF} />
+      </main>
+      <Footer />
+      <CookieBanner />
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection label="Paleta premium" />
+        <TweakRadio label="Tema" value={t.dir}
+          options={[{value:"arena",label:"Arena"},{value:"noche",label:"Noche"},{value:"jardin",label:"Jardín"}]}
+          onChange={(v) => setTweak("dir", v)} />
+        <TweakSection label="Tipografía de titulares" />
+        <TweakRadio label="Display" value={t.display}
+          options={[{value:"newsreader",label:"Serif"},{value:"fraunces",label:"Editorial"},{value:"grotesk",label:"Moderno"}]}
+          onChange={(v) => setTweak("display", v)} />
+        <TweakSection label="Hero" />
+        <TweakText label="Antetítulo" value={t.eyebrow} onChange={(v) => setTweak("eyebrow", v)} />
+        <TweakText label="Titular (admite &lt;em&gt;)" value={t.heroTitle} onChange={(v) => setTweak("heroTitle", v)} />
+        <TweakText label="Subtítulo" value={t.heroSub} onChange={(v) => setTweak("heroSub", v)} />
+        <TweakText label="Botón" value={t.ctaText} onChange={(v) => setTweak("ctaText", v)} />
+      </TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+
+<script>
+// Tilt 3D interactivo en el mockup del teléfono
+document.addEventListener('DOMContentLoaded', () => {
+  function initTilt() {
+    const el = document.querySelector('.mockup-wrap');
+    if (!el) { setTimeout(initTilt, 400); return; }
+    el.style.transition = 'transform .12s ease, filter .4s ease';
+    el.addEventListener('mousemove', e => {
+      const r = el.getBoundingClientRect();
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      const dx = (e.clientX - cx) / (r.width / 2);
+      const dy = (e.clientY - cy) / (r.height / 2);
+      const rx = -dy * 10, ry = dx * 10;
+      el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-6px) scale(1.02)`;
+    });
+    el.addEventListener('mouseleave', () => {
+      el.style.transition = 'transform .45s cubic-bezier(.23,1,.32,1)';
+      el.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)';
+    });
+    el.addEventListener('mouseenter', () => {
+      el.style.transition = 'transform .12s ease';
+    });
+  }
+  initTilt();
+});
+</script>
+</body>
+</html>

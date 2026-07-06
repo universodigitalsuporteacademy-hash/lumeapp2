@@ -598,7 +598,7 @@ function Experts() {
               </div>
               <div style={{marginTop:16,display:"flex",alignItems:"center",gap:8}}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,80,.75)" strokeWidth="2" strokeLinecap="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"/><path d="M9 12l2 2 4-4"/></svg>
-                <a href="Lume Expertos.html" style={{fontSize:12,color:"rgba(212,175,80,.8)",fontWeight:600,textDecoration:"none",letterSpacing:".02em",borderBottom:"1px solid rgba(212,175,80,.28)",paddingBottom:1}}>¿Eres profesional de la salud? Únete al comité asesor →</a>
+                <a href="expertos.html" style={{fontSize:12,color:"rgba(212,175,80,.8)",fontWeight:600,textDecoration:"none",letterSpacing:".02em",borderBottom:"1px solid rgba(212,175,80,.28)",paddingBottom:1}}>¿Eres profesional de la salud? Únete al comité asesor →</a>
               </div>
             </div>
 
@@ -1191,14 +1191,14 @@ function Footer() {
             <div className="fp-col">
               <h5>Compañía</h5>
               <a href="#expertos">Fuentes y rigor</a>
-              <a href="Lume Expertos.html" style={{color:"var(--gold,#E6CFA1)",fontWeight:600}}>¿Eres profesional? Únete →</a>
+              <a href="expertos.html" style={{color:"var(--gold,#E6CFA1)",fontWeight:600}}>¿Eres profesional? Únete →</a>
               <a href="mailto:contacto@lume-app.com">Contacto</a>
             </div>
             <div className="fp-col">
               <h5>Legal</h5>
-              <a href="Lume Legal.html">Privacidad</a>
-              <a href="Lume Legal.html">Términos de uso</a>
-              <a href="Lume Legal.html">Cookies</a>
+              <a href="legal.html">Privacidad</a>
+              <a href="legal.html">Términos de uso</a>
+              <a href="legal.html">Cookies</a>
             </div>
           </div>
         </div>
@@ -1235,7 +1235,7 @@ function CookieBanner() {
       </svg>
       <p style={{flex:1, fontSize:13, color:"rgba(255,255,255,.68)", lineHeight:1.55, margin:0, minWidth:200}}>
         Usamos cookies esenciales y de analítica para mejorar tu experiencia.
-        Consulta nuestra <a href="Lume Legal.html" style={{color:"rgba(212,175,80,.9)", textDecoration:"none", fontWeight:600}}>Política de privacidad</a>.
+        Consulta nuestra <a href="legal.html" style={{color:"rgba(212,175,80,.9)", textDecoration:"none", fontWeight:600}}>Política de privacidad</a>.
       </p>
       <div style={{display:"flex", gap:10, flexShrink:0}}>
         <button onClick={reject} style={{padding:"9px 16px", borderRadius:10, border:"1px solid rgba(255,255,255,.18)", background:"transparent", color:"rgba(255,255,255,.5)", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit", transition:"color .15s"}} onMouseEnter={e=>e.target.style.color="rgba(255,255,255,.8)"} onMouseLeave={e=>e.target.style.color="rgba(255,255,255,.5)"}>

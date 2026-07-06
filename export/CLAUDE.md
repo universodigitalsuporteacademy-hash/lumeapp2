@@ -2,8 +2,8 @@
 
 ## Qué es este proyecto
 **Lumé** = app de acompañamiento de embarazo premium. Incluye:
-1. **`Lume App.html`** — prototipo interactivo clickeable (iOS frame simulado)
-2. **`Lume Landing FINAL.html`** — landing de ventas DEFINITIVA (liquid glass + SEO + GA + cookies + Stripe). Usar SIEMPRE esta.
+1. **`app.html`** — prototipo interactivo clickeable (iOS frame simulado)
+2. **`index.html`** — landing de ventas DEFINITIVA (liquid glass + SEO + GA + cookies + Stripe). Usar SIEMPRE esta.
 3. `archivo/` — landings viejas (Premium, v3, original). NO usar; sus rutas relativas están rotas a propósito.
 
 ## Stripe (pagos reales)
@@ -45,8 +45,8 @@ Texto suave:         #8a6a5a / #a08070
 ## Estructura de archivos
 
 ```
-Lume App.html              ← app principal (React+Babel inline)
-Lume Landing FINAL.html    ← landing principal (React+Babel inline)
+app.html              ← app principal (React+Babel inline)
+index.html    ← landing principal (React+Babel inline)
 js/
   app-core.jsx     ← íconos SVG, datos, componente Inicio (home), TabBar, FruitIcon
   app-screens.jsx  ← todas las pantallas secundarias: Citas, Síntomas, Recompensas, Ultrasonidos, Peso, Ajustes, Patadas

@@ -2097,7 +2097,7 @@ function CheckoutScreen({ goBack, planId, onSuccess }) {
               {trialDays>0 ? `Activar ${trialDays} días gratis →` : "Confirmar pago →"}
             </button>
             <p style={{textAlign:"center",fontSize:11,color:"#a08070",margin:0,lineHeight:1.5}}>
-              {trialDays>0 ? <>No se hará ningún cobro hoy. Cancela antes del día {trialDays+1} sin coste. </> : <>Se cobrará el importe total hoy. Cancela cuando quieras. </>}<a href="Lume Legal.html" target="_blank" style={{color:"#A8492A",textDecoration:"none",fontWeight:600}}>Condiciones</a>
+              {trialDays>0 ? <>No se hará ningún cobro hoy. Cancela antes del día {trialDays+1} sin coste. </> : <>Se cobrará el importe total hoy. Cancela cuando quieras. </>}<a href="legal.html" target="_blank" style={{color:"#A8492A",textDecoration:"none",fontWeight:600}}>Condiciones</a>
             </p>
           </>
         )}

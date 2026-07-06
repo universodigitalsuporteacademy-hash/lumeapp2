@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Bienvenida a Lumé</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'DM Sans',sans-serif;
+    background:#e8d9cc;
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:40px 16px;
+  }
+
+  .shell{width:100%;max-width:560px;}
+
+  /* ─── FROM LINE ─── */
+  .from-line{
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:20px;padding:0 4px;
+  }
+  .from-dot{
+    width:8px;height:8px;border-radius:50%;
+    background:linear-gradient(135deg,#A8492A,#C8952A);
+    box-shadow:0 0 0 3px rgba(168,73,42,.18);
+    flex-shrink:0;
+  }
+  .from-text{font-size:12px;color:#a08070;font-weight:500;}
+  .from-text strong{color:#5a3a2a;font-weight:700;}
+
+  /* ─── POSTER ─── */
+  .poster{
+    border-radius:28px;
+    overflow:hidden;
+    margin-bottom:12px;
+    position:relative;
+    min-height:380px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    box-shadow:0 32px 80px rgba(90,30,10,.28);
+  }
+
+  /* Fondo cálido con textura de luz */
+  .poster-bg{
+    position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse at 30% 0%, rgba(212,175,80,.55) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 20%, rgba(255,210,160,.4) 0%, transparent 50%),
+      radial-gradient(ellipse at 10% 80%, rgba(168,73,42,.3) 0%, transparent 50%),
+      linear-gradient(170deg,#f5e4d0 0%,#e0c5a8 40%,#c89070 70%,#8b4020 100%);
+  }
+
+  /* Noise texture overlay */
+  .poster-noise{
+    position:absolute;inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity:.35;pointer-events:none;
+  }
+
+  .poster-inner{
+    position:relative;z-index:2;
+    padding:60px 36px 40px;
+    height:366px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+  }
+
+  .poster-logo{
+    position:absolute;top:23px;left:34px;z-index:3;
+    display:flex;align-items:center;gap:8px;
+  }
+  .poster-logo img{
+    width:141px;height:135px;border-radius:13px;
+    box-shadow:0 4px 14px rgba(0,0,0,.2);
+  }
+  .poster-logo-name{
+    font-family:'Cormorant Garamond',serif;
+    font-size:24px;font-weight:700;
+    color:#3d1a0e;letter-spacing:-.02em;
+  }
+
+  /* Eyebrow badge top right */
+  .poster-badge{
+    position:absolute;top:28px;right:28px;z-index:3;width:145px;height:36px;
+    display:flex;align-items:center;gap:6px;
+    padding:5px 12px;border-radius:99px;
+    background:rgba(255,255,255,.55);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,.75);
+    box-shadow:0 4px 14px rgba(0,0,0,.08);
+  }
+  .poster-badge-dot{
+    width:6px;height:6px;border-radius:50%;
+    background:#2e8a4a;
+    box-shadow:0 0 0 2px rgba(46,138,74,.25);
+  }
+  .poster-badge span{font-size:10.5px;font-weight:700;color:#3d1a0e;}
+
+  /* Headline */
+  .poster h1{
+    font-family:'Cormorant Garamond',serif;
+    font-size:52px;font-weight:700;
+    color:#3d1a0e;line-height:1.05;
+    letter-spacing:-.03em;
+    margin-bottom:12px;
+    text-wrap:balance;
+  }
+  .poster h1 em{
+    font-style:italic;
+    background:linear-gradient(90deg,#A8492A,#8B3520);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  .poster-sub{
+    font-size:14.5px;color:rgba(61,26,14,.65);
+    line-height:1.7;max-width:340px;
+  }
+
+  /* Plan pill bottom */
+  .plan-strip{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-top:24px;padding:13px 16px;
+    border-radius:16px;
+    background:rgba(255,255,255,.55);
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,.75);
+    box-shadow:0 4px 16px rgba(0,0,0,.08), 0 1px 0 rgba(255,255,255,.9) inset;
+    transition:transform .2s, box-shadow .2s;cursor:default;
+  }
+  .plan-strip:hover{
+    transform:translateY(-1px);
+    box-shadow:0 8px 24px rgba(0,0,0,.12), 0 1px 0 rgba(255,255,255,.9) inset;
+  }
+  .plan-strip-left{display:flex;align-items:center;gap:10px;}
+  .plan-icon{
+    width:34px;height:34px;border-radius:10px;
+    background:linear-gradient(135deg,rgba(168,73,42,.15),rgba(200,149,42,.1));
+    border:1px solid rgba(168,73,42,.2);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .plan-name{font-size:13.5px;font-weight:700;color:#3d1a0e;}
+  .plan-sub{font-size:11px;color:#a08070;margin-top:1px;}
+  .plan-price{
+    font-family:'Cormorant Garamond',serif;
+    font-size:26px;font-weight:700;color:#A8492A;line-height:1;
+  }
+  .plan-price sub{font-size:12px;color:#a08070;font-family:'DM Sans',sans-serif;font-weight:500;vertical-align:bottom;}
+
+  /* ─── GLASS CARDS ─── */
+  .glass{
+    background:rgba(255,255,255,.68);
+    backdrop-filter:blur(24px) saturate(160%);
+    -webkit-backdrop-filter:blur(24px) saturate(160%);
+    border:1px solid rgba(255,255,255,.9);
+    border-radius:22px;
+    box-shadow:0 10px 36px rgba(168,73,42,.09), 0 1px 0 rgba(255,255,255,.95) inset;
+    margin-bottom:12px;
+  }
+
+  /* ─── FEATURE CHIPS ─── */
+  .feat-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+  }
+  .feat-chip{
+    display:flex;align-items:center;gap:10px;
+    padding:12px 14px;
+    border-radius:16px;
+    background:rgba(255,255,255,.62);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,.88);
+    box-shadow:0 4px 16px rgba(168,73,42,.07), 0 1px 0 rgba(255,255,255,.95) inset;
+    cursor:default;
+    transition:transform .2s cubic-bezier(.23,1,.32,1), box-shadow .2s;
+    overflow:hidden;
+    position:relative;
+  }
+  .feat-chip::before{
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;
+    height:2px;
+  }
+  .feat-chip:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 28px rgba(168,73,42,.12), 0 1px 0 rgba(255,255,255,.95) inset;
+  }
+  .feat-chip-icon{
+    width:34px;height:34px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .feat-chip-title{font-size:12px;font-weight:700;color:#3d1a0e;margin-bottom:2px;}
+  .feat-chip-desc{font-size:10.5px;color:#9a7a6a;line-height:1.4;}
+
+  /* ─── CTA ─── */
+  .cta-wrap{padding:22px 28px;text-align:center;}
+  .cta-btn{
+    display:block;width:100%;padding:16px;
+    border-radius:99px;
+    background:linear-gradient(90deg,#A8492A 0%,#8B3520 100%);
+    color:#fff5ee;font-family:'DM Sans',sans-serif;
+    font-size:15.5px;font-weight:800;text-decoration:none;
+    letter-spacing:-.01em;
+    box-shadow:0 12px 36px rgba(168,73,42,.36), 0 1px 0 rgba(255,255,255,.18) inset;
+    margin-bottom:11px;
+    transition:transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+  }
+  .cta-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 18px 48px rgba(168,73,42,.44), 0 1px 0 rgba(255,255,255,.18) inset;
+  }
+  .cta-note{font-size:11.5px;color:#a08070;line-height:1.6;}
+  .cta-note strong{color:#3d1a0e;}
+
+  /* ─── SUMMARY ─── */
+  .summary{padding:22px 28px;}
+  .sum-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:9px 0;border-bottom:1px solid rgba(168,73,42,.07);
+    font-size:13px;
+  }
+  .sum-row:last-child{border-bottom:none;padding-bottom:0;}
+  .sum-label{color:#8a6a5a;}
+  .sum-value{font-weight:700;color:#3d1a0e;}
+  .sum-value.green{color:#2e8a4a;}
+
+  /* ─── GUARANTEE ─── */
+  .guarantee{
+    display:flex;align-items:center;gap:14px;
+    padding:16px 20px;margin:0 0 12px;
+    border-radius:18px;
+    background:rgba(46,138,74,.07);
+    border:1px solid rgba(46,138,74,.2);
+  }
+  .g-icon{
+    width:40px;height:40px;border-radius:50%;
+    background:rgba(46,138,74,.12);border:1.5px solid rgba(46,138,74,.28);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    box-shadow:0 4px 12px rgba(46,138,74,.18);
+  }
+
+  /* ─── FOOTER ─── */
+  .footer{text-align:center;padding:20px 0 8px;font-size:11.5px;color:#a08070;line-height:1.9;}
+  .footer a{color:#A8492A;font-weight:600;text-decoration:none;}
+
+  @media(max-width:500px){
+    body{padding:20px 10px;}
+    .poster-inner{padding:28px 24px 24px;}
+    .poster h1{font-size:38px;}
+    .poster-logo{left:20px;top:20px;}
+    .poster-badge{right:16px;top:20px;}
+    .features,.cta-wrap,.summary{padding:20px 20px;}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- FROM LINE -->
+  <div class="from-line">
+    <div class="from-dot"></div>
+    <span class="from-text"><strong>Lumé</strong> &nbsp;·&nbsp; noreply@lume-app.com &nbsp;·&nbsp; 4 jul 2026</span>
+  </div>
+
+  <!-- POSTER HERO -->
+  <div class="poster">
+    <div class="poster-bg"></div>
+    <div class="poster-noise"></div>
+
+    <!-- Logo -->
+    <div class="poster-logo">
+      <img src="uploads/Coffee-3df04102.png" alt="Lumé"/>
+      <span class="poster-logo-name">Lumé</span>
+    </div>
+
+    <!-- Status badge -->
+    <div class="poster-badge">
+      <div class="poster-badge-dot"></div>
+      <span style="font-size:14px;">Cuenta activa</span>
+    </div>
+
+    <!-- Content -->
+    <div class="poster-inner">
+      <h1 style="text-align:right;">Bienvenida,<br/><em>mamá.</em></h1>
+      <p class="poster-sub" style="font-size:15px;color:rgba(23,11,6,.96);">Tu suscripción está lista. Empieza hoy a sentirte acompañada en cada semana de tu embarazo.</p>
+
+      <!-- Plan strip -->
+      <div class="plan-strip">
+        <div class="plan-strip-left">
+          <div class="plan-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2.2" stroke-linecap="round">
+              <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/>
+              <path d="M9 12l2 2 4-4"/>
+            </svg>
+          </div>
+          <div>
+            <div class="plan-name">Lumé Bienestar</div>
+            <div class="plan-sub">7 días gratis · sin tarjeta</div>
+          </div>
+        </div>
+        <div class="plan-price">$9<sub>/mes</sub></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="glass">
+    <div style="padding:24px 28px;">
+      <div class="sec-label" style="margin-bottom:20px;">Lo que tienes activado</div>
+      <div class="feat-grid">
+
+        <div class="feat-chip">
+          <div style="height:2px;background:linear-gradient(90deg,#A8492A,#C8952A);position:absolute;top:0;left:0;right:0;"></div>
+          <div class="feat-chip-icon" style="background:rgba(168,73,42,.1);border:1px solid rgba(168,73,42,.15);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div>
+            <div class="feat-chip-title">Asistente Glow</div>
+            <div class="feat-chip-desc">Respuestas médicas 24/7</div>
+          </div>
+        </div>
+
+        <div class="feat-chip">
+          <div style="height:2px;background:linear-gradient(90deg,#C8952A,#e8c070);position:absolute;top:0;left:0;right:0;"></div>
+          <div class="feat-chip-icon" style="background:rgba(200,149,42,.1);border:1px solid rgba(200,149,42,.15);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C8952A" stroke-width="2" stroke-linecap="round"><path d="M12 2a5 5 0 1 0 0 10A5 5 0 0 0 12 2z"/><path d="M6.3 14.5A9 9 0 0 0 3 21h18a9 9 0 0 0-3.3-6.5"/></svg>
+          </div>
+          <div>
+            <div class="feat-chip-title">Nutrición</div>
+            <div class="feat-chip-desc">Plan por trimestre</div>
+          </div>
+        </div>
+
+        <div class="feat-chip">
+          <div style="height:2px;background:linear-gradient(90deg,#7a5a80,#A8492A);position:absolute;top:0;left:0;right:0;"></div>
+          <div class="feat-chip-icon" style="background:rgba(120,90,128,.1);border:1px solid rgba(120,90,128,.15);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7a5a80" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg>
+          </div>
+          <div>
+            <div class="feat-chip-title">Tracker bebé</div>
+            <div class="feat-chip-desc">Semana a semana</div>
+          </div>
+        </div>
+
+        <div class="feat-chip">
+          <div style="height:2px;background:linear-gradient(90deg,#3a7a60,#C8952A);position:absolute;top:0;left:0;right:0;"></div>
+          <div class="feat-chip-icon" style="background:rgba(58,122,96,.1);border:1px solid rgba(58,122,96,.15);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3a7a60" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <div>
+            <div class="feat-chip-title">Música prenatal</div>
+            <div class="feat-chip-desc">Para tu bebé</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="glass">
+    <div class="cta-wrap">
+      <a href="app.html" class="cta-btn">Abrir Lumé ahora →</a>
+      <p class="cta-note">Prueba gratis 7 días · luego <strong>$9/mes</strong> · cancela cuando quieras<br/>
+      ¿Preguntas? <a href="mailto:soporte@lume-app.com" style="color:#A8492A;font-weight:600;text-decoration:none;">soporte@lume-app.com</a></p>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="glass">
+    <div class="summary">
+      <div class="sec-label">Resumen de suscripción</div>
+      <div class="sum-row">
+        <span class="sum-label">Prueba gratuita</span>
+        <span class="sum-value green">7 días · $0.00</span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-label">Primer cobro (día 8)</span>
+        <span class="sum-value">$9/mes</span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-label">Cancelación</span>
+        <span class="sum-value">En cualquier momento</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GUARANTEE -->
+  <div class="guarantee">
+    <div class="g-icon">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#2e8a4a" stroke-width="2.2" stroke-linecap="round">
+        <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/>
+        <path d="M9 12l2 2 4-4"/>
+      </svg>
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:#2e6a3a;margin-bottom:3px;">Sin riesgo, sin letra pequeña</div>
+      <div style="font-size:12px;color:#4a8a5a;line-height:1.5;">Cancela antes del día 8 y no se hará ningún cargo. Sin excepciones.</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>Has recibido este email por registrarte en Lumé.</p>
+    <p>
+      <a href="legal.html">Privacidad</a> &nbsp;&middot;&nbsp;
+      <a href="legal.html">Términos</a> &nbsp;&middot;&nbsp;
+      <a href="mailto:soporte@lume-app.com">Soporte</a>
+    </p>
+    <p style="color:#c0a090;font-size:11px;margin-top:4px;">Lumé &nbsp;&middot;&nbsp; soporte@lume-app.com</p>
+  </div>
+
+</div>
+</body>
+</html>

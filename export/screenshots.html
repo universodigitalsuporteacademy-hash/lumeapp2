@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Lumé — App Store Screenshots</title>
+<style>deck-stage:not(:defined){visibility:hidden}</style>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --terra: #A8492A; --terra-d: #8B3520;
+  --cream: #F9F1EB; --cream-d: #EFE7DB;
+  --gold: #E6CFA1; --gold-d: #D4AF80;
+  --ink: #3d1a0e; --ink-s: #5a3a2a;
+  --display: 'Cormorant Garamond', Georgia, serif;
+  --body: 'DM Sans', system-ui, sans-serif;
+}
+
+/* ─── Slide base ─── */
+section {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  font-family: var(--body);
+  overflow: hidden; position: relative;
+}
+
+/* ─── Phone mockup ─── */
+.phone {
+  position: relative;
+  border-radius: 44px;
+  border: 2px solid rgba(255,255,255,.22);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.25),
+    0 40px 80px rgba(0,0,0,.45),
+    inset 0 0 0 1.5px rgba(255,255,255,.15);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.phone-notch {
+  position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+  width: 100px; height: 28px; background: #000; border-radius: 20px; z-index: 10;
+}
+.phone-screen {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── Shared UI elements ─── */
+.status-bar {
+  height: 44px; flex-shrink: 0;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding: 0 22px 6px; font-size: 11px; font-weight: 700;
+}
+.screen-body { flex: 1; overflow: hidden; position: relative; }
+
+/* ─── Glass card ─── */
+.gc {
+  background: rgba(255,255,255,.68);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,.85);
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(90,40,20,.1);
+}
+
+/* ─── Pill badge ─── */
+.pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 12px; border-radius: 99px;
+  font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+}
+
+/* ─── Entrance animations ─── */
+@media (prefers-reduced-motion: no-preference) {
+  [data-deck-active] .anim-up  { animation: up  .55s cubic-bezier(.23,1,.32,1) both; }
+  [data-deck-active] .anim-up2 { animation: up  .55s .12s cubic-bezier(.23,1,.32,1) both; }
+  [data-deck-active] .anim-up3 { animation: up  .55s .22s cubic-bezier(.23,1,.32,1) both; }
+  [data-deck-active] .anim-sc  { animation: sc  .6s  .08s cubic-bezier(.23,1,.32,1) both; }
+}
+@keyframes up { from { opacity:0; transform:translateY(22px) } to { opacity:1; transform:none } }
+@keyframes sc { from { opacity:0; transform:scale(.88) } to { opacity:1; transform:none } }
+</style>
+</head>
+<body>
+<deck-stage width="430" height="932" no-rail>
+
+<!-- ══════════════════════════════════
+     SLIDE 1 — HOME / TRACKER
+══════════════════════════════════ -->
+<section data-label="01 Home" style="background:linear-gradient(165deg,#2a0e06 0%,#5a2010 35%,#A8492A 75%,#C8952A 100%);">
+  <!-- BG orbs -->
+  <div style="position:absolute;top:-80px;right:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(230,207,161,.18),transparent 70%);pointer-events:none"></div>
+  <div style="position:absolute;bottom:120px;left:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(168,73,42,.3),transparent 70%);pointer-events:none"></div>
+
+  <!-- Copy top -->
+  <div class="anim-up" style="text-align:center;padding:52px 36px 0;z-index:1;">
+    <div class="pill anim-up" style="background:rgba(230,207,161,.18);border:1px solid rgba(230,207,161,.35);color:var(--gold);margin-bottom:14px;">
+      <svg width="9" height="9" viewBox="0 0 24 24" fill="var(--gold)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      App de embarazo premium
+    </div>
+    <div style="font-family:var(--display);font-size:54px;font-weight:500;color:#fff;line-height:1.05;letter-spacing:-.02em;">Tu bebé crece.<br/><em style="color:var(--gold);">Tú también.</em></div>
+    <div style="font-size:16px;color:rgba(255,255,255,.65);margin-top:12px;line-height:1.55;">Seguimiento semanal personalizado,<br/>respaldado por matronas y ginecólogas.</div>
+  </div>
+
+  <!-- Phone -->
+  <div class="phone anim-sc" style="width:260px;height:360px;margin:28px auto 0;background:linear-gradient(165deg,#f9f1eb,#f0e2d6);">
+    <div class="phone-notch"></div>
+    <div class="phone-screen">
+      <div class="status-bar" style="color:#3d1a0e;background:rgba(249,241,235,.9);">
+        <span>9:41</span><span style="display:flex;gap:4px;align-items:center;font-size:10px;">●●●●</span>
+      </div>
+      <div class="screen-body" style="padding:8px 12px;display:flex;flex-direction:column;gap:8px;background:#f9f1eb;">
+        <!-- Week hero -->
+        <div style="background:linear-gradient(135deg,#3d1a0e,#8B3520);border-radius:16px;padding:14px;color:#fff;position:relative;overflow:hidden;flex-shrink:0;">
+          <div style="position:absolute;top:-20px;right:-10px;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle,rgba(200,149,42,.35),transparent 70%)"></div>
+          <div style="font-size:8px;font-weight:800;letter-spacing:.1em;color:rgba(255,255,255,.55);text-transform:uppercase;margin-bottom:4px;">SEMANA ACTUAL</div>
+          <div style="font-family:var(--display);font-size:34px;font-weight:600;line-height:1;color:#fff;">20</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.65);margin-top:2px;font-style:italic;">del tamaño de un mango</div>
+          <div style="height:3px;border-radius:99px;background:rgba(255,255,255,.15);margin-top:8px;">
+            <div style="height:100%;width:50%;border-radius:99px;background:rgba(255,255,255,.7)"></div>
+          </div>
+        </div>
+        <!-- Baby card -->
+        <div style="background:linear-gradient(135deg,#1a2e40,#0d1a28);border-radius:14px;padding:12px;display:flex;align-items:center;gap:10px;flex-shrink:0;">
+          <div style="width:44px;height:44px;border-radius:12px;background:rgba(230,207,161,.15);border:1px solid rgba(230,207,161,.3);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🥭</div>
+          <div>
+            <div style="font-size:9px;color:rgba(255,255,255,.5);font-weight:700;text-transform:uppercase;letter-spacing:.08em;">Tu bebé esta semana</div>
+            <div style="font-size:12px;font-weight:700;color:#fff;margin-top:2px;">Develops hearing</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:1px;">25 cm · 300 g</div>
+          </div>
+        </div>
+        <!-- Stats row -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;flex-shrink:0;">
+          <div style="background:rgba(255,255,255,.7);border-radius:12px;padding:8px 6px;text-align:center;border:1px solid rgba(255,255,255,.9);">
+            <div style="font-size:8px;font-weight:700;color:#a08070;text-transform:uppercase;letter-spacing:.06em;">Citas</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:#3d1a0e;">Jue</div>
+          </div>
+          <div style="background:rgba(255,255,255,.7);border-radius:12px;padding:8px 6px;text-align:center;border:1px solid rgba(255,255,255,.9);">
+            <div style="font-size:8px;font-weight:700;color:#a08070;text-transform:uppercase;letter-spacing:.06em;">Nombres</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:#3d1a0e;">♥ 3</div>
+          </div>
+          <div style="background:rgba(255,255,255,.7);border-radius:12px;padding:8px 6px;text-align:center;border:1px solid rgba(255,255,255,.9);">
+            <div style="font-size:8px;font-weight:700;color:#a08070;text-transform:uppercase;letter-spacing:.06em;">Puntos</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:#3d1a0e;">126</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logo bottom -->
+  <div class="anim-up3" style="display:flex;align-items:center;gap:8px;margin-top:20px;z-index:1;">
+    <img src="uploads/logo-lume.png" style="width:28px;height:28px;object-fit:contain;"/>
+    <span style="font-family:var(--display);font-size:20px;font-weight:600;color:rgba(255,255,255,.85);">Lumé</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SLIDE 2 — ASISTENTE IA
+══════════════════════════════════ -->
+<section style="background:linear-gradient(165deg,#0a2030 0%,#1a4050 40%,#3A8070 80%,#4db6a0 100%);">
+  <div style="position:absolute;top:-60px;left:-40px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(77,182,160,.2),transparent 70%);pointer-events:none"></div>
+
+  <div class="anim-up" style="text-align:center;padding:52px 36px 0;z-index:1;">
+    <div class="pill" style="background:rgba(77,182,160,.2);border:1px solid rgba(77,182,160,.4);color:#7ee8d4;margin-bottom:14px;">IA · Disponible 24/7</div>
+    <div style="font-family:var(--display);font-size:52px;font-weight:500;color:#fff;line-height:1.08;letter-spacing:-.02em;">Pregunta lo<br/><em style="color:#7ee8d4;">que sientes.</em></div>
+    <div style="font-size:15px;color:rgba(255,255,255,.6);margin-top:12px;line-height:1.55;">Tu asistente perinatal responde al instante,<br/>sin juicios y con base médica.</div>
+  </div>
+
+  <div class="phone anim-sc" style="width:260px;height:360px;margin:28px auto 0;background:#0d1a24;">
+    <div class="phone-notch"></div>
+    <div class="phone-screen" style="background:linear-gradient(180deg,#0d1a24,#0a1520);">
+      <div class="status-bar" style="color:rgba(255,255,255,.6);">
+        <span>9:41</span><span>●●●●</span>
+      </div>
+      <div class="screen-body" style="padding:8px 10px;display:flex;flex-direction:column;gap:7px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:#fff;text-align:center;padding:4px 0 2px;">Asistente Lumé</div>
+        <!-- Messages -->
+        <div style="background:rgba(58,128,112,.25);border:1px solid rgba(58,128,112,.4);border-radius:14px 14px 14px 4px;padding:9px 12px;font-size:10px;color:rgba(255,255,255,.85);line-height:1.5;">¿Es normal tener acidez en el segundo trimestre? 🤔</div>
+        <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:14px 14px 4px 14px;padding:9px 12px;font-size:10px;color:rgba(255,255,255,.75);line-height:1.5;align-self:flex-end;max-width:90%;">Muy normal — el útero presiona el estómago y el progesterona relaja el esfínter. Prueba comer en porciones pequeñas y elevar la cabecera al dormir. ✓</div>
+        <div style="background:rgba(58,128,112,.25);border:1px solid rgba(58,128,112,.4);border-radius:14px 14px 14px 4px;padding:9px 12px;font-size:10px;color:rgba(255,255,255,.85);line-height:1.5;">¿Cuándo debo preocuparme?</div>
+        <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:14px 14px 4px 14px;padding:9px 12px;font-size:10px;color:rgba(255,255,255,.75);line-height:1.5;align-self:flex-end;max-width:90%;">Si hay dificultad al tragar o dolor intenso, coméntaselo a tu ginecóloga. En el 95% de casos es completamente normal 💚</div>
+        <!-- Input -->
+        <div style="margin-top:auto;display:flex;gap:6px;align-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:99px;padding:7px 10px;">
+          <span style="flex:1;font-size:9.5px;color:rgba(255,255,255,.3);">Escribe tu pregunta…</span>
+          <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#3A8070,#4db6a0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="anim-up3" style="display:flex;align-items:center;gap:8px;margin-top:20px;z-index:1;">
+    <img src="uploads/logo-lume.png" style="width:28px;height:28px;object-fit:contain;"/>
+    <span style="font-family:var(--display);font-size:20px;font-weight:600;color:rgba(255,255,255,.8);">Lumé</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SLIDE 3 — SÍNTOMAS
+══════════════════════════════════ -->
+<section style="background:linear-gradient(165deg,#2a1430 0%,#4a2050 40%,#8B5A9E 80%,#b08ec8 100%);">
+  <div style="position:absolute;top:-50px;right:-50px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(180,140,210,.25),transparent 70%);pointer-events:none"></div>
+
+  <div class="anim-up" style="text-align:center;padding:52px 36px 0;z-index:1;">
+    <div class="pill" style="background:rgba(180,140,210,.2);border:1px solid rgba(180,140,210,.4);color:#d4b8f0;margin-bottom:14px;">Bitácora de salud</div>
+    <div style="font-family:var(--display);font-size:52px;font-weight:500;color:#fff;line-height:1.08;letter-spacing:-.02em;">Registra cómo<br/><em style="color:#d4b8f0;">te sientes.</em></div>
+    <div style="font-size:15px;color:rgba(255,255,255,.6);margin-top:12px;line-height:1.55;">Lleva un historial de síntomas, recibe<br/>orientación contextual y gana puntos.</div>
+  </div>
+
+  <div class="phone anim-sc" style="width:260px;height:360px;margin:28px auto 0;background:linear-gradient(165deg,#f9f1eb,#f0e2d6);">
+    <div class="phone-notch" style="background:#2a1430;"></div>
+    <div class="phone-screen" style="background:linear-gradient(165deg,#f9f1eb,#f0e2d6);">
+      <div class="status-bar" style="color:#3d1a0e;background:rgba(249,241,235,.9);">
+        <span>9:41</span><span>●●●●</span>
+      </div>
+      <div class="screen-body" style="padding:8px 10px;display:flex;flex-direction:column;gap:7px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:700;color:#3d1a0e;text-align:center;">¿Cómo te sientes?</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 3px 6px;border-radius:11px;border:1.5px solid #3A807055;background:#3A807022;">
+            <div style="width:22px;height:22px;border-radius:50%;background:#3A807018;display:flex;align-items:center;justify-content:center;"><div style="width:6px;height:6px;border-radius:50%;background:#3A8070;"></div></div>
+            <span style="font-size:7.5px;font-weight:700;color:#3A8070;text-align:center;line-height:1.2;">Náuseas</span>
+            <div style="width:12px;height:2px;border-radius:99px;background:#3A8070;"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 3px 6px;border-radius:11px;border:1.5px solid #4080D055;background:#4080D022;">
+            <div style="width:22px;height:22px;border-radius:50%;background:#4080D018;display:flex;align-items:center;justify-content:center;"><div style="width:6px;height:6px;border-radius:50%;background:#4080D0;"></div></div>
+            <span style="font-size:7.5px;font-weight:700;color:#4080D0;text-align:center;line-height:1.2;">Cansancio</span>
+            <div style="width:12px;height:2px;border-radius:99px;background:#4080D0;"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 3px 6px;border-radius:11px;border:1.5px solid rgba(168,73,42,.12);background:rgba(255,255,255,.6);">
+            <div style="width:22px;height:22px;border-radius:50%;background:#C8961A18;display:flex;align-items:center;justify-content:center;"><div style="width:6px;height:6px;border-radius:50%;background:#C8961A;opacity:.4;"></div></div>
+            <span style="font-size:7.5px;font-weight:500;color:#a08070;text-align:center;line-height:1.2;">Acidez</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 3px 6px;border-radius:11px;border:1.5px solid rgba(168,73,42,.12);background:rgba(255,255,255,.6);">
+            <div style="width:22px;height:22px;border-radius:50%;background:#8B5A9E18;display:flex;align-items:center;justify-content:center;"><div style="width:6px;height:6px;border-radius:50%;background:#8B5A9E;opacity:.4;"></div></div>
+            <span style="font-size:7.5px;font-weight:500;color:#a08070;text-align:center;line-height:1.2;">Hinchazón</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 3px 6px;border-radius:11px;border:1.5px solid #A8492A55;background:#A8492A22;">
+            <div style="width:22px;height:22px;border-radius:50%;background:#A8492A18;display:flex;align-items:center;justify-content:center;"><div style="width:6px;height:6px;border-radius:50%;background:#A8492A;"></div></div>
+            <span style="font-size:7.5px;font-weight:700;color:#A8492A;text-align:center;line-height:1.2;">Dolor lumbar</span>
+            <div style="width:12px;height:2px;border-radius:99px;background:#A8492A;"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 3px 6px;border-radius:11px;border:1.5px solid rgba(168,73,42,.12);background:rgba(255,255,255,.6);">
+            <div style="width:22px;height:22px;border-radius:50%;background:#D0609018;display:flex;align-items:center;justify-content:center;"><div style="width:6px;height:6px;border-radius:50%;background:#D06090;opacity:.4;"></div></div>
+            <span style="font-size:7.5px;font-weight:500;color:#a08070;text-align:center;line-height:1.2;">Mareo</span>
+          </div>
+        </div>
+        <!-- Advice -->
+        <div style="background:rgba(139,90,158,.12);border:1px solid rgba(139,90,158,.25);border-radius:12px;padding:8px 10px;">
+          <div style="font-size:8px;font-weight:800;color:#8B5A9E;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;">Orientación · Náuseas</div>
+          <div style="font-size:9px;color:#5a3a2a;line-height:1.5;">Come algo ligero al despertar antes de levantarte. El jengibre y los snacks pequeños cada 2h ayudan.</div>
+        </div>
+        <!-- Save btn -->
+        <div style="background:linear-gradient(135deg,#c4693a,#A8492A);border-radius:12px;padding:11px;text-align:center;font-size:11px;font-weight:700;color:#fff;">Guardar en mi bitácora →</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="anim-up3" style="display:flex;align-items:center;gap:8px;margin-top:20px;z-index:1;">
+    <img src="uploads/logo-lume.png" style="width:28px;height:28px;object-fit:contain;"/>
+    <span style="font-family:var(--display);font-size:20px;font-weight:600;color:rgba(255,255,255,.8);">Lumé</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SLIDE 4 — NUTRICIÓN
+══════════════════════════════════ -->
+<section style="background:linear-gradient(165deg,#0a2018 0%,#1a4030 40%,#3A8050 80%,#5ab070 100%);">
+  <div style="position:absolute;bottom:80px;right:-30px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(90,176,112,.25),transparent 70%);pointer-events:none"></div>
+
+  <div class="anim-up" style="text-align:center;padding:52px 36px 0;z-index:1;">
+    <div class="pill" style="background:rgba(90,176,112,.2);border:1px solid rgba(90,176,112,.4);color:#9ae8b0;margin-bottom:14px;">Nutrición · IA personalizada</div>
+    <div style="font-family:var(--display);font-size:52px;font-weight:500;color:#fff;line-height:1.08;letter-spacing:-.02em;">Come bien<br/><em style="color:#9ae8b0;">para los dos.</em></div>
+    <div style="font-size:15px;color:rgba(255,255,255,.6);margin-top:12px;line-height:1.55;">Plan nutricional semanal generado por IA,<br/>adaptado a tu trimestre y síntomas.</div>
+  </div>
+
+  <div class="phone anim-sc" style="width:260px;height:360px;margin:28px auto 0;background:linear-gradient(165deg,#f9f1eb,#f0e2d6);">
+    <div class="phone-notch" style="background:#0a2018;"></div>
+    <div class="phone-screen" style="background:linear-gradient(165deg,#f9f1eb,#e8f5ee);">
+      <div class="status-bar" style="color:#3d1a0e;background:rgba(232,245,238,.9);">
+        <span>9:41</span><span>●●●●</span>
+      </div>
+      <div class="screen-body" style="padding:8px 10px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;color:#3d1a0e;text-align:center;">Nutrición · Semana 20</div>
+        <!-- Macro pills -->
+        <div style="display:flex;gap:5px;">
+          <div style="flex:1;background:rgba(255,255,255,.7);border-radius:10px;padding:7px 5px;text-align:center;border:1px solid #3A805022;">
+            <div style="font-size:13px;font-weight:800;color:#3A8050;">82%</div>
+            <div style="font-size:8px;color:#a08070;font-weight:600;">Folato</div>
+            <div style="height:2px;border-radius:99px;background:rgba(168,73,42,.1);margin-top:4px;overflow:hidden;"><div style="height:100%;width:82%;background:#3A8050;border-radius:99px;"></div></div>
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,.7);border-radius:10px;padding:7px 5px;text-align:center;border:1px solid #C8961A22;">
+            <div style="font-size:13px;font-weight:800;color:#C8961A;">68%</div>
+            <div style="font-size:8px;color:#a08070;font-weight:600;">Hierro</div>
+            <div style="height:2px;border-radius:99px;background:rgba(168,73,42,.1);margin-top:4px;overflow:hidden;"><div style="height:100%;width:68%;background:#C8961A;border-radius:99px;"></div></div>
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,.7);border-radius:10px;padding:7px 5px;text-align:center;border:1px solid #4080D022;">
+            <div style="font-size:13px;font-weight:800;color:#4080D0;">91%</div>
+            <div style="font-size:8px;color:#a08070;font-weight:600;">DHA</div>
+            <div style="height:2px;border-radius:99px;background:rgba(168,73,42,.1);margin-top:4px;overflow:hidden;"><div style="height:100%;width:91%;background:#4080D0;border-radius:99px;"></div></div>
+          </div>
+        </div>
+        <!-- Meals -->
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.65);border-radius:12px;padding:7px 10px;border:1px solid rgba(255,255,255,.9);">
+          <span style="font-size:18px;">🥑</span>
+          <div style="flex:1;min-width:0;"><div style="font-size:8px;font-weight:800;color:#3A8050;letter-spacing:.06em;text-transform:uppercase;">Desayuno</div><div style="font-size:9.5px;color:#5a3a2a;font-weight:500;line-height:1.3;">Smoothie verde + tostadas aguacate</div></div>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3A8050" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.65);border-radius:12px;padding:7px 10px;border:1px solid rgba(255,255,255,.9);">
+          <span style="font-size:18px;">🥗</span>
+          <div style="flex:1;min-width:0;"><div style="font-size:8px;font-weight:800;color:#3A8050;letter-spacing:.06em;text-transform:uppercase;">Almuerzo</div><div style="font-size:9.5px;color:#5a3a2a;font-weight:500;line-height:1.3;">Lentejas con verduras y arroz integral</div></div>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3A8050" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.65);border-radius:12px;padding:7px 10px;border:1px solid rgba(255,255,255,.9);">
+          <span style="font-size:18px;">🐟</span>
+          <div style="flex:1;min-width:0;"><div style="font-size:8px;font-weight:800;color:#3A8050;letter-spacing:.06em;text-transform:uppercase;">Cena</div><div style="font-size:9.5px;color:#5a3a2a;font-weight:500;line-height:1.3;">Salmón al horno con boniato</div></div>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3A8050" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="anim-up3" style="display:flex;align-items:center;gap:8px;margin-top:20px;z-index:1;">
+    <img src="uploads/logo-lume.png" style="width:28px;height:28px;object-fit:contain;"/>
+    <span style="font-family:var(--display);font-size:20px;font-weight:600;color:rgba(255,255,255,.8);">Lumé</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SLIDE 5 — RECOMPENSAS
+══════════════════════════════════ -->
+<section style="background:linear-gradient(165deg,#1a0e04 0%,#3a2010 35%,#A8492A 70%,#C8952A 100%);">
+  <div style="position:absolute;top:-40px;left:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(200,149,42,.3),transparent 70%);pointer-events:none"></div>
+
+  <div class="anim-up" style="text-align:center;padding:52px 36px 0;z-index:1;">
+    <div class="pill" style="background:rgba(230,207,161,.18);border:1px solid rgba(230,207,161,.35);color:var(--gold);margin-bottom:14px;">
+      <svg width="9" height="9" viewBox="0 0 24 24" fill="var(--gold)"><path d="M20 12v10H4V12"/><rect x="2" y="7" width="20" height="5" rx="1"/><path d="M12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+      Programa de lealtad
+    </div>
+    <div style="font-family:var(--display);font-size:52px;font-weight:500;color:#fff;line-height:1.08;letter-spacing:-.02em;">Cuídate<br/><em style="color:var(--gold);">y gana.</em></div>
+    <div style="font-size:15px;color:rgba(255,255,255,.6);margin-top:12px;line-height:1.55;">Gana puntos por cada hábito saludable.<br/>Canjéalos por funciones premium gratis.</div>
+  </div>
+
+  <div class="phone anim-sc" style="width:260px;height:360px;margin:28px auto 0;background:linear-gradient(165deg,#f9f1eb,#f0e2d6);">
+    <div class="phone-notch" style="background:#1a0e04;"></div>
+    <div class="phone-screen" style="background:linear-gradient(165deg,#f9f1eb,#f0e2d6);">
+      <div class="status-bar" style="color:#3d1a0e;background:rgba(249,241,235,.9);">
+        <span>9:41</span><span>●●●●</span>
+      </div>
+      <div class="screen-body" style="padding:8px 10px;display:flex;flex-direction:column;gap:6px;">
+        <!-- Hero points card -->
+        <div style="border-radius:14px;padding:12px 14px;background:linear-gradient(145deg,#5E1C08,#A8492A,#C8952A);color:#fff;position:relative;overflow:hidden;flex-shrink:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <div>
+              <div style="font-size:8px;font-weight:800;letter-spacing:.1em;color:rgba(255,255,255,.6);text-transform:uppercase;">TUS PUNTOS</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;line-height:1;color:#fff;">126</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:8px;color:rgba(255,255,255,.6);">Nivel</div>
+              <div style="font-size:14px;font-weight:800;color:rgba(230,207,161,.9);">Bronce ✦</div>
+            </div>
+          </div>
+          <div style="height:4px;border-radius:99px;background:rgba(255,255,255,.2);overflow:hidden;">
+            <div style="height:100%;width:25%;border-radius:99px;background:rgba(255,255,255,.85);"></div>
+          </div>
+          <div style="font-size:8px;color:rgba(255,255,255,.55);margin-top:4px;">374 pts para nivel Plata</div>
+        </div>
+        <!-- Rewards list -->
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.65);border-radius:11px;padding:7px 9px;border:1px solid rgba(255,255,255,.9);">
+          <div style="width:28px;height:28px;border-radius:9px;background:#8B5A9E18;border:1px solid #8B5A9E30;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><div style="width:8px;height:8px;border-radius:50%;background:#8B5A9E;"></div></div>
+          <div style="flex:1;min-width:0;"><div style="font-size:9.5px;font-weight:700;color:#3d1a0e;">Meditación guiada</div><div style="height:2px;border-radius:99px;background:rgba(168,73,42,.1);margin-top:3px;overflow:hidden;"><div style="height:100%;width:84%;background:#8B5A9E;border-radius:99px;"></div></div></div>
+          <div style="font-size:9px;font-weight:800;color:#8B5A9E;padding:2px 6px;border-radius:99px;background:#8B5A9E14;flex-shrink:0;">150pts</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.65);border-radius:11px;padding:7px 9px;border:1px solid rgba(255,255,255,.9);">
+          <div style="width:28px;height:28px;border-radius:9px;background:#4080D018;border:1px solid #4080D030;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><div style="width:8px;height:8px;border-radius:50%;background:#4080D0;"></div></div>
+          <div style="flex:1;min-width:0;"><div style="font-size:9.5px;font-weight:700;color:#3d1a0e;">Playlist prenatal</div><div style="height:2px;border-radius:99px;background:rgba(168,73,42,.1);margin-top:3px;overflow:hidden;"><div style="height:100%;width:63%;background:#4080D0;border-radius:99px;"></div></div></div>
+          <div style="font-size:9px;font-weight:800;color:#4080D0;padding:2px 6px;border-radius:99px;background:#4080D014;flex-shrink:0;">200pts</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.65);border-radius:11px;padding:7px 9px;border:1px solid rgba(255,255,255,.9);">
+          <div style="width:28px;height:28px;border-radius:9px;background:#C8961A18;border:1px solid #C8961A30;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><div style="width:8px;height:8px;border-radius:50%;background:#C8961A;"></div></div>
+          <div style="flex:1;min-width:0;"><div style="font-size:9.5px;font-weight:700;color:#3d1a0e;">1 mes Premium gratis</div><div style="height:2px;border-radius:99px;background:rgba(168,73,42,.1);margin-top:3px;overflow:hidden;"><div style="height:100%;width:8%;background:#C8961A;border-radius:99px;"></div></div></div>
+          <div style="font-size:9px;font-weight:800;color:#C8961A;padding:2px 6px;border-radius:99px;background:#C8961A14;flex-shrink:0;">1500pts</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="anim-up3" style="display:flex;align-items:center;gap:8px;margin-top:20px;z-index:1;">
+    <img src="uploads/logo-lume.png" style="width:28px;height:28px;object-fit:contain;"/>
+    <span style="font-family:var(--display);font-size:20px;font-weight:600;color:rgba(255,255,255,.8);">Lumé</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SLIDE 6 — EXPERTOS
+══════════════════════════════════ -->
+<section style="background:linear-gradient(165deg,#060e18 0%,#142040 40%,#1e3a60 75%,#2e5a90 100%);">
+  <div style="position:absolute;bottom:100px;left:-30px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(46,90,144,.4),transparent 70%);pointer-events:none"></div>
+
+  <div class="anim-up" style="text-align:center;padding:52px 36px 0;z-index:1;">
+    <div class="pill" style="background:rgba(100,150,220,.2);border:1px solid rgba(100,150,220,.4);color:#a8c8f8;margin-bottom:14px;">✦ Plan Profesional</div>
+    <div style="font-family:var(--display);font-size:52px;font-weight:500;color:#fff;line-height:1.08;letter-spacing:-.02em;">Tu experta,<br/><em style="color:#a8c8f8;">a un tap.</em></div>
+    <div style="font-size:15px;color:rgba(255,255,255,.6);margin-top:12px;line-height:1.55;">Matronas, ginecólogas, nutricionistas<br/>y psicólogas perinatales. Agenda hoy.</div>
+  </div>
+
+  <div class="phone anim-sc" style="width:260px;height:360px;margin:28px auto 0;background:linear-gradient(165deg,#f9f1eb,#f0e2d6);">
+    <div class="phone-notch" style="background:#060e18;"></div>
+    <div class="phone-screen" style="background:linear-gradient(160deg,#0a1528,#142040);">
+      <div class="status-bar" style="color:rgba(255,255,255,.6);">
+        <span>9:41</span><span>●●●●</span>
+      </div>
+      <div class="screen-body" style="padding:8px 10px;display:flex;flex-direction:column;gap:7px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;color:#fff;text-align:center;">Consultas con expertas</div>
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:13px;padding:8px 10px;">
+          <div style="width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#A8492Acc,#A8492A88);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;border:1.5px solid rgba(255,255,255,.18);">CL</div>
+          <div style="flex:1;min-width:0;"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.9);line-height:1.2;">Dra. Carmen López</div><div style="font-size:8.5px;color:rgba(255,255,255,.45);margin-top:1px;">Matrona · Parto natural</div></div>
+          <div style="text-align:right;flex-shrink:0;"><div style="font-size:9px;font-weight:700;color:rgba(200,150,26,.9);">⭐ 4.9</div><div style="font-size:8px;color:rgba(255,255,255,.4);margin-top:2px;">Hoy · 16:00</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:13px;padding:8px 10px;">
+          <div style="width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#3A8070cc,#3A807088);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;border:1.5px solid rgba(255,255,255,.18);">MF</div>
+          <div style="flex:1;min-width:0;"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.9);line-height:1.2;">Dra. María Fuentes</div><div style="font-size:8.5px;color:rgba(255,255,255,.45);margin-top:1px;">Nutricionista perinatal</div></div>
+          <div style="text-align:right;flex-shrink:0;"><div style="font-size:9px;font-weight:700;color:rgba(200,150,26,.9);">⭐ 4.8</div><div style="font-size:8px;color:rgba(255,255,255,.4);margin-top:2px;">Mañana · 10:30</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:13px;padding:8px 10px;">
+          <div style="width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#8B5A9Ecc,#8B5A9E88);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;border:1.5px solid rgba(255,255,255,.18);">LM</div>
+          <div style="flex:1;min-width:0;"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.9);line-height:1.2;">Psic. Laura Martín</div><div style="font-size:8.5px;color:rgba(255,255,255,.45);margin-top:1px;">Psicología perinatal</div></div>
+          <div style="text-align:right;flex-shrink:0;"><div style="font-size:9px;font-weight:700;color:rgba(200,150,26,.9);">⭐ 4.9</div><div style="font-size:8px;color:rgba(255,255,255,.4);margin-top:2px;">Hoy · 18:00</div></div>
+        </div>
+        <div style="background:linear-gradient(135deg,rgba(46,90,144,.4),rgba(30,58,96,.6));border:1px solid rgba(100,150,220,.3);border-radius:11px;padding:9px;text-align:center;font-size:10px;font-weight:700;color:#a8c8f8;">Agenda en tiempo real · Powered by Calendly</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="anim-up3" style="display:flex;align-items:center;gap:8px;margin-top:20px;z-index:1;">
+    <img src="uploads/logo-lume.png" style="width:28px;height:28px;object-fit:contain;"/>
+    <span style="font-family:var(--display);font-size:20px;font-weight:600;color:rgba(255,255,255,.8);">Lumé</span>
+  </div>
+</section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

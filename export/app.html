@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lumé — App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles/tokens.css" />
+<link rel="stylesheet" href="styles/app.css" />
+<link rel="stylesheet" href="styles/screens-premium.css" />
+</head>
+<body class="stage">
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="image-slot.js"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="js/app-core.jsx"></script>
+<script type="text/babel" src="js/exercise-anim.jsx"></script>
+<script type="text/babel" src="js/app-screens.jsx"></script>
+<script type="text/babel" src="js/app-more.jsx"></script>
+
+<script type="text/babel">
+
+
+let INITIAL_DIR = "aura";
+try {const d = localStorage.getItem("lume_dir");if (d) INITIAL_DIR = d;} catch (e) {}
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "dir": "aura",
+  "week": 17
+}/*EDITMODE-END*/;
+
+/* ── Onboarding Screen ────────────────────────────────── */
+function OnboardingScreen({ onComplete }) {
+  const [step, setStep] = React.useState(0);
+  const [nombre, setNombre] = React.useState("");
+  const [due, setDue] = React.useState("");
+  const [press, setPress] = React.useState(false);
+
+  const calcWeeks = (dueDate) => {
+    if (!dueDate) return 20;
+    const today = new Date();
+    const dueD = new Date(dueDate);
+    const diffMs = dueD - today;
+    const daysLeft = Math.round(diffMs / (1000 * 60 * 60 * 24));
+    const weeksLeft = Math.round(daysLeft / 7);
+    const weeks = Math.max(1, Math.min(40, 40 - weeksLeft));
+    return weeks;
+  };
+
+  const finish = () => {
+    const w = calcWeeks(due);
+    try {
+      if (nombre.trim()) localStorage.setItem("lume_nombre", nombre.trim());
+      if (due) {localStorage.setItem("lume_due", due);localStorage.setItem("lume_weeks", w);}
+      localStorage.setItem("lume_onboarded", "true");
+    } catch {}
+    onComplete(w);
+  };
+
+  const steps = [
+  {
+    title: "Bienvenida a Lumé",
+    sub: "Tu compañera de viaje en el embarazo más importante de tu vida.",
+    field:
+    <div>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#a08070", marginBottom: 8, letterSpacing: ".05em" }}>Tu nombre</div>
+          <input value={nombre} onChange={(e) => setNombre(e.target.value)}
+      placeholder="¿Cómo te llamas?"
+      style={{ width: "100%", padding: "16px 18px", borderRadius: 16, border: "1.5px solid rgba(168,73,42,.2)",
+        background: "rgba(255,255,255,.7)", fontSize: 17, fontFamily: "inherit", color: "#3d1a0e",
+        outline: "none", boxSizing: "border-box", backdropFilter: "blur(12px)" }} />
+        </div>,
+
+    canNext: nombre.trim().length > 0,
+    nextLabel: "Continuar →"
+  },
+  {
+    title: `Hola, ${nombre || "mamá"} 💛`,
+    sub: "Cuéntame cuándo esperas a tu bebé para personalizar tu acompañamiento.",
+    field:
+    <div>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#a08070", marginBottom: 8, letterSpacing: ".05em" }}>Fecha probable de parto</div>
+          <input type="date" value={due} onChange={(e) => setDue(e.target.value)}
+      style={{ width: "100%", padding: "16px 18px", borderRadius: 16, border: "1.5px solid rgba(168,73,42,.2)",
+        background: "rgba(255,255,255,.7)", fontSize: 16, fontFamily: "inherit", color: "#3d1a0e",
+        outline: "none", boxSizing: "border-box", backdropFilter: "blur(12px)" }} />
+          {due &&
+      <div style={{ marginTop: 12, padding: "12px 16px", borderRadius: 12, background: "rgba(168,73,42,.08)",
+        border: "1px solid rgba(168,73,42,.15)", fontSize: 13, color: "#A8492A", fontWeight: 600 }}>
+              Semana {calcWeeks(due)} de embarazo · Trimestre {calcWeeks(due) <= 13 ? 1 : calcWeeks(due) <= 26 ? 2 : 3}
+            </div>
+      }
+        </div>,
+
+    canNext: true,
+    nextLabel: "Comenzar ✨"
+  }];
+
+
+  const cur = steps[step];
+
+  return (
+    <div style={{ minHeight: "100%", background: "linear-gradient(160deg,#f9f1eb 0%,#f0e2d6 45%,#e8d5c6 100%)",
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 24px", position: "relative", overflow: "hidden" }}>
+      {/* Bg glows */}
+      <div style={{ position: "absolute", top: -80, right: -80, width: 260, height: 260, borderRadius: "50%",
+        background: "radial-gradient(circle,rgba(200,149,42,.18),transparent 65%)", pointerEvents: "none" }}></div>
+      <div style={{ position: "absolute", bottom: -60, left: -60, width: 200, height: 200, borderRadius: "50%",
+        background: "radial-gradient(circle,rgba(168,73,42,.14),transparent 65%)", pointerEvents: "none" }}></div>
+
+      {/* Logo */}
+      <img src="uploads/logo-lume.png" alt="Lumé" style={{ width: 72, height: 72, objectFit: "contain", marginBottom: 24 }} />
+
+      {/* Progress dots */}
+      <div style={{ display: "flex", gap: 6, marginBottom: 32 }}>
+        {steps.map((_, i) =>
+        <div key={i} style={{ width: i === step ? 24 : 6, height: 6, borderRadius: 99,
+          background: i === step ? "#A8492A" : "rgba(168,73,42,.2)",
+          transition: "width .35s cubic-bezier(.34,1.56,.64,1)" }}></div>
+        )}
+      </div>
+
+      {/* Card */}
+      <div style={{ width: "100%", maxWidth: 320, background: "rgba(255,255,255,.58)", backdropFilter: "blur(24px) saturate(160%)",
+        WebkitBackdropFilter: "blur(24px) saturate(160%)", border: "1px solid rgba(255,255,255,.88)", borderRadius: 28,
+        padding: "32px 24px", boxShadow: "0 24px 64px rgba(168,73,42,.16),0 1px 0 rgba(255,255,255,.9) inset" }}>
+        <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 30, fontWeight: 700, color: "#3d1a0e",
+          lineHeight: 1.2, marginBottom: 10 }}>{cur.title}</div>
+        <div style={{ fontSize: 14, color: "#8a6a5a", lineHeight: 1.65, marginBottom: 24 }}>{cur.sub}</div>
+        {cur.field}
+      </div>
+
+      {/* CTA */}
+      <button
+        onPointerDown={() => setPress(true)} onPointerUp={() => setPress(false)} onPointerLeave={() => setPress(false)}
+        onClick={() => {if (!cur.canNext) return;step < steps.length - 1 ? setStep((s) => s + 1) : finish();}}
+        disabled={!cur.canNext}
+        style={{ marginTop: 20, width: "100%", maxWidth: 320, padding: "17px", borderRadius: 99, border: "none", cursor: cur.canNext ? "pointer" : "default",
+          background: cur.canNext ? "linear-gradient(90deg,#A8492A,#8B3520)" : "rgba(200,185,180,.3)",
+          boxShadow: cur.canNext ? "0 12px 36px rgba(168,73,42,.38)" : "none",
+          fontFamily: "inherit", fontSize: 16, fontWeight: 800,
+          color: cur.canNext ? "#fff5ee" : "#b09080",
+          transform: press && cur.canNext ? "scale(.96)" : "scale(1)",
+          transition: "transform .18s cubic-bezier(.34,1.56,.64,1),background .25s,box-shadow .25s" }}>
+        {cur.nextLabel}
+      </button>
+
+      {step === 0 &&
+      <button onClick={finish} style={{ marginTop: 14, background: "none", border: "none", cursor: "pointer",
+        fontSize: 13, color: "#a08070", fontFamily: "inherit" }}>Omitir por ahora</button>
+      }
+    </div>);
+
+}
+
+/* ── AdMob Banner ───────────────────────────────────────── */
+function AdMobBanner({ onWatchAd, onDismiss }) {
+  return (
+    <div style={{
+      position:"absolute", bottom:78, left:0, right:0, height:52,
+      background:"rgba(255,255,255,.97)", backdropFilter:"blur(16px)",
+      WebkitBackdropFilter:"blur(16px)",
+      borderTop:"1px solid rgba(0,0,0,.07)",
+      display:"flex", alignItems:"center", padding:"0 12px", gap:10, zIndex:40,
+      boxShadow:"0 -4px 20px rgba(0,0,0,.08)"
+    }}>
+      <div style={{fontSize:9,fontWeight:800,color:"#4285F4",letterSpacing:".06em",flexShrink:0,
+        padding:"2px 5px",border:"1px solid #4285F4",borderRadius:3}}>Ad</div>
+      <div style={{flex:1,minWidth:0}}>
+        <div style={{fontSize:12,fontWeight:600,color:"#3d1a0e",lineHeight:1.2,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
+          {["Vitaminas prenatales · recomendadas por matronas","Ropa premamá cómoda · envío gratis","Seguro de maternidad · desde 12€/mes","Cuna colecho · montessori y segura"][Math.floor(Date.now()/30000)%4]}
+        </div>
+        <div style={{fontSize:10,color:"#a08070"}}>NutriciónMamá · Patrocinado</div>
+      </div>
+      <button onClick={onWatchAd} style={{flexShrink:0,padding:"6px 11px",borderRadius:99,border:"none",
+        background:"linear-gradient(135deg,#A8492A,#8B3520)",color:"#fff",fontSize:10,fontWeight:700,
+        cursor:"pointer",fontFamily:"inherit",boxShadow:"0 4px 12px rgba(168,73,42,.35)"}}>
+        Ver anuncio
+      </button>
+      <button onClick={onDismiss} style={{flexShrink:0,width:20,height:20,borderRadius:"50%",border:"none",
+        background:"rgba(0,0,0,.07)",color:"#a08070",display:"flex",alignItems:"center",justifyContent:"center",
+        cursor:"pointer",fontSize:15,fontFamily:"inherit",lineHeight:1}}>×</button>
+    </div>
+  );
+}
+
+/* ── Rewarded Video Modal ────────────────────────────────── */
+function RewardedVideoModal({ onClose, onReward }) {
+  const [time, setTime] = React.useState(5);
+  const [canSkip, setCanSkip] = React.useState(false);
+  const [done, setDone] = React.useState(false);
+  React.useEffect(() => {
+    if (done) return;
+    const iv = setInterval(() => {
+      setTime(prev => {
+        if (prev <= 1) { clearInterval(iv); setDone(true); return 0; }
+        if (prev === 3) setCanSkip(true);
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(iv);
+  }, [done]);
+  const claim = () => { onReward(); onClose(); };
+  return (
+    <div onClick={onClose} style={{position:"absolute",inset:0,zIndex:100,
+      background:"rgba(20,8,4,.55)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)",
+      display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
+      <div onClick={e=>e.stopPropagation()} style={{
+        background:"linear-gradient(160deg,#1e0e06 0%,#2d1208 60%,#1a0a04 100%)",
+        borderRadius:"28px 28px 0 0",
+        padding:"8px 0 0",
+        boxShadow:"0 -20px 60px rgba(0,0,0,.5)",
+        animation:"sheetUp .35s cubic-bezier(.23,1,.32,1)",
+        overflow:"hidden",
+      }}>
+        {/* Handle */}
+        <div style={{width:40,height:4,borderRadius:99,background:"rgba(255,255,255,.18)",margin:"0 auto 20px"}}></div>
+
+        {/* Header ad */}
+        <div style={{padding:"0 20px 20px",display:"flex",gap:14,alignItems:"center",borderBottom:"1px solid rgba(255,255,255,.07)"}}>
+          <div style={{width:52,height:52,borderRadius:16,background:"linear-gradient(135deg,#A8492A,#C8952A)",
+            display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,
+            boxShadow:"0 8px 24px rgba(168,73,42,.45)"}}>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>
+          </div>
+          <div style={{flex:1}}>
+            <div style={{fontSize:15,fontWeight:700,color:"#fff",marginBottom:3}}>Nutrición Mamá</div>
+            <div style={{fontSize:12,color:"rgba(255,255,255,.5)"}}>Vitaminas prenatales · Patrocinado</div>
+          </div>
+          <div style={{width:36,height:36,borderRadius:"50%",background:"rgba(0,0,0,.4)",
+            display:"flex",alignItems:"center",justifyContent:"center",
+            fontSize:13,fontWeight:800,color:"#fff",border:"2px solid rgba(255,255,255,.15)"}}>
+            {done ? "✓" : time}
+          </div>
+        </div>
+
+        {/* Video area — simulated */}
+        <div style={{margin:"16px 20px",borderRadius:20,overflow:"hidden",
+          background:"radial-gradient(ellipse 70% 60% at 50% 40%, rgba(168,73,42,.25) 0%, rgba(10,4,2,1) 80%)",
+          height:160,display:"flex",alignItems:"center",justifyContent:"center",
+          border:"1px solid rgba(255,255,255,.07)",position:"relative"}}>
+          <div style={{textAlign:"center"}}>
+            <div style={{fontSize:36,marginBottom:8,opacity:.5}}>▶</div>
+            <div style={{fontSize:12,color:"rgba(255,255,255,.4)",fontWeight:600,letterSpacing:".06em",textTransform:"uppercase"}}>
+              {done ? "Anuncio completado" : "Anuncio en reproducción..."}
+            </div>
+          </div>
+          <div style={{position:"absolute",bottom:10,right:12,fontSize:9,color:"rgba(255,255,255,.25)",fontWeight:600}}>Google AdMob</div>
+        </div>
+
+        {/* Skip / Reward */}
+        <div style={{padding:"0 20px 28px",display:"flex",flexDirection:"column",gap:10}}>
+          {done ? (
+            <>
+              <div style={{padding:"14px 16px",borderRadius:16,background:"rgba(200,149,42,.12)",border:"1px solid rgba(200,149,42,.25)"}}>
+                <div style={{fontSize:10,fontWeight:800,letterSpacing:".1em",textTransform:"uppercase",color:"#C8952A",marginBottom:4}}>🎁 Recompensa</div>
+                <div style={{fontSize:15,fontWeight:700,color:"#fff"}}>+3 consultas al Asistente IA</div>
+                <div style={{fontSize:11.5,color:"rgba(255,255,255,.45)",marginTop:2}}>Válidas por las próximas 24 horas</div>
+              </div>
+              <button onClick={claim} style={{padding:"15px",borderRadius:16,border:"none",
+                background:"linear-gradient(135deg,#A8492A,#C8952A)",color:"#fff",fontSize:15,fontWeight:800,
+                cursor:"pointer",fontFamily:"inherit",boxShadow:"0 12px 32px rgba(168,73,42,.45)"}}>
+                ¡Reclamar recompensa!
+              </button>
+            </>
+          ) : (
+            <div style={{display:"flex",gap:10}}>
+              {canSkip && (
+                <button onClick={onClose} style={{flex:1,padding:"14px",borderRadius:14,border:"1px solid rgba(255,255,255,.15)",
+                  background:"rgba(255,255,255,.06)",color:"rgba(255,255,255,.7)",fontSize:13,fontWeight:700,
+                  cursor:"pointer",fontFamily:"inherit"}}>Saltar →</button>
+              )}
+              <div style={{flex:2,padding:"14px",borderRadius:14,border:"1px solid rgba(255,255,255,.08)",
+                background:"rgba(255,255,255,.04)",textAlign:"center"}}>
+                <div style={{fontSize:11,color:"rgba(255,255,255,.4)",fontWeight:600}}>
+                  {canSkip ? "o espera a la recompensa" : `Espera ${time}s para saltar`}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+      <style>{`@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}`}</style>
+    </div>
+  );
+}
+
+function App() {
+  const [t, setTweak] = useTweaks({ ...TWEAK_DEFAULTS, dir: INITIAL_DIR });
+  const [audioPlaying, setAudioPlaying] = React.useState(false);
+  const [audioLabel, setAudioLabel] = React.useState('');
+  React.useEffect(() => {
+    const handler = (e) => {
+      setAudioPlaying(e.detail.playing);
+      if (e.detail.playing) setAudioLabel(window._LUME_AUDIO_LABEL || 'Reproduciendo');
+    };
+    window.addEventListener('lume-audio', handler);
+    return () => window.removeEventListener('lume-audio', handler);
+  }, []);
+
+  const stopGlobalAudio = () => {if (window.LUME_AUDIO_MGR) window.LUME_AUDIO_MGR.stop();};
+
+  const [showBanner, setShowBanner] = React.useState(false);
+  const [showReward, setShowReward] = React.useState(false);
+  const [rewardType, setRewardType] = React.useState("points");
+
+  // Exponer globalmente para que cualquier pantalla pueda dispararlo
+  React.useEffect(() => {
+    window.triggerRewardedAd = (type = "points") => { setRewardType(type); setShowReward(true); };
+    return () => { delete window.triggerRewardedAd; };
+  }, []);
+
+  const handleReward = () => {
+    try {
+      // Siempre da puntos
+      const pts = parseInt(localStorage.getItem("lume_points")||"126") + 25;
+      localStorage.setItem("lume_points", String(pts));
+      // Si el tipo es AI, da consultas extra también
+      if (rewardType === "ai") {
+        const extra = (parseInt(localStorage.getItem("lume_extra_consults")||"0")) + 5;
+        localStorage.setItem("lume_extra_consults", String(extra));
+        localStorage.setItem("lume_extra_consults_exp", String(Date.now() + 86400000));
+      }
+      // Conteo diario
+      const k = "lume_ads_" + new Date().toISOString().slice(0,10);
+      localStorage.setItem(k, String((parseInt(localStorage.getItem(k)||"0"))+1));
+    } catch {}
+    setShowBanner(false);
+    setTimeout(() => setShowBanner(true), 30000);
+  };
+
+  const [tab, setTab] = React.useState("inicio");
+  const [subScreen, setSubScreen] = React.useState(null);
+  const [week, setWeekState] = React.useState(() => {
+    try {const w = parseInt(localStorage.getItem("lume_weeks"));if (w >= 4 && w <= 42) return w;} catch {}
+    return t.week;
+  });
+  const setWeek = React.useCallback((w) => {
+    setWeekState(w);
+    try {localStorage.setItem("lume_weeks", String(w));} catch {}
+  }, []);
+  const [onboarded, setOnboarded] = React.useState(() => {
+    try {return !!localStorage.getItem("lume_onboarded");} catch {return false;}
+  });
+  const [notifOpen, setNotifOpen] = React.useState(false);
+  const [notifs, setNotifs] = React.useState(() => {
+    try {return JSON.parse(localStorage.getItem("lume_notifs") || JSON.stringify([
+      { id: 1, text: "Tu bebé tiene el tamaño de un aguacate esta semana 🥑", time: "Ahora", read: false },
+      { id: 2, text: "Recuerda registrar tu peso esta semana", time: "Hace 1h", read: false },
+      { id: 3, text: "Consejo: Hierro + vitamina C = mejor absorción", time: "Hoy", read: true }]
+      ));} catch {return [];}
+  });
+  const unreadCount = notifs.filter((n) => !n.read).length;
+
+  const markAllRead = () => {
+    const updated = notifs.map((n) => ({ ...n, read: true }));
+    setNotifs(updated);
+    try {localStorage.setItem("lume_notifs", JSON.stringify(updated));} catch {}
+  };
+
+  React.useEffect(() => {
+    window.__lumeGoCheckout = (planId, annual) => { try{localStorage.setItem('lume_checkout_plan', planId);localStorage.setItem('lume_checkout_billing', annual ? 'annual' : 'monthly');}catch{} push('checkout'); };
+    return () => { delete window.__lumeGoCheckout; };
+  }, [push]);
+
+  const push = React.useCallback((name) => setSubScreen(name), []);
+  const pop = React.useCallback(() => setSubScreen(null), []);
+  const goToTab = React.useCallback((name) => {setSubScreen(null);setTab(name);}, []);
+
+  React.useEffect(() => {
+    document.documentElement.setAttribute("data-dir", t.dir);
+    try {localStorage.setItem("lume_dir", t.dir);} catch (e) {}
+  }, [t.dir]);
+  React.useEffect(() => {
+    try {if (!localStorage.getItem("lume_weeks")) setWeekState(t.week);} catch {setWeekState(t.week);}
+  }, [t.week]);
+  React.useEffect(() => {
+    const motionOk = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (document.visibilityState === "visible" && motionOk) document.documentElement.classList.add("anim-on");
+    const onVis = () => {if (document.visibilityState === "hidden") document.documentElement.classList.remove("anim-on");};
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, []);
+
+  /* — Onboarding — */
+  if (!onboarded) {
+    return (
+      <div>
+        <IOSDevice>
+          <div className="app" data-dir={t.dir}>
+            <OnboardingScreen onComplete={(w) => {setWeek(w);setOnboarded(true);}} />
+          </div>
+        </IOSDevice>
+        <TweaksPanel title="Tweaks">
+          <TweakSection label="Dirección visual" />
+          <TweakRadio label="Estilo" value={t.dir}
+          options={[{ value: "aura", label: "Aura" }, { value: "sereno", label: "Sereno" }, { value: "fresco", label: "Fresco" }]}
+          onChange={(v) => setTweak("dir", v)} />
+        </TweaksPanel>
+      </div>);
+
+  }
+
+  const renderContent = () => {
+    if (subScreen) {
+      const map = {
+        checkout: () => <CheckoutScreen goBack={pop} planId={localStorage.getItem('lume_checkout_plan')||'bienestar'} onSuccess={() => { try{localStorage.setItem('lume_premium','true');}catch{} }} />,
+        citas: () => <CitasScreen goBack={pop} />,
+        sintomas: () => <SintomasScreen goBack={pop} />,
+        recompensas: () => <RecompensasScreen goBack={pop} />,
+        ultrasonidos: () => <UltrasonidosScreen goBack={pop} />,
+        peso: () => <PesoScreen goBack={pop} />,
+        ajustes: () => <AjustesScreen goBack={pop} />,
+        patadas: () => <KickTrackerScreen goBack={pop} />,
+        fotos: () => <FotosScreen goBack={pop} />,
+        meditaciones: () => <MeditacionesScreen goBack={pop} goToTab={goToTab} />,
+        ejercicios: () => <EjerciciosScreen goBack={pop} goToTab={goToTab} />,
+        contenido: () => <ContenidoSemanalScreen goBack={pop} goToTab={goToTab} />,
+        diario: () => <DiarioScreen goBack={pop} goToTab={goToTab} />,
+        expertos: () => <ExpertosScreen goBack={pop} goToTab={goToTab} />,
+        pareja: () => <ParejaScreen goBack={pop} goToTab={goToTab} />,
+        historial: () => <HistorialScreen goBack={pop} />,
+        nombres: () => <Nombres goBack={pop} />,
+        "nutri-plan": () => <NutricionPersonalizadaScreen goBack={pop} goToTab={goToTab} />,
+        "musica-bebe": () => <MusicaBebeScreen goBack={pop} goToTab={goToTab} />,
+        "medit-musica": () => <MeditacionMusicaScreen goBack={pop} goToTab={goToTab} />,
+        "medit-bebes": () => <MeditacionBebesScreen goBack={pop} goToTab={goToTab} />
+      };
+      const fn = map[subScreen];
+      return fn ? fn() : null;
+    }
+    const tabs = {
+      inicio: () => <Inicio week={week} setWeek={setWeek} push={push} goToTab={goToTab} unreadCount={unreadCount} onBell={() => setNotifOpen(true)} />,
+      ajustes: () => <AjustesScreen goBack={() => { setSubScreen(null); setTab("inicio"); }} setWeek={setWeek} />,
+      nombres: () => <Nombres />,
+      nutricion: () => <Nutricion onPlanPress={() => push("nutri-plan")} />,
+      premium: () => <Premium onActivate={() => {try {localStorage.setItem("lume_premium", "true");} catch {}}} />,
+      asistente: () => <Asistente />,
+      mas: () => typeof MasScreen !== 'undefined' ? <MasScreen push={push} goToTab={goToTab} week={week} /> : null
+    };
+    const fn = tabs[tab];
+    return fn ? fn() : null;
+  };
+
+  /* ── Notification panel ── */
+  const NotifPanel = () =>
+  <div onClick={() => setNotifOpen(false)} style={{ position: "absolute", inset: 0, zIndex: 50, background: "rgba(30,10,4,.45)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", top: 0, left: 0, right: 0,
+      background: "rgba(255,248,240,.96)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)",
+      borderBottom: "1px solid rgba(168,73,42,.1)", borderRadius: "0 0 28px 28px",
+      boxShadow: "0 24px 60px rgba(30,10,4,.28)" }}>
+        <div style={{ padding: "52px 20px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 24, fontWeight: 700, color: "#3d1a0e" }}>Notificaciones</div>
+          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+            {unreadCount > 0 && <button onClick={markAllRead} style={{ fontSize: 12, fontWeight: 700, color: "#A8492A", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" }}>Marcar leídas</button>}
+            <button onClick={() => setNotifOpen(false)} style={{ width: 32, height: 32, borderRadius: "50%", border: "none", background: "rgba(168,73,42,.1)", color: "#A8492A", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+            </button>
+          </div>
+        </div>
+        <div style={{ padding: "0 16px 20px", display: "flex", flexDirection: "column", gap: 8 }}>
+          {notifs.length === 0 && <div style={{ textAlign: "center", padding: "24px", color: "#a08070", fontSize: 14 }}>Sin notificaciones</div>}
+          {notifs.map((n) =>
+        <div key={n.id} style={{ display: "flex", gap: 12, padding: "14px 16px", borderRadius: 16,
+          background: n.read ? "rgba(255,255,255,.4)" : "rgba(168,73,42,.07)",
+          border: n.read ? "1px solid rgba(168,73,42,.06)" : "1px solid rgba(168,73,42,.18)",
+          transition: "background .2s" }}>
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: n.read ? "transparent" : "#A8492A",
+            flexShrink: 0, marginTop: 5, boxShadow: n.read ? "none" : "0 0 6px rgba(168,73,42,.5)" }}></div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 13.5, color: "#3d1a0e", fontWeight: n.read ? 400 : 600, lineHeight: 1.45 }}>{n.text}</div>
+                <div style={{ fontSize: 11, color: "#a08070", marginTop: 4 }}>{n.time}</div>
+              </div>
+            </div>
+        )}
+        </div>
+      </div>
+    </div>;
+
+
+  const isDarkScreen = subScreen === 'musica-bebe' || subScreen === 'medit-musica' || subScreen === 'medit-bebes';
+
+  return (
+    <div>
+      <IOSDevice>
+        <div className="app" data-dir={t.dir} style={{ margin: "0px" }}>
+          {renderContent()}
+          {!subScreen && showBanner && <AdMobBanner onWatchAd={() => setShowReward(true)} onDismiss={() => { setShowBanner(false); setTimeout(() => setShowBanner(true), 20000); }} />}
+          {!subScreen && <TabBar active={tab} onChange={(name) => {setTab(name);setSubScreen(null);}} />}
+          {showReward && <RewardedVideoModal onClose={() => setShowReward(false)} onReward={handleReward} />}
+          {notifOpen && <NotifPanel />}
+          {audioPlaying &&
+          <div style={{ position: "absolute", bottom: subScreen ? 12 : 88, left: 12, right: 12, zIndex: 50,
+            background: "rgba(30,15,8,.88)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
+            borderRadius: 16, padding: "10px 14px", display: "flex", alignItems: "center", gap: 10,
+            border: "1px solid rgba(255,255,255,.12)", boxShadow: "0 8px 28px rgba(0,0,0,.4)" }}>
+              <div style={{ width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(135deg,#A8492A,#C8952A)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".1em", color: "rgba(255,255,255,.5)", textTransform: "uppercase" }}>Reproduciendo</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: "#fff" }}>{audioLabel}</div>
+              </div>
+              <button onClick={stopGlobalAudio} style={{ padding: "6px 14px", borderRadius: 99, border: "1px solid rgba(255,255,255,.22)", background: "rgba(255,255,255,.1)", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                Detener
+              </button>
+            </div>
+          }
+        </div>
+      </IOSDevice>
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection label="Dirección visual" />
+        <TweakRadio label="Estilo" value={t.dir}
+        options={[{ value: "aura", label: "Aura" }, { value: "sereno", label: "Sereno" }, { value: "fresco", label: "Fresco" }]}
+        onChange={(v) => setTweak("dir", v)} />
+        <TweakSection label="Embarazo" />
+        <TweakSlider label="Semana" value={week} min={5} max={40} step={1}
+        onChange={(v) => {setWeek(v);setTweak("week", v);}} />
+        <TweakSection label="Demo" />
+        <TweakToggle label="Modo Premium" value={!!localStorage.getItem("lume_premium")}
+        onChange={(v) => {try {if (v) localStorage.setItem("lume_premium", "true");else localStorage.removeItem("lume_premium");window.location.reload();} catch {}}} />
+      </TweaksPanel>
+    </div>);
+
+}
+
+function waitAndRender(retries = 0) {
+  if (typeof Inicio !== 'undefined') {
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  } else if (retries < 60) {
+    setTimeout(() => waitAndRender(retries + 1), 50);
+  } else {
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  }
+}
+waitAndRender();
+</script>
+</body>
+</html>
