@@ -46,8 +46,43 @@ function AppIcon({ name, size = 24, sw = 1.7 }) {
   return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ ...{ width: size, height: size, display: "block" }, width: "30px", height: "30px" }}>{g[name] || g.spark}</svg>;
 }
 
+/* ── Idioma (ES/EN) ── */
+function getAppLang() { try { return localStorage.getItem("lume_lang") || "es"; } catch { return "es"; } }
+const APP_I18N = {
+  es: { tab_inicio:"Inicio", tab_ajustes:"Ajustes", tab_nombres:"Nombres", tab_nutricion:"Nutrición", tab_premium:"Premium", baby_week:"Tu bebé esta semana", due_label:"Fecha probable", edit:"Editar",
+    tri:["Primer Trimestre","Segundo Trimestre","Tercer Trimestre"], pct_done:"recorrido", weeks_word:"semanas", size_of:"del tamaño de",
+    days_done:"d recorridos", days_left:"d por delante", ask_lume:"Pregunta a Lumé", ask_sub:"Tu asistente responde al instante", quick_access:"Accesos rápidos",
+    stat_next_appt:"Próx. cita", stat_control:"Control", stat_names:"Nombres", stat_fav:"favoritos", stat_points:"Mis puntos", stat_bronze:"Bronce ✦",
+    due_modal_title:"Fecha probable de parto", due_modal_sub:"Introduce la fecha indicada por tu médico.", cancel:"Cancelar", save:"Guardar",
+    earn_points:"Gana 50 puntos ahora", watch_sec:"Ver 30 seg", video_avail:"video", videos_avail:"videos", available_today:"disponible hoy", available_today_pl:"disponibles hoy", watch_btn:"Ver ▶",
+    sponsored:"Patrocinado",
+    qa: { sintomas:"Síntomas", citas:"Citas", patadas:"Patadas", peso:"Mi peso", fotos:"Mis fotos", ultrasonidos:"Ultrasonidos", recompensas:"Recompensas",
+      meditaciones:"Meditación", ejercicios:"Ejercicios", contenido:"Guía semanal", diario:"Diario", "nutri-plan":"Plan Nutri.", "musica-bebe":"Música Bebé",
+      "medit-musica":"Medit.+Música", pareja:"Pareja", expertos:"Expertos", historial:"Historial PDF", "medit-bebes":"Medit. Bebés" },
+    aff:[
+      { title:"Elevit Materna", sub:"Ácido fólico + Hierro + DHA · recomendada por ginecólogos", cta:"Ver oferta", deal:"Envío gratis" },
+      { title:"Almohada embarazo en U", sub:"Soporte lumbar y lateral · funda lavable incluida", cta:"Ver precio", deal:"-15% esta semana" },
+      { title:"Kit bolsa de hospital", sub:"Lo esencial para el gran día · envío express 24h", cta:"Ver más", deal:"Entrega rápida" }
+    ] },
+  en: { tab_inicio:"Home", tab_ajustes:"Settings", tab_nombres:"Names", tab_nutricion:"Nutrition", tab_premium:"Premium", baby_week:"Your baby this week", due_label:"Due date", edit:"Edit",
+    tri:["First Trimester","Second Trimester","Third Trimester"], pct_done:"there", weeks_word:"weeks", size_of:"the size of",
+    days_done:"d done", days_left:"d to go", ask_lume:"Ask Lumé", ask_sub:"Your assistant answers instantly", quick_access:"Quick access",
+    stat_next_appt:"Next visit", stat_control:"Check-up", stat_names:"Names", stat_fav:"favorites", stat_points:"My points", stat_bronze:"Bronze ✦",
+    due_modal_title:"Estimated due date", due_modal_sub:"Enter the date given by your doctor.", cancel:"Cancel", save:"Save",
+    earn_points:"Earn 50 points now", watch_sec:"Watch 30 sec", video_avail:"video", videos_avail:"videos", available_today:"available today", available_today_pl:"available today", watch_btn:"Watch ▶",
+    sponsored:"Sponsored",
+    qa: { sintomas:"Symptoms", citas:"Appointments", patadas:"Kicks", peso:"My weight", fotos:"My photos", ultrasonidos:"Ultrasounds", recompensas:"Rewards",
+      meditaciones:"Meditation", ejercicios:"Exercise", contenido:"Weekly guide", diario:"Diary", "nutri-plan":"Nutrition plan", "musica-bebe":"Baby music",
+      "medit-musica":"Medit.+Music", pareja:"Partner", expertos:"Experts", historial:"PDF history", "medit-bebes":"Baby medit." },
+    aff:[
+      { title:"Elevit Maternity", sub:"Folic acid + Iron + DHA · recommended by OB-GYNs", cta:"See offer", deal:"Free shipping" },
+      { title:"U-shaped pregnancy pillow", sub:"Lumbar & side support · washable cover included", cta:"See price", deal:"-15% this week" },
+      { title:"Hospital bag kit", sub:"The essentials for the big day · 24h express shipping", cta:"See more", deal:"Fast delivery" }
+    ] },
+};
+
 /* ── Week milestones ─── */
-const WEEKS = [
+const WEEKS_ES = [
 { w: 6, tri: 0, fruit: "una lenteja", cm: 0.5, g: 0, note: "Su corazón empieza a latir, aún del tamaño de una semilla." },
 { w: 8, tri: 0, fruit: "una frambuesa", cm: 1.6, g: 1, note: "Se forman los esbozos de brazos y piernas; los rasgos se definen." },
 { w: 10, tri: 0, fruit: "una fresa", cm: 3.1, g: 4, note: "Ya tiene uñas diminutas y puede mover las articulaciones." },
@@ -60,6 +95,20 @@ const WEEKS = [
 { w: 32, tri: 2, fruit: "un coco", cm: 42, g: 1700, note: "Practica la respiración y gana grasa para regular su temperatura." },
 { w: 36, tri: 2, fruit: "una lechuga romana", cm: 47, g: 2600, note: "Se coloca cabeza abajo, preparándose para el encuentro." },
 { w: 40, tri: 2, fruit: "una sandía pequeña", cm: 51, g: 3400, note: "A término: cada día es ahora una pequeña eternidad de espera." }];
+const WEEKS_EN = [
+{ w: 6, tri: 0, fruit: "a lentil", cm: 0.5, g: 0, note: "Her heart starts beating, still the size of a seed." },
+{ w: 8, tri: 0, fruit: "a raspberry", cm: 1.6, g: 1, note: "Arm and leg buds are forming; features are taking shape." },
+{ w: 10, tri: 0, fruit: "a strawberry", cm: 3.1, g: 4, note: "Tiny nails are forming and joints can already move." },
+{ w: 12, tri: 0, fruit: "a plum", cm: 5.4, g: 14, note: "Reflexes are waking up; soon fingers will open and close." },
+{ w: 14, tri: 0, fruit: "a lemon", cm: 8.7, g: 43, note: "Her little body stretches out: legs are now longer than arms." },
+{ w: 16, tri: 1, fruit: "an avocado", cm: 11.6, g: 100, note: "She starts hearing sounds, and your voice becomes familiar." },
+{ w: 20, tri: 1, fruit: "a banana", cm: 25, g: 300, note: "Halfway there: you may feel her first movements." },
+{ w: 24, tri: 1, fruit: "an ear of corn", cm: 30, g: 600, note: "Her lungs develop blood vessels; eyebrows and lashes are visible." },
+{ w: 28, tri: 2, fruit: "an eggplant", cm: 37, g: 1000, note: "She opens her eyes and can sense light through your belly." },
+{ w: 32, tri: 2, fruit: "a coconut", cm: 42, g: 1700, note: "She practices breathing and gains fat to regulate her temperature." },
+{ w: 36, tri: 2, fruit: "a romaine lettuce", cm: 47, g: 2600, note: "She turns head-down, getting ready to meet you." },
+{ w: 40, tri: 2, fruit: "a small watermelon", cm: 51, g: 3400, note: "Full term: every day now feels like a small eternity of waiting." }];
+const WEEKS = getAppLang() === "en" ? WEEKS_EN : WEEKS_ES;
 
 function weekIndex(w) {let i = 0;for (let j = 0; j < WEEKS.length; j++) if (w >= WEEKS[j].w) i = j;return i;}
 
@@ -147,7 +196,9 @@ function Inicio({ week, setWeek, push, goToTab, unreadCount=0, onBell }) {
   const data = WEEKS[idx];
   const elapsed = week * 7;
   const remaining = (40 - week) * 7;
-  const triLabel = data.tri === 0 ? "Primer Trimestre" : data.tri === 1 ? "Segundo Trimestre" : "Tercer Trimestre";
+  const lang0 = getAppLang();
+  const at0 = APP_I18N[lang0];
+  const triLabel = at0.tri[data.tri];
 
   const calcDue = React.useCallback((w) => {
     const d = new Date(Date.now() + (40 - w) * 7 * 86400000);
@@ -211,29 +262,31 @@ function Inicio({ week, setWeek, push, goToTab, unreadCount=0, onBell }) {
 
   const QA = [
   /* ── Esencial (gratis) ── */
-  { key: "sintomas",    icon: "pulse",     label: "Síntomas" },
-  { key: "citas",       icon: "calendar",  label: "Citas" },
-  { key: "patadas",     icon: "heart",     label: "Patadas" },
-  { key: "peso",        icon: "weight",    label: "Mi peso" },
-  { key: "fotos",       icon: "photo",     label: "Mis fotos" },
-  { key: "ultrasonidos",icon: "scan",      label: "Ultrasonidos" },
-  { key: "recompensas", icon: "award",     label: "Recompensas" },
+  { key: "sintomas",    icon: "pulse",     label: at0.qa.sintomas },
+  { key: "citas",       icon: "calendar",  label: at0.qa.citas },
+  { key: "patadas",     icon: "heart",     label: at0.qa.patadas },
+  { key: "peso",        icon: "weight",    label: at0.qa.peso },
+  { key: "fotos",       icon: "photo",     label: at0.qa.fotos },
+  { key: "ultrasonidos",icon: "scan",      label: at0.qa.ultrasonidos },
+  { key: "recompensas", icon: "award",     label: at0.qa.recompensas },
   /* ── Bienestar ($9) ── */
-  { key: "meditaciones",icon: "meditation",label: "Meditación",     plan: "bien" },
-  { key: "ejercicios",  icon: "exercise",  label: "Ejercicios",     plan: "bien" },
-  { key: "contenido",   icon: "book",      label: "Guía semanal",   plan: "bien" },
-  { key: "diario",      icon: "diary",     label: "Diario",         plan: "bien" },
-  { key: "nutri-plan",  icon: "leaf",      label: "Plan Nutri.",    plan: "bien" },
-  { key: "musica-bebe", icon: "music",     label: "Música Bebé",    plan: "bien" },
-  { key: "medit-musica",icon: "wave",      label: "Medit.+Música",  plan: "bien" },
-  { key: "pareja",      icon: "heart",     label: "Pareja",         plan: "bien" },
+  { key: "meditaciones",icon: "meditation",label: at0.qa.meditaciones,     plan: "bien" },
+  { key: "ejercicios",  icon: "exercise",  label: at0.qa.ejercicios,     plan: "bien" },
+  { key: "contenido",   icon: "book",      label: at0.qa.contenido,   plan: "bien" },
+  { key: "diario",      icon: "diary",     label: at0.qa.diario,         plan: "bien" },
+  { key: "nutri-plan",  icon: "leaf",      label: at0.qa["nutri-plan"],    plan: "bien" },
+  { key: "musica-bebe", icon: "music",     label: at0.qa["musica-bebe"],    plan: "bien" },
+  { key: "medit-musica",icon: "wave",      label: at0.qa["medit-musica"],  plan: "bien" },
+  { key: "pareja",      icon: "heart",     label: at0.qa.pareja,         plan: "bien" },
   /* ── Profesional ($19) ── */
-  { key: "expertos",    icon: "expert",    label: "Expertos",       plan: "pro" },
-  { key: "historial",   icon: "chart",     label: "Historial PDF",  plan: "pro" },
-  { key: "medit-bebes", icon: "baby",      label: "Medit. Bebés",   plan: "pro" }];
+  { key: "expertos",    icon: "expert",    label: at0.qa.expertos,       plan: "pro" },
+  { key: "historial",   icon: "chart",     label: at0.qa.historial,  plan: "pro" },
+  { key: "medit-bebes", icon: "baby",      label: at0.qa["medit-bebes"],   plan: "pro" }];
 
 
   const dayName = new Date().toLocaleDateString("es-ES", { weekday: "long" });
+  const lang = lang0;
+  const at = at0;
 
   return (
     <div className="screen s-enter" style={{ position: "relative" }}>
@@ -291,15 +344,15 @@ function Inicio({ week, setWeek, push, goToTab, unreadCount=0, onBell }) {
               style={{ transition:"stroke-dashoffset .9s var(--ease)", filter:"drop-shadow(0 0 5px rgba(230,207,161,.5))" }} />
           </svg>
           <div className="wk-ring-center"><AppFruitIcon idx={idx} size={158} tri={data.tri} /></div>
-          <div className="wk-ring-pct">{Math.round(Math.min(40,week)/40*100)}% recorrido</div>
+          <div className="wk-ring-pct">{Math.round(Math.min(40,week)/40*100)}% {at.pct_done}</div>
         </div>
 
         {/* Semana número grande */}
         <div className="wk-num-big-c">
           <span style={{ fontSize:"72px" }}>{week}</span>
-          <small>&nbsp;semanas</small>
+          <small>&nbsp;{at.weeks_word}</small>
         </div>
-        <div className="wk-fruit-sub" style={{ fontFamily:"'Cormorant Garamond',serif", fontStyle:"italic", fontSize:"15px", opacity:.9 }}>del tamaño de {data.fruit}</div>
+        <div className="wk-fruit-sub" style={{ fontFamily:"'Cormorant Garamond',serif", fontStyle:"italic", fontSize:"15px", opacity:.9 }}>{at.size_of} {data.fruit}</div>
 
         {/* Barra de progreso */}
         <div className="wk-prog-bar-wrap">
@@ -307,15 +360,15 @@ function Inicio({ week, setWeek, push, goToTab, unreadCount=0, onBell }) {
             <div className="wk-prog-bar-fill" style={{ width: (Math.min(40,week)/40*100)+"%" }} />
           </div>
           <div className="wk-prog-labels">
-            <span>{elapsed}d recorridos</span>
-            <span>{remaining}d por delante</span>
+            <span>{elapsed}{at.days_done}</span>
+            <span>{remaining}{at.days_left}</span>
           </div>
         </div>
 
         <div className="wk-due-row">
           <AppIcon name="calendar" size={13} />
-          <span>Fecha probable: {dueDisplay}</span>
-          <button className="wk-due-edit" onClick={() => {setDueTmp("");setEditingDue(true);}}>Editar</button>
+          <span>{at.due_label}: {dueDisplay}</span>
+          <button className="wk-due-edit" onClick={() => {setDueTmp("");setEditingDue(true);}}>{at.edit}</button>
         </div>
       </div>
 
@@ -335,7 +388,7 @@ function Inicio({ week, setWeek, push, goToTab, unreadCount=0, onBell }) {
         {/* Contenido */}
         <div className="bcv2-top" style={{ position:"relative", zIndex:1 }}>
           <div>
-            <div className="baby-label" style={{ color:"rgba(255,210,185,.75)" }}>Tu bebé esta semana</div>
+            <div className="baby-label" style={{ color:"rgba(255,210,185,.75)" }}>{at.baby_week}</div>
             <div className="baby-fruit-nm" style={{ color:"#fff8f2" }}>{data.fruit}</div>
             <div className="baby-stats">
               <div className="baby-stat-pill" style={{ background:"rgba(255,255,255,.14)", border:"1px solid rgba(255,255,255,.22)" }}>
@@ -356,19 +409,19 @@ function Inicio({ week, setWeek, push, goToTab, unreadCount=0, onBell }) {
       {/* Quick stats */}
       <div className="stats-3">
         <div className="stat-card stat-card-cita" onClick={() => push("citas")}>
-          <div className="stk">Próx. cita</div>
+          <div className="stk">{at.stat_next_appt}</div>
           <div className="stv">{nextApptLabel}</div>
-          <div className="stsub">Control</div>
+          <div className="stsub">{at.stat_control}</div>
         </div>
         <div className="stat-card stat-card-nombres" onClick={() => push("nombres")}>
-          <div className="stk">Nombres</div>
+          <div className="stk">{at.stat_names}</div>
           <div className="stv">♥ {favCount}</div>
-          <div className="stsub">favoritos</div>
+          <div className="stsub">{at.stat_fav}</div>
         </div>
         <div className="stat-card stat-card-puntos" onClick={() => push("recompensas")}>
-          <div className="stk">Mis puntos</div>
+          <div className="stk">{at.stat_points}</div>
           <div className="stv">{points}</div>
-          <div className="stsub">Bronce ✦</div>
+          <div className="stsub">{at.stat_bronze}</div>
         </div>
       </div>
 
@@ -392,18 +445,18 @@ function Inicio({ week, setWeek, push, goToTab, unreadCount=0, onBell }) {
                 display:"flex", alignItems:"center", justifyContent:"center" }}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E6CFA1" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M20 12v10H4V12"/><rect x="2" y="7" width="20" height="5" rx="1"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
               <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:16, fontWeight:700, color:"#fff", lineHeight:1.2, marginBottom:3 }}>
-                  Gana 50 puntos ahora
+                  {at.earn_points}
                 </div>
                 <div style={{ display:"flex", gap:4, marginBottom:6 }}>
                   {[0,1,2].map(i=><div key={i} style={{ flex:1, height:3, borderRadius:99, background:i<adsToday?"#E6CFA1":"rgba(230,207,161,.2)", transition:"background .3s" }} />)}
                 </div>
                 <div style={{ fontSize:11, color:"rgba(230,207,161,.7)", fontWeight:500 }}>
-                  Ver 30 seg · {left} video{left!==1?"s":""} disponible{left!==1?"s":""} hoy
+                  {at.watch_sec} · {left} {left!==1?at.videos_avail:at.video_avail} {left!==1?at.available_today_pl:at.available_today}
                 </div>
               </div>
               <div style={{ padding:"9px 14px", borderRadius:12, flexShrink:0,
                 background:"linear-gradient(135deg,#E6CFA1,#C8952A)",
-                color:"#3d1a0e", fontSize:12, fontWeight:800 }}>Ver ▶</div>
+                color:"#3d1a0e", fontSize:12, fontWeight:800 }}>{at.watch_btn}</div>
             </div>
           </div>
         );
@@ -415,14 +468,14 @@ function Inicio({ week, setWeek, push, goToTab, unreadCount=0, onBell }) {
           <img src="uploads/icon-asistente-virtual.png" style={{ width:64, height:64, objectFit:"contain", display:"block" }} />
         </div>
         <div className="ask-body">
-          <div className="ask-t">Pregunta a Lumé</div>
-          <div className="ask-s">Tu asistente responde al instante</div>
+          <div className="ask-t">{at.ask_lume}</div>
+          <div className="ask-s">{at.ask_sub}</div>
         </div>
         <AppIcon name="chevron" size={16} />
       </button>
 
       {/* Quick access */}
-      <div className="sec-label">Accesos rápidos</div>
+      <div className="sec-label">{at.quick_access}</div>
       <div className="qa">
         {QA.map((q) => {
           const QC = {
@@ -455,11 +508,7 @@ function Inicio({ week, setWeek, push, goToTab, unreadCount=0, onBell }) {
 
       {/* ── Native Sponsored Card — contextual por trimestre ── */}
       {(()=>{
-        const AFF = [
-          { icon:"💊", grad:"linear-gradient(135deg,#A8492A,#C8952A)", title:"Elevit Materna", sub:"Ácido fólico + Hierro + DHA · recomendada por ginecólogos", cta:"Ver oferta", deal:"Envío gratis" },
-          { icon:"🛋️", grad:"linear-gradient(135deg,#6a5acd,#9b8ee0)", title:"Almohada embarazo en U", sub:"Soporte lumbar y lateral · funda lavable incluida", cta:"Ver precio", deal:"-15% esta semana" },
-          { icon:"👶", grad:"linear-gradient(135deg,#2e7d6e,#4db6a0)", title:"Kit bolsa de hospital", sub:"Lo esencial para el gran día · envío express 24h", cta:"Ver más", deal:"Entrega rápida" }
-        ];
+        const AFF = at.aff.map((a,i)=>({...a, icon:["💊","🛋️","👶"][i], grad:["linear-gradient(135deg,#A8492A,#C8952A)","linear-gradient(135deg,#6a5acd,#9b8ee0)","linear-gradient(135deg,#2e7d6e,#4db6a0)"][i]}));
         const p = AFF[data.tri]||AFF[0];
         return (
           <div
@@ -483,7 +532,7 @@ function Inicio({ week, setWeek, push, goToTab, unreadCount=0, onBell }) {
               <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
                 <div style={{display:"flex",alignItems:"center",gap:4}}>
                   <div style={{width:5,height:5,borderRadius:"50%",background:"#C8952A"}} />
-                  <span style={{fontSize:9,fontWeight:700,color:"#a08050",letterSpacing:".08em",textTransform:"uppercase"}}>Patrocinado</span>
+                  <span style={{fontSize:9,fontWeight:700,color:"#a08050",letterSpacing:".08em",textTransform:"uppercase"}}>{at.sponsored}</span>
                 </div>
                 <div style={{display:"flex",alignItems:"center",gap:2}}>
                   {[1,2,3,4,5].map(i=><svg key={i} width="9" height="9" viewBox="0 0 24 24" fill="#D4A830" stroke="none"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8L3.5 9.7l5.9-.9L12 3.5Z"/></svg>)}
@@ -523,12 +572,12 @@ function Inicio({ week, setWeek, push, goToTab, unreadCount=0, onBell }) {
       {editingDue &&
       <div className="due-overlay" onClick={() => setEditingDue(false)}>
           <div className="due-box" onClick={(e) => e.stopPropagation()}>
-            <h4>Fecha probable de parto</h4>
-            <p style={{ fontSize: 13, color: "var(--ink-soft)", marginBottom: 14 }}>Introduce la fecha indicada por tu médico.</p>
+            <h4>{at.due_modal_title}</h4>
+            <p style={{ fontSize: 13, color: "var(--ink-soft)", marginBottom: 14 }}>{at.due_modal_sub}</p>
             <input type="date" className="app-field" value={dueTmp} onChange={(e) => setDueTmp(e.target.value)} style={{ marginBottom: 14 }} />
             <div style={{ display: "flex", gap: 10 }}>
-              <button className="btn" style={{ flex: 1, justifyContent: "center", background: "var(--surface-2)", color: "var(--ink)" }} onClick={() => setEditingDue(false)}>Cancelar</button>
-              <button className="btn btn-primary" style={{ flex: 1, justifyContent: "center" }} onClick={saveDue}>Guardar</button>
+              <button className="btn" style={{ flex: 1, justifyContent: "center", background: "var(--surface-2)", color: "var(--ink)" }} onClick={() => setEditingDue(false)}>{at.cancel}</button>
+              <button className="btn btn-primary" style={{ flex: 1, justifyContent: "center" }} onClick={saveDue}>{at.save}</button>
             </div>
           </div>
         </div>
@@ -538,12 +587,13 @@ function Inicio({ week, setWeek, push, goToTab, unreadCount=0, onBell }) {
 }
 
 /* ── TabBar ─── */
-const TABS = [
-{ id: "inicio",     label: "Inicio",     img: "uploads/icon-app-22.png", imgSize:"97%" },
-{ id: "ajustes",    label: "Ajustes",    img: "uploads/icon-app-21.png", imgSize:"97%" },
-{ id: "nombres",    label: "Nombres",    img: "uploads/icon-app-18.png", imgSize:"97%" },
-{ id: "nutricion",  label: "Nutrición",  img: "uploads/icon-app-16.png", imgSize:"97%" },
-{ id: "premium",    label: "Premium",    img: "uploads/icon-app-19.png", imgSize:"97%" }];
+const TABS_BASE = [
+{ id: "inicio",     key: "tab_inicio",     img: "uploads/icon-app-22.png", imgSize:"97%" },
+{ id: "ajustes",    key: "tab_ajustes",    img: "uploads/icon-app-21.png", imgSize:"97%" },
+{ id: "nombres",    key: "tab_nombres",    img: "uploads/icon-app-18.png", imgSize:"97%" },
+{ id: "nutricion",  key: "tab_nutricion",  img: "uploads/icon-app-16.png", imgSize:"97%" },
+{ id: "premium",    key: "tab_premium",    img: "uploads/icon-app-19.png", imgSize:"97%" }];
+const TABS = TABS_BASE.map(t => ({ ...t, label: APP_I18N[getAppLang()][t.key] }));
 
 function TabBar({ active, onChange }) {
   return (
