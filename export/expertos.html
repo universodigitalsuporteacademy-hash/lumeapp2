@@ -37,12 +37,15 @@ body {
   font-family: 'Cormorant Garamond', serif;
   font-size: 22px; font-weight: 600; color: #3d1a0e;
 }
+.nav-actions { display:flex; align-items:center; gap:16px; }
 .nav-back {
   display: flex; align-items: center; gap: 6px;
   text-decoration: none; font-size: 13px; font-weight: 600; color: #A8492A;
   transition: gap .2s;
 }
 .nav-back:hover { gap: 10px; }
+.lang-btn { background:transparent; border:1px solid rgba(168,73,42,.25); border-radius:99px; padding:5px 12px; font-family:inherit; font-size:12px; font-weight:700; letter-spacing:.04em; color:#A8492A; cursor:pointer; }
+.lang-btn:hover { background:rgba(168,73,42,.08); }
 
 /* ── HERO ── */
 .hero {
@@ -228,10 +231,13 @@ body {
     <img src="uploads/logo-lume.png" alt="Lumé" />
     <span>Lumé</span>
   </a>
-  <a href="index.html" class="nav-back">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-    Volver a la landing
-  </a>
+  <div class="nav-actions">
+    <button class="lang-btn" id="lang-toggle-btn" onclick="toggleLang()">EN</button>
+    <a href="index.html" class="nav-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      <span id="nav-back-text">Volver a la landing</span>
+    </a>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -239,22 +245,22 @@ body {
   <div class="hero-inner">
     <div class="hero-eyebrow">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-      Para profesionales de la salud materna
+      <span id="hero-eyebrow-text">Para profesionales de la salud materna</span>
     </div>
-    <h1>Llega a miles de mamás<br/>que <em>te necesitan.</em></h1>
-    <p class="hero-sub">Lumé conecta a profesionales de la salud perinatal con embarazadas que buscan orientación de confianza. Listado gratuito, sin intermediarios.</p>
+    <h1 id="hero-h1">Llega a miles de mamás<br/>que <em>te necesitan.</em></h1>
+    <p class="hero-sub" id="hero-sub">Lumé conecta a profesionales de la salud perinatal con embarazadas que buscan orientación de confianza. Listado gratuito, sin intermediarios.</p>
     <div class="hero-chips">
       <div class="hero-chip">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg>
-        Agenda gestionada con tu Calendly
+        <span id="chip-1">Agenda gestionada con tu Calendly</span>
       </div>
       <div class="hero-chip">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
-        Pacientes cualificadas y comprometidas
+        <span id="chip-2">Pacientes cualificadas y comprometidas</span>
       </div>
       <div class="hero-chip">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Sin comisiones al inicio
+        <span id="chip-3">Sin comisiones al inicio</span>
       </div>
     </div>
   </div>
@@ -265,17 +271,17 @@ body {
 
   <!-- BENEFITS -->
   <div>
-    <div class="benefits-title">Por qué unirte</div>
-    <h2 class="benefits-h2">Tu consulta, visible donde importa.</h2>
-    <p class="benefits-lead">Las mamás de Lumé son usuarias activas que confían en la app para su seguimiento diario. Cuando buscan un profesional, tú estás ahí.</p>
+    <div class="benefits-title" id="ben-title">Por qué unirte</div>
+    <h2 class="benefits-h2" id="ben-h2">Tu consulta, visible donde importa.</h2>
+    <p class="benefits-lead" id="ben-lead">Las mamás de Lumé son usuarias activas que confían en la app para su seguimiento diario. Cuando buscan un profesional, tú estás ahí.</p>
 
     <div class="benefit-item">
       <div class="benefit-icon" style="background:rgba(168,73,42,.1);">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="1.7" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </div>
       <div class="benefit-content">
-        <h4>Visibilidad ante tu público ideal</h4>
-        <p>Todas las usuarias de Lumé son mujeres embarazadas o en período perinatal — exactamente las pacientes que buscas.</p>
+        <h4 id="ben1-h4">Visibilidad ante tu público ideal</h4>
+        <p id="ben1-p">Todas las usuarias de Lumé son mujeres embarazadas o en período perinatal — exactamente las pacientes que buscas.</p>
       </div>
     </div>
 
@@ -284,8 +290,8 @@ body {
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3A8070" stroke-width="1.7" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
       </div>
       <div class="benefit-content">
-        <h4>Agenda gestionada con tu propio Calendly</h4>
-        <p>Sin cambiar tus herramientas. Tú controlas tu disponibilidad, precios y modalidad (online o presencial).</p>
+        <h4 id="ben2-h4">Agenda gestionada con tu propio Calendly</h4>
+        <p id="ben2-p">Sin cambiar tus herramientas. Tú controlas tu disponibilidad, precios y modalidad (online o presencial).</p>
       </div>
     </div>
 
@@ -294,8 +300,8 @@ body {
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B5A9E" stroke-width="1.7" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       </div>
       <div class="benefit-content">
-        <h4>Credibilidad respaldada por Lumé</h4>
-        <p>Apareces en un entorno de confianza médica. Las usuarias saben que los profesionales de Lumé están verificados.</p>
+        <h4 id="ben3-h4">Credibilidad respaldada por Lumé</h4>
+        <p id="ben3-p">Apareces en un entorno de confianza médica. Las usuarias saben que los profesionales de Lumé están verificados.</p>
       </div>
     </div>
 
@@ -304,8 +310,8 @@ body {
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8961A" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
       </div>
       <div class="benefit-content">
-        <h4>Listado gratuito al inicio</h4>
-        <p>Durante el lanzamiento, el listing es completamente gratuito. Sin comisión por reserva, sin cuota de entrada.</p>
+        <h4 id="ben4-h4">Listado gratuito al inicio</h4>
+        <p id="ben4-p">Durante el lanzamiento, el listing es completamente gratuito. Sin comisión por reserva, sin cuota de entrada.</p>
       </div>
     </div>
 
@@ -313,15 +319,15 @@ body {
     <div class="stat-row">
       <div class="stat-box">
         <div class="stat-n">100%</div>
-        <div class="stat-l">usuarias en etapa perinatal</div>
+        <div class="stat-l" id="stat1-l">usuarias en etapa perinatal</div>
       </div>
       <div class="stat-box">
         <div class="stat-n">4.9★</div>
-        <div class="stat-l">valoración media de la app</div>
+        <div class="stat-l" id="stat2-l">valoración media de la app</div>
       </div>
       <div class="stat-box">
         <div class="stat-n">$0</div>
-        <div class="stat-l">costo de listing al lanzar</div>
+        <div class="stat-l" id="stat3-l">costo de listing al lanzar</div>
       </div>
     </div>
   </div>
@@ -330,20 +336,20 @@ body {
   <div>
     <div class="form-card" id="form-card">
       <div id="form-content">
-        <div class="form-title">Solicita tu espacio</div>
-        <p class="form-sub">Completa el formulario y te contactamos en menos de 48 horas para confirmar tu perfil.</p>
+        <div class="form-title" id="form-title">Solicita tu espacio</div>
+        <p class="form-sub" id="form-sub">Completa el formulario y te contactamos en menos de 48 horas para confirmar tu perfil.</p>
 
         <!-- ACTION: reemplaza YOUR_FORM_ID con tu ID de Formspree (formspree.io) -->
         <form id="expert-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" onsubmit="handleSubmit(event)">
 
           <div class="field-row">
             <div class="field">
-              <label>Nombre completo</label>
-              <input type="text" name="nombre" placeholder="Dra. María García" required />
+              <label id="lbl-nombre">Nombre completo</label>
+              <input type="text" name="nombre" id="inp-nombre" placeholder="Dra. María García" required />
             </div>
             <div class="field">
-              <label>Especialidad</label>
-              <select name="especialidad" required>
+              <label id="lbl-especialidad">Especialidad</label>
+              <select name="especialidad" id="sel-especialidad" required>
                 <option value="">Selecciona…</option>
                 <option>Ginecología y Obstetricia</option>
                 <option>Matrona / Partera</option>
@@ -358,32 +364,32 @@ body {
 
           <div class="field-row">
             <div class="field">
-              <label>Email profesional</label>
+              <label id="lbl-email">Email profesional</label>
               <input type="email" name="email" placeholder="tu@clinica.com" required />
             </div>
             <div class="field">
-              <label>Teléfono (opcional)</label>
+              <label id="lbl-telefono">Teléfono (opcional)</label>
               <input type="tel" name="telefono" placeholder="+34 600 000 000" />
             </div>
           </div>
 
           <div class="field">
-            <label>Número de colegiada / credencial</label>
-            <input type="text" name="colegiada" placeholder="COM Madrid · Nº 28042" />
+            <label id="lbl-colegiada">Número de colegiada / credencial</label>
+            <input type="text" name="colegiada" id="inp-colegiada" placeholder="COM Madrid · Nº 28042" />
           </div>
 
           <div class="field">
-            <label>Tu link de Calendly</label>
+            <label id="lbl-calendly">Tu link de Calendly</label>
             <input type="url" name="calendly" placeholder="https://calendly.com/tu-nombre" />
           </div>
 
           <div class="field">
-            <label>Cuéntanos sobre ti</label>
-            <textarea name="bio" placeholder="Años de experiencia, enfoque, tipo de consulta (online / presencial), zonas que cubres…" rows="4"></textarea>
+            <label id="lbl-bio">Cuéntanos sobre ti</label>
+            <textarea name="bio" id="inp-bio" placeholder="Años de experiencia, enfoque, tipo de consulta (online / presencial), zonas que cubres…" rows="4"></textarea>
           </div>
 
-          <button type="submit" class="submit-btn">Solicitar mi espacio en Lumé →</button>
-          <p class="form-note">Al enviar aceptas que revisemos tu solicitud · Sin spam · Respuesta en 48h</p>
+          <button type="submit" class="submit-btn" id="submit-btn">Solicitar mi espacio en Lumé →</button>
+          <p class="form-note" id="form-note">Al enviar aceptas que revisemos tu solicitud · Sin spam · Respuesta en 48h</p>
         </form>
       </div>
 
@@ -392,35 +398,35 @@ body {
         <div class="success-icon">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="1.8" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
         </div>
-        <div class="success-h">¡Solicitud recibida!</div>
-        <p class="success-p">Gracias por querer ser parte de Lumé. Revisaremos tu perfil y te escribiremos a tu email en menos de 48 horas. Mientras tanto, conoce la app.</p>
-        <a href="index.html" style="display:inline-block;margin-top:20px;padding:12px 28px;border-radius:12px;background:linear-gradient(135deg,#c4693a,#A8492A);color:#fff;font-weight:700;font-size:14px;text-decoration:none;box-shadow:0 8px 24px rgba(168,73,42,.35);">Ver la app →</a>
+        <div class="success-h" id="success-h">¡Solicitud recibida!</div>
+        <p class="success-p" id="success-p">Gracias por querer ser parte de Lumé. Revisaremos tu perfil y te escribiremos a tu email en menos de 48 horas. Mientras tanto, conoce la app.</p>
+        <a href="index.html" id="success-cta" style="display:inline-block;margin-top:20px;padding:12px 28px;border-radius:12px;background:linear-gradient(135deg,#c4693a,#A8492A);color:#fff;font-weight:700;font-size:14px;text-decoration:none;box-shadow:0 8px 24px rgba(168,73,42,.35);">Ver la app →</a>
       </div>
     </div>
 
     <!-- Especialidades aceptadas -->
     <div style="margin-top:20px;padding:18px 20px;border-radius:16px;background:rgba(255,255,255,.55);border:1px solid rgba(168,73,42,.1);">
-      <div style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#A8492A;margin-bottom:12px;">Especialidades buscadas</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;">
-        {["Matrona","Ginecóloga","Nutricionista","Psicóloga perinatal","Fisioterapeuta obstétrica","Doula","Pediatra","Enfermera obstétrica"].map(s => `<span style="padding:5px 12px;border-radius:99px;background:rgba(168,73,42,.07);border:1px solid rgba(168,73,42,.12);font-size:12px;color:#7a5a4a;font-weight:500;">${s}</span>`).join('')}
-      </div>
+      <div style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#A8492A;margin-bottom:12px;" id="specialties-title">Especialidades buscadas</div>
+      <div id="specialty-tags" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
     </div>
 
   </div>
 </div>
 
 <footer class="foot">
-  © 2026 Lumé · <a href="index.html">Ir a la landing</a> · Hecho con ♥ para las mamás
+  <span id="footer-text">© 2026 Lumé · <a href="index.html">Ir a la landing</a> · Hecho con ♥ para las mamás</span>
 </footer>
 
 <script>
-  // Render the specialty tags
-  const tagContainer = document.querySelector('[style*="flex-wrap:wrap"]');
-  if (tagContainer) {
-    const specialties = ["Matrona","Ginecóloga","Nutricionista","Psicóloga perinatal","Fisioterapeuta obstétrica","Doula","Pediatra","Enfermera obstétrica"];
-    tagContainer.innerHTML = specialties.map(s =>
-      `<span style="padding:5px 12px;border-radius:99px;background:rgba(168,73,42,.07);border:1px solid rgba(168,73,42,.12);font-size:12px;color:#7a5a4a;font-weight:500;">${s}</span>`
-    ).join('');
+  var SPECIALTIES_ES = ["Matrona","Ginecóloga","Nutricionista","Psicóloga perinatal","Fisioterapeuta obstétrica","Doula","Pediatra","Enfermera obstétrica"];
+  var SPECIALTIES_EN = ["Midwife","OB/GYN","Nutritionist","Perinatal psychologist","Obstetric physiotherapist","Doula","Pediatrician","Obstetric nurse"];
+
+  function renderSpecialties(lang) {
+    var list = lang === 'en' ? SPECIALTIES_EN : SPECIALTIES_ES;
+    var container = document.getElementById('specialty-tags');
+    container.innerHTML = list.map(function(s){
+      return '<span style="padding:5px 12px;border-radius:99px;background:rgba(168,73,42,.07);border:1px solid rgba(168,73,42,.12);font-size:12px;color:#7a5a4a;font-weight:500;">' + s + '</span>';
+    }).join('');
   }
 
   function handleSubmit(e) {
@@ -429,7 +435,6 @@ body {
     const formContent = document.getElementById('form-content');
     const successContent = document.getElementById('success-content');
 
-    // If Formspree is configured, submit it
     const action = form.action;
     if (action && !action.includes('YOUR_FORM_ID')) {
       fetch(action, {
@@ -439,14 +444,120 @@ body {
       }).then(r => {
         if (r.ok) { formContent.style.display='none'; successContent.style.display='block'; }
       }).catch(() => {
-        // Fallback: show success anyway (demo mode)
         formContent.style.display='none'; successContent.style.display='block';
       });
     } else {
-      // Demo mode — show success without real submission
       formContent.style.display='none'; successContent.style.display='block';
     }
   }
+
+  /* ── Idioma (ES/EN) ── */
+  var ES_TEXT = {};
+  var EN_TEXT = {
+    'nav-back-text': 'Back to landing',
+    'hero-eyebrow-text': 'For maternal health professionals',
+    'chip-1': 'Schedule managed with your Calendly',
+    'chip-2': 'Qualified, engaged patients',
+    'chip-3': 'No commissions to start',
+    'ben-title': 'Why join',
+    'ben1-h4': 'Visibility with your ideal audience',
+    'ben1-p': 'Every Lumé user is a pregnant woman or someone in the perinatal period — exactly the patients you\'re looking for.',
+    'ben2-h4': 'Schedule managed with your own Calendly',
+    'ben2-p': 'No need to switch tools. You control your availability, pricing and format (online or in-person).',
+    'ben3-h4': 'Credibility backed by Lumé',
+    'ben3-p': 'You appear in a trusted medical environment. Users know Lumé professionals are verified.',
+    'ben4-h4': 'Free listing at launch',
+    'ben4-p': 'During launch, listing is completely free. No booking commission, no entry fee.',
+    'stat1-l': 'users in the perinatal stage',
+    'stat2-l': 'average app rating',
+    'stat3-l': 'listing cost at launch',
+    'form-title': 'Request your spot',
+    'form-sub': 'Fill out the form and we\'ll contact you within 48 hours to confirm your profile.',
+    'lbl-nombre': 'Full name',
+    'lbl-especialidad': 'Specialty',
+    'lbl-email': 'Professional email',
+    'lbl-telefono': 'Phone (optional)',
+    'lbl-colegiada': 'License / credential number',
+    'lbl-calendly': 'Your Calendly link',
+    'lbl-bio': 'Tell us about yourself',
+    'submit-btn': 'Request my spot on Lumé →',
+    'form-note': 'By submitting you agree we\'ll review your request · No spam · Response in 48h',
+    'success-h': 'Request received!',
+    'success-p': 'Thank you for wanting to be part of Lumé. We\'ll review your profile and email you within 48 hours. Meanwhile, explore the app.',
+    'success-cta': 'View the app →',
+    'specialties-title': 'Specialties we\'re looking for',
+    'footer-text': '© 2026 Lumé · <a href="index.html">Go to landing</a> · Made with ♥ for moms',
+  };
+  var EN_H1 = 'Reach thousands of moms<br/>who <em>need you.</em>';
+  var ES_H1 = null;
+  var EN_SUB = 'Lumé connects perinatal health professionals with expectant mothers looking for trusted guidance. Free listing, no middlemen.';
+  var ES_SUB = null;
+  var EN_H2 = 'Your practice, visible where it matters.';
+  var ES_H2 = null;
+  var EN_LEAD = 'Lumé\'s moms are active users who rely on the app for daily tracking. When they look for a professional, you\'re there.';
+  var ES_LEAD = null;
+  var EN_PLACEHOLDERS = {
+    'inp-nombre': 'Dr. Maria Garcia',
+    'inp-colegiada': 'Board Cert. · No. 28042',
+    'inp-bio': 'Years of experience, approach, consultation type (online / in-person), areas you cover…',
+  };
+  var ES_PLACEHOLDERS = {};
+
+  function getExpLang() { try { return localStorage.getItem('lume_lang') || 'es'; } catch(e) { return 'es'; } }
+
+  function applyLang(lang) {
+    var h1 = document.getElementById('hero-h1');
+    if (ES_H1 === null) ES_H1 = h1.innerHTML;
+    h1.innerHTML = lang === 'en' ? EN_H1 : ES_H1;
+
+    var sub = document.getElementById('hero-sub');
+    if (ES_SUB === null) ES_SUB = sub.innerHTML;
+    sub.innerHTML = lang === 'en' ? EN_SUB : ES_SUB;
+
+    var h2 = document.getElementById('ben-h2');
+    if (ES_H2 === null) ES_H2 = h2.innerHTML;
+    h2.innerHTML = lang === 'en' ? EN_H2 : ES_H2;
+
+    var lead = document.getElementById('ben-lead');
+    if (ES_LEAD === null) ES_LEAD = lead.innerHTML;
+    lead.innerHTML = lang === 'en' ? EN_LEAD : ES_LEAD;
+
+    Object.keys(EN_TEXT).forEach(function(id){
+      var el = document.getElementById(id);
+      if (!el) return;
+      if (!(id in ES_TEXT)) ES_TEXT[id] = el.innerHTML;
+      el.innerHTML = lang === 'en' ? EN_TEXT[id] : ES_TEXT[id];
+    });
+
+    Object.keys(EN_PLACEHOLDERS).forEach(function(id){
+      var el = document.getElementById(id);
+      if (!el) return;
+      if (!(id in ES_PLACEHOLDERS)) ES_PLACEHOLDERS[id] = el.getAttribute('placeholder');
+      el.setAttribute('placeholder', lang === 'en' ? EN_PLACEHOLDERS[id] : ES_PLACEHOLDERS[id]);
+    });
+
+    var sel = document.getElementById('sel-especialidad');
+    if (sel) {
+      var opts = sel.querySelectorAll('option');
+      var esOpts = ["Selecciona…","Ginecología y Obstetricia","Matrona / Partera","Nutricionista perinatal","Psicología perinatal","Fisioterapia obstétrica","Pediatría","Otra especialidad"];
+      var enOpts = ["Select…","OB/GYN","Midwife","Perinatal nutritionist","Perinatal psychology","Obstetric physiotherapy","Pediatrics","Other specialty"];
+      opts.forEach(function(o, i){ o.textContent = lang === 'en' ? enOpts[i] : esOpts[i]; });
+    }
+
+    renderSpecialties(lang);
+    document.documentElement.lang = lang === 'en' ? 'en' : 'es';
+    document.title = lang === 'en' ? 'Join as an expert — Lumé' : 'Únete como experta — Lumé';
+    document.getElementById('lang-toggle-btn').textContent = lang === 'en' ? 'ES' : 'EN';
+  }
+
+  function toggleLang() {
+    var cur = getExpLang();
+    var next = cur === 'en' ? 'es' : 'en';
+    try { localStorage.setItem('lume_lang', next); } catch(e) {}
+    applyLang(next);
+  }
+
+  applyLang(getExpLang());
 </script>
 
 </body>
