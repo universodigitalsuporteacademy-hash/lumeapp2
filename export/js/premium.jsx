@@ -1,6 +1,12 @@
 /* Lumé Premium — landing sections (self-contained) */
 
-const WEEKS = [
+/* ── Idioma (ES/EN) — se lee una vez; el toggle recarga la página ── */
+const LANG_KEY = "lume_lang";
+function getLang() { try { return localStorage.getItem(LANG_KEY) || "es"; } catch { return "es"; } }
+function setLang(l) { try { localStorage.setItem(LANG_KEY, l); } catch {} window.location.reload(); }
+const CUR_LANG = getLang();
+
+const WEEKS_ES = [
 { w: 6,  tri: 0, fruit: "una lenteja",         cm: 0.5,  g: 0,    note: "Su corazón empieza a latir, aún del tamaño de una semilla." },
 { w: 8,  tri: 0, fruit: "una frambuesa",       cm: 1.6,  g: 1,    note: "Se forman los esbozos de brazos y piernas; los rasgos se definen." },
 { w: 10, tri: 0, fruit: "una fresa",           cm: 3.1,  g: 4,    note: "Ya tiene uñas diminutas y puede mover las articulaciones." },
@@ -14,7 +20,154 @@ const WEEKS = [
 { w: 36, tri: 2, fruit: "una lechuga romana",  cm: 47,   g: 2600, note: "Se coloca cabeza abajo, preparándose para el encuentro." },
 { w: 40, tri: 2, fruit: "una sandía pequeña", cm: 51,   g: 3400, note: "A término: cada día es ahora una pequeña eternidad de espera." }];
 
-const TRI_LABELS = ["Primer trimestre", "Segundo trimestre", "Tercer trimestre"];
+const WEEKS_EN = [
+{ w: 6,  tri: 0, fruit: "a lentil",         cm: 0.5,  g: 0,    note: "Her heart starts beating, still the size of a seed." },
+{ w: 8,  tri: 0, fruit: "a raspberry",      cm: 1.6,  g: 1,    note: "Arm and leg buds are forming; features are taking shape." },
+{ w: 10, tri: 0, fruit: "a strawberry",     cm: 3.1,  g: 4,    note: "Tiny nails are forming and joints can already move." },
+{ w: 12, tri: 0, fruit: "a plum",           cm: 5.4,  g: 14,   note: "Reflexes are waking up; soon fingers will open and close." },
+{ w: 14, tri: 0, fruit: "a lemon",          cm: 8.7,  g: 43,   note: "Her little body stretches out: legs are now longer than arms." },
+{ w: 16, tri: 1, fruit: "an avocado",       cm: 11.6, g: 100,  note: "She starts hearing sounds, and your voice becomes familiar." },
+{ w: 20, tri: 1, fruit: "a banana",         cm: 25,   g: 300,  note: "Halfway there: you may feel her first movements." },
+{ w: 24, tri: 1, fruit: "an ear of corn",   cm: 30,   g: 600,  note: "Her lungs develop blood vessels; eyebrows and lashes are visible." },
+{ w: 28, tri: 2, fruit: "an eggplant",      cm: 37,   g: 1000, note: "She opens her eyes and can sense light through your belly." },
+{ w: 32, tri: 2, fruit: "a coconut",        cm: 42,   g: 1700, note: "She practices breathing and gains fat to regulate her temperature." },
+{ w: 36, tri: 2, fruit: "a romaine lettuce",cm: 47,   g: 2600, note: "She turns head-down, getting ready to meet you." },
+{ w: 40, tri: 2, fruit: "a small watermelon", cm: 51, g: 3400, note: "Full term: every day now feels like a small eternity of waiting." }];
+const WEEKS = CUR_LANG === "en" ? WEEKS_EN : WEEKS_ES;
+
+const TRI_LABELS = CUR_LANG === "en"
+  ? ["First trimester", "Second trimester", "Third trimester"]
+  : ["Primer trimestre", "Segundo trimestre", "Tercer trimestre"];
+const TRI_SHORT = CUR_LANG === "en" ? ["1st", "2nd", "3rd"] : ["1.er", "2.º", "3.er"];
+
+/* ── Textos traducibles ── */
+const TR_ES = {
+  topbar_strong: "Lumé Bienestar", topbar_rest: "· 7 días gratis para nuevas mamás", topbar_cta: "Ver planes →",
+  nav_producto: "Producto", nav_semana: "Semana a semana", nav_expertos: "Respaldo médico", nav_precios: "Precios",
+  nav_login: "Iniciar sesión", nav_cta: "Empezar gratis",
+  hero_secondary_cta: "Conocer el producto", hero_early_access: "Acceso anticipado",
+  hero_based: "Basada", hero_based_rest: "en guías médicas de referencia",
+  hero_slider_hint: "Pruébalo · mueve la semana", hero_baby_like: "Tu bebé es como", week_label: "Semana", tri_suffix: "trim.",
+  hero_eyebrow: "Tu viaje, iluminado", hero_title: "El embarazo, <em>acompañado</em> como mereces.",
+  hero_sub: "La guía semana a semana más completa en español: inteligencia con calidez, basada en guías médicas de referencia.", hero_cta: "Empezar gratis",
+  trust_label: "Todo lo que Lumé acompaña, semana a semana",
+  vp_eyebrow: "Qué incluye", vp_h2: "Vive tu embarazo<br />con todo Lumé.", vp_lead: "Acompañamiento completo, semana a semana, con la tecnología más avanzada.",
+  sh1_num: "01 — Asistente IA", sh1_h2: "Respuestas claras cuando más las necesitas.",
+  sh1_p: "Pregunta lo que sea —médico o emocional— y recibe una respuesta serena y fundamentada, a las 3 de la mañana o entre dos reuniones.",
+  sh1_li1: "Basado en guías clínicas actualizadas", sh1_li2: "Detecta señales de alerta y te orienta", sh1_li3: "Recuerda tu semana y tu historial",
+  sh1_tag_b: "Respuesta en segundos", sh1_tag_s: "siempre con tacto humano",
+  sh2_num: "02 — Semana a semana", sh2_h2: "Mira crecer a tu bebé, semana tras semana.",
+  sh2_p: "Desarrollo verificado, cambios en tu cuerpo y hábitos de bienestar, con comparaciones de tamaño que te sacarán una sonrisa.",
+  sh2_li1: "Hitos del desarrollo por trimestre", sh2_li2: "Qué esperar y cómo cuidarte",
+  sh3_num: "03 — Nutrición", sh3_h2: "Comer bien, sin complicarte.",
+  sh3_p: "Recetas y nutrientes clave según tu trimestre y tus síntomas. Menos dudas, más energía para las dos.",
+  sh3_li1: "Planes adaptados a náuseas, acidez o anemia", sh3_li2: "Lista de la compra automática",
+  sh3_tag_b: "+200 recetas", sh3_tag_s: "por trimestre y síntoma",
+  wk_size_label: "Tamaño del bebé", wk_como: "Como",
+  exp_eyebrow: "Fuentes y rigor", exp_h2: "Construido sobre guías médicas de referencia.",
+  exp_p: "El contenido de Lumé se elabora contrastando guías clínicas públicas de organismos de referencia en salud materna. Porque en el embarazo, la confianza no se improvisa.",
+  exp_committee: "Comité en formación · 2026", exp_join: "¿Eres profesional de la salud? Únete al comité asesor →",
+  exp_stat1: "del contenido contrastado con guías clínicas de referencia", exp_stat2: "comité clínico asesor en formación — con verificación colegiada",
+  exp_stat3: "asistente IA disponible a cualquier hora, sin esperas", exp_stat4: "datos cifrados, privados y nunca cedidos a terceros",
+  tst_eyebrow: "Mamás Lumé", tst_h2: "Cuidadas de verdad.", tst_lead: "Así queremos que lo viva cada mamá.",
+  tst_note: "Historias ilustrativas. Pronto, los testimonios reales de nuestras primeras usuarias.",
+  desc_eyebrow: "Descárgala", desc_h2: "Lumé en tu bolsillo,<br/><em>desde el primer día.</em>",
+  desc_p: "Disponible pronto en App Store y Google Play. Únete ahora y sé de las primeras en acceder — 7 días completos de Bienestar sin tarjeta.",
+  desc_soon: "Próximamente", desc_appstore: "App Store", desc_googleplay: "Google Play",
+  desc_pill1_n: "Pronto", desc_pill1_l: "App Store & Play", desc_pill2_n: "7 días", desc_pill2_l: "Prueba gratis", desc_pill3_n: "Sin tarjeta", desc_pill3_l: "Cancela cuando quieras",
+  desc_tag1_t: "Sin tarjeta", desc_tag1_s: "7 días gratis", desc_tag2_t: "Ejercicios prenatales", desc_tag2_s: "seguros en cada trimestre",
+  pricing_eyebrow: "Planes", pricing_h2: "Elige cómo vivirlo.", pricing_lead: "Empieza gratis. Mejora cuando quieras. Cancela en cualquier momento.",
+  bill_monthly: "Mensual", bill_annual: "Anual", bill_save: "ahorra hasta 37%", per_month: "/mes", billed: "Facturado", per_year: "/año", saves: "ahorras", free_label: "Gratis",
+  pricing_disclaimer: "Bienestar mensual incluye 7 días de prueba gratis · Sin tarjeta de crédito · Cancela cuando quieras",
+  faq_eyebrow: "Dudas frecuentes", faq_h2: "Lo que toda mamá pregunta.", faq_lead: "Respuestas directas, sin rodeos.",
+  final_badge: "✦ Acceso anticipado · Beta 2026", final_badge2: "· 7 días gratis",
+  final_h2: "Tu embarazo merece<br /><em>esta calma.</em>",
+  final_p: "Lumé te acompaña semana a semana con contenido clínico, herramientas de seguimiento y un asistente que no duerme.",
+  final_quote_meta: "· Beta Lumé",
+  final_items: ["Tracker semanal del bebé","Asistente IA 24/7","Seguimiento de síntomas","Plan nutricional","Control de citas","Sistema de recompensas"],
+  final_cta1: "Empezar gratis — 7 días", final_cta2: "Ver planes", final_note: "Sin tarjeta de crédito · cancela cuando quieras · datos protegidos RGPD",
+  footer_tagline: "Tu compañera de maternidad consciente.", footer_tagline2: "Semana a semana, con calma y ciencia.",
+  footer_col_producto: "Producto", footer_caracteristicas: "Características", footer_seguimiento: "Seguimiento semanal", footer_precios: "Precios", footer_faq: "Preguntas frecuentes",
+  footer_col_compania: "Compañía", footer_fuentes: "Fuentes y rigor", footer_profesional: "¿Eres profesional? Únete →", footer_contacto: "Contacto",
+  footer_col_legal: "Legal", footer_privacidad: "Privacidad", footer_terminos: "Términos de uso", footer_cookies: "Cookies",
+  footer_copyright: "© 2026 Lumé · Hecho con cuidado, semana a semana.",
+  cookie_text: "Usamos cookies esenciales y de analítica para mejorar tu experiencia. Consulta nuestra", cookie_link: "Política de privacidad",
+  cookie_reject: "Solo esenciales", cookie_accept: "Aceptar todo",
+  login_tab_login: "Iniciar sesión", login_tab_registro: "Crear cuenta",
+  label_nombre: "Nombre", label_email: "Correo electrónico", label_pass: "Contraseña",
+  ph_nombre: "Tu nombre", ph_email: "tu@correo.com", ph_pass: "Mínimo 8 caracteres",
+  btn_loading: "Cargando…", btn_login: "Entrar a Lumé", btn_registro: "Crear mi cuenta gratis",
+  or_continue: "O continúa con", google_btn: "Google",
+  no_account: "¿No tienes cuenta?", create_free: "Crear cuenta gratis", forgot_pass: "¿Olvidaste tu contraseña?",
+  terms_pre: "Al registrarte aceptas nuestros", terms_link: "Términos", terms_and: "y", privacy_link: "Privacidad",
+  welcome_title: "¡Bienvenida a Lumé!", welcome_sub: "Tu cuenta está lista. Empieza tu viaje.", open_app: "Abrir la app →",
+  stripe_title: "Completa tu suscripción", stripe_sub: "Pago seguro con Stripe. Dentro del recuadro puedes elegir facturación mensual o anual.",
+  stripe_note: "¿No ves el botón de pago o no redirige? Prueba en tu sitio ya publicado — esta vista previa de diseño bloquea el redireccionamiento de Stripe.", stripe_loading: "Cargando pago seguro…",
+};
+const TR_EN = {
+  topbar_strong: "Lumé Wellness", topbar_rest: "· 7 days free for new moms", topbar_cta: "See plans →",
+  nav_producto: "Product", nav_semana: "Week by week", nav_expertos: "Medical backing", nav_precios: "Pricing",
+  nav_login: "Log in", nav_cta: "Start free",
+  hero_secondary_cta: "See the product", hero_early_access: "Early access",
+  hero_based: "Based", hero_based_rest: "on reference medical guidelines",
+  hero_slider_hint: "Try it · move the week", hero_baby_like: "Your baby is like", week_label: "Week", tri_suffix: "tri.",
+  hero_eyebrow: "Your journey, illuminated", hero_title: "Pregnancy, <em>accompanied</em> the way you deserve.",
+  hero_sub: "The most complete week-by-week guide: intelligence with warmth, based on reference medical guidelines.", hero_cta: "Start free",
+  trust_label: "Everything Lumé supports, week by week",
+  vp_eyebrow: "What's included", vp_h2: "Live your pregnancy<br />with all of Lumé.", vp_lead: "Complete companionship, week by week, with the most advanced technology.",
+  sh1_num: "01 — AI Assistant", sh1_h2: "Clear answers exactly when you need them.",
+  sh1_p: "Ask anything —medical or emotional— and get a calm, well-founded answer, at 3am or between two meetings.",
+  sh1_li1: "Based on up-to-date clinical guidelines", sh1_li2: "Detects warning signs and guides you", sh1_li3: "Remembers your week and your history",
+  sh1_tag_b: "Answers in seconds", sh1_tag_s: "always with a human touch",
+  sh2_num: "02 — Week by week", sh2_h2: "Watch your baby grow, week after week.",
+  sh2_p: "Verified development, body changes and wellness habits, with size comparisons that will make you smile.",
+  sh2_li1: "Developmental milestones by trimester", sh2_li2: "What to expect and how to take care of yourself",
+  sh3_num: "03 — Nutrition", sh3_h2: "Eat well, without the hassle.",
+  sh3_p: "Recipes and key nutrients based on your trimester and symptoms. Fewer doubts, more energy for both of you.",
+  sh3_li1: "Plans adapted to nausea, heartburn or anemia", sh3_li2: "Automatic shopping list",
+  sh3_tag_b: "+200 recipes", sh3_tag_s: "by trimester and symptom",
+  wk_size_label: "Baby's size", wk_como: "Like",
+  exp_eyebrow: "Sources & rigor", exp_h2: "Built on reference medical guidelines.",
+  exp_p: "Lumé's content is developed by cross-checking public clinical guidelines from leading maternal health organizations. Because in pregnancy, trust isn't improvised.",
+  exp_committee: "Committee forming · 2026", exp_join: "Healthcare professional? Join our advisory board →",
+  exp_stat1: "of content cross-checked against reference clinical guidelines", exp_stat2: "clinical advisory committee forming — with peer verification",
+  exp_stat3: "AI assistant available anytime, no waiting", exp_stat4: "encrypted, private data, never sold to third parties",
+  tst_eyebrow: "Lumé moms", tst_h2: "Truly cared for.", tst_lead: "This is how we want every mom to experience it.",
+  tst_note: "Illustrative stories. Real testimonials from our first users, coming soon.",
+  desc_eyebrow: "Download it", desc_h2: "Lumé in your pocket,<br/><em>from day one.</em>",
+  desc_p: "Coming soon to the App Store and Google Play. Join now and be among the first to access it — 7 full days of Wellness, no card required.",
+  desc_soon: "Coming soon", desc_appstore: "App Store", desc_googleplay: "Google Play",
+  desc_pill1_n: "Soon", desc_pill1_l: "App Store & Play", desc_pill2_n: "7 days", desc_pill2_l: "Free trial", desc_pill3_n: "No card", desc_pill3_l: "Cancel anytime",
+  desc_tag1_t: "No card", desc_tag1_s: "7 days free", desc_tag2_t: "Prenatal exercises", desc_tag2_s: "safe for every trimester",
+  pricing_eyebrow: "Plans", pricing_h2: "Choose how to live it.", pricing_lead: "Start free. Upgrade whenever you want. Cancel anytime.",
+  bill_monthly: "Monthly", bill_annual: "Annual", bill_save: "save up to 37%", per_month: "/mo", billed: "Billed", per_year: "/yr", saves: "you save", free_label: "Free",
+  pricing_disclaimer: "Monthly Wellness includes a 7-day free trial · No credit card · Cancel anytime",
+  faq_eyebrow: "FAQ", faq_h2: "What every mom asks.", faq_lead: "Direct answers, no detours.",
+  final_badge: "✦ Early access · Beta 2026", final_badge2: "· 7 days free",
+  final_h2: "Your pregnancy deserves<br /><em>this calm.</em>",
+  final_p: "Lumé supports you week by week with clinical content, tracking tools, and an assistant that never sleeps.",
+  final_quote_meta: "· Lumé Beta",
+  final_items: ["Weekly baby tracker","24/7 AI assistant","Symptom tracking","Nutrition plan","Appointment tracking","Rewards system"],
+  final_cta1: "Start free — 7 days", final_cta2: "See plans", final_note: "No credit card · cancel anytime · GDPR-protected data",
+  footer_tagline: "Your mindful maternity companion.", footer_tagline2: "Week by week, with calm and science.",
+  footer_col_producto: "Product", footer_caracteristicas: "Features", footer_seguimiento: "Weekly tracking", footer_precios: "Pricing", footer_faq: "FAQ",
+  footer_col_compania: "Company", footer_fuentes: "Sources & rigor", footer_profesional: "Healthcare pro? Join →", footer_contacto: "Contact",
+  footer_col_legal: "Legal", footer_privacidad: "Privacy", footer_terminos: "Terms of use", footer_cookies: "Cookies",
+  footer_copyright: "© 2026 Lumé · Made with care, week by week.",
+  cookie_text: "We use essential and analytics cookies to improve your experience. See our", cookie_link: "Privacy policy",
+  cookie_reject: "Essential only", cookie_accept: "Accept all",
+  login_tab_login: "Log in", login_tab_registro: "Create account",
+  label_nombre: "Name", label_email: "Email", label_pass: "Password",
+  ph_nombre: "Your name", ph_email: "you@email.com", ph_pass: "At least 8 characters",
+  btn_loading: "Loading…", btn_login: "Enter Lumé", btn_registro: "Create my free account",
+  or_continue: "Or continue with", google_btn: "Google",
+  no_account: "Don't have an account?", create_free: "Create a free account", forgot_pass: "Forgot your password?",
+  terms_pre: "By signing up you agree to our", terms_link: "Terms", terms_and: "and", privacy_link: "Privacy",
+  welcome_title: "Welcome to Lumé!", welcome_sub: "Your account is ready. Start your journey.", open_app: "Open the app →",
+  stripe_title: "Complete your subscription", stripe_sub: "Secure payment with Stripe. Inside the box you can choose monthly or annual billing.",
+  stripe_note: "Don't see the payment button, or it won't redirect? Try it on your published site — this design preview blocks Stripe's redirect.", stripe_loading: "Loading secure payment…",
+};
+const TR = CUR_LANG === "en" ? TR_EN : TR_ES;
 
 function I({ d, fill }) {
   const p = fill ?
@@ -129,8 +282,8 @@ function useReveal() {
 function TopBar() {
   return (
     <div className="topbar">
-      <strong>Lumé Bienestar</strong> · 7 días gratis para nuevas mamás
-      <a href="#precios">Ver planes →</a>
+      <strong>{TR.topbar_strong}</strong> {TR.topbar_rest}
+      <a href="#precios">{TR.topbar_cta}</a>
     </div>);
 
 }
@@ -154,6 +307,14 @@ function LoginModal({ onClose, appHref, initialTab }) {
         else await window.lumeAuth.signIn(email, pass);
       } else {
         await new Promise((r) => setTimeout(r, 1200)); // Sin Supabase conectado aún: modo demo
+      }
+      if (tab === "registro") {
+        try {
+          if (name.trim()) localStorage.setItem("lume_nombre", name.trim());
+          localStorage.setItem("lume_plan", "esencial");
+        } catch {}
+        window.location.href = "confirmacion.html";
+        return;
       }
       setDone(true);
     } catch (err) {
@@ -188,7 +349,7 @@ function LoginModal({ onClose, appHref, initialTab }) {
                 background:tab===t?"var(--surface)":"transparent",
                 color:tab===t?"var(--ink)":"var(--muted)",
                 boxShadow:tab===t?"var(--sh-1)":"none",transition:"all .2s"}}>
-                {t==="login"?"Iniciar sesión":"Crear cuenta"}
+                {t==="login"?TR.login_tab_login:TR.login_tab_registro}
               </button>
             ))}
           </div>
@@ -196,21 +357,21 @@ function LoginModal({ onClose, appHref, initialTab }) {
           <form onSubmit={handleSubmit} style={{display:"flex",flexDirection:"column",gap:14}}>
             {tab==="registro" && (
               <div>
-                <label style={{fontSize:12,fontWeight:700,color:"var(--muted)",letterSpacing:".06em",textTransform:"uppercase",display:"block",marginBottom:6}}>Nombre</label>
-                <input value={name} onChange={e=>setName(e.target.value)} placeholder="Tu nombre" required
+                <label style={{fontSize:12,fontWeight:700,color:"var(--muted)",letterSpacing:".06em",textTransform:"uppercase",display:"block",marginBottom:6}}>{TR.label_nombre}</label>
+                <input value={name} onChange={e=>setName(e.target.value)} placeholder={TR.ph_nombre} required
                   style={{width:"100%",padding:"12px 16px",borderRadius:12,border:"1.5px solid var(--line)",background:"var(--surface)",fontFamily:"inherit",fontSize:14,color:"var(--ink)",outline:"none",boxSizing:"border-box"}}
                   onFocus={e=>e.target.style.borderColor="var(--primary)"} onBlur={e=>e.target.style.borderColor="var(--line)"}/>
               </div>
             )}
             <div>
-              <label style={{fontSize:12,fontWeight:700,color:"var(--muted)",letterSpacing:".06em",textTransform:"uppercase",display:"block",marginBottom:6}}>Correo electrónico</label>
-              <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="tu@correo.com" required
+              <label style={{fontSize:12,fontWeight:700,color:"var(--muted)",letterSpacing:".06em",textTransform:"uppercase",display:"block",marginBottom:6}}>{TR.label_email}</label>
+              <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder={TR.ph_email} required
                 style={{width:"100%",padding:"12px 16px",borderRadius:12,border:"1.5px solid var(--line)",background:"var(--surface)",fontFamily:"inherit",fontSize:14,color:"var(--ink)",outline:"none",boxSizing:"border-box"}}
                 onFocus={e=>e.target.style.borderColor="var(--primary)"} onBlur={e=>e.target.style.borderColor="var(--line)"}/>
             </div>
             <div>
-              <label style={{fontSize:12,fontWeight:700,color:"var(--muted)",letterSpacing:".06em",textTransform:"uppercase",display:"block",marginBottom:6}}>Contraseña</label>
-              <input type="password" value={pass} onChange={e=>setPass(e.target.value)} placeholder="Mínimo 8 caracteres" required minLength={8}
+              <label style={{fontSize:12,fontWeight:700,color:"var(--muted)",letterSpacing:".06em",textTransform:"uppercase",display:"block",marginBottom:6}}>{TR.label_pass}</label>
+              <input type="password" value={pass} onChange={e=>setPass(e.target.value)} placeholder={TR.ph_pass} required minLength={8}
                 style={{width:"100%",padding:"12px 16px",borderRadius:12,border:"1.5px solid var(--line)",background:"var(--surface)",fontFamily:"inherit",fontSize:14,color:"var(--ink)",outline:"none",boxSizing:"border-box"}}
                 onFocus={e=>e.target.style.borderColor="var(--primary)"} onBlur={e=>e.target.style.borderColor="var(--line)"}/>
             </div>
@@ -218,31 +379,31 @@ function LoginModal({ onClose, appHref, initialTab }) {
             <button type="submit" disabled={loading} style={{marginTop:4,padding:"14px",borderRadius:12,border:"none",
               background:"linear-gradient(135deg,#A8492A,#8B3520)",color:"#FBF3EB",fontSize:15,fontWeight:700,cursor:loading?"not-allowed":"pointer",
               fontFamily:"inherit",opacity:loading?.7:1,transition:"all .2s",boxShadow:"0 8px 24px rgba(168,73,42,.35)"}}>
-              {loading ? "Cargando…" : tab==="login" ? "Entrar a Lumé" : "Crear mi cuenta gratis"}
+              {loading ? TR.btn_loading : tab==="login" ? TR.btn_login : TR.btn_registro}
             </button>
             {authError && <div style={{fontSize:12.5,color:"#c0392b",textAlign:"center",marginTop:-4}}>{authError}</div>}
           </form>
 
           <div style={{display:"flex",alignItems:"center",gap:10,margin:"18px 0"}}>
             <div style={{flex:1,height:1,background:"var(--line)"}}/>
-            <span style={{fontSize:12,color:"var(--muted)",fontWeight:600}}>O continúa con</span>
+            <span style={{fontSize:12,color:"var(--muted)",fontWeight:600}}>{TR.or_continue}</span>
             <div style={{flex:1,height:1,background:"var(--line)"}}/>
           </div>
 
           <button style={{width:"100%",padding:"12px",borderRadius:12,border:"1.5px solid var(--line)",background:"var(--surface)",fontFamily:"inherit",fontSize:14,fontWeight:600,color:"var(--ink)",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:10}}>
             <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-            Google
+            {TR.google_btn}
           </button>
 
           {tab==="login" && (
             <div style={{textAlign:"center",marginTop:16,display:"flex",flexDirection:"column",gap:8}}>
-              <p style={{margin:0,fontSize:12,color:"var(--muted)"}}>¿No tienes cuenta? <button onClick={()=>setTab("registro")} style={{background:"none",border:"none",color:"var(--primary)",fontWeight:700,cursor:"pointer",fontFamily:"inherit",fontSize:12,padding:0}}>Crear cuenta gratis</button></p>
-              <button onClick={()=>alert("Disponible en la versión de producción. Escíbenos a soporte@lume-app.com")} style={{background:"none",border:"none",color:"var(--muted)",fontSize:11.5,cursor:"pointer",fontFamily:"inherit",padding:0,opacity:.65}}>¿Olvidaste tu contraseña?</button>
+              <p style={{margin:0,fontSize:12,color:"var(--muted)"}}>{TR.no_account} <button onClick={()=>setTab("registro")} style={{background:"none",border:"none",color:"var(--primary)",fontWeight:700,cursor:"pointer",fontFamily:"inherit",fontSize:12,padding:0}}>{TR.create_free}</button></p>
+              <button onClick={()=>alert("Disponible en la versión de producción. Escíbenos a soporte@lume-app.com")} style={{background:"none",border:"none",color:"var(--muted)",fontSize:11.5,cursor:"pointer",fontFamily:"inherit",padding:0,opacity:.65}}>{TR.forgot_pass}</button>
             </div>
           )}
           {tab==="registro" && (
             <p style={{textAlign:"center",fontSize:11,color:"var(--muted)",marginTop:14,lineHeight:1.5}}>
-              Al registrarte aceptas nuestros <a href="#" style={{color:"var(--primary)"}}>Términos</a> y <a href="#" style={{color:"var(--primary)"}}>Privacidad</a>
+              {TR.terms_pre} <a href="#" style={{color:"var(--primary)"}}>{TR.terms_link}</a> {TR.terms_and} <a href="#" style={{color:"var(--primary)"}}>{TR.privacy_link}</a>
             </p>
           )}
         </>) : (
@@ -250,10 +411,10 @@ function LoginModal({ onClose, appHref, initialTab }) {
             <div style={{width:64,height:64,borderRadius:"50%",background:"linear-gradient(135deg,#A8492A,#C8952A)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 16px",boxShadow:"0 12px 32px rgba(168,73,42,.35)"}}>
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12l4 4L19 7"/></svg>
             </div>
-            <div style={{fontFamily:"var(--font-display)",fontSize:26,fontWeight:600,color:"var(--ink)",marginBottom:8}}>¡Bienvenida a Lumé!</div>
-            <p style={{fontSize:14,color:"var(--muted)",marginBottom:24,lineHeight:1.6}}>Tu cuenta está lista. Empieza tu viaje.</p>
+            <div style={{fontFamily:"var(--font-display)",fontSize:26,fontWeight:600,color:"var(--ink)",marginBottom:8}}>{TR.welcome_title}</div>
+            <p style={{fontSize:14,color:"var(--muted)",marginBottom:24,lineHeight:1.6}}>{TR.welcome_sub}</p>
             <a href={appHref} style={{display:"block",padding:"14px",borderRadius:12,background:"linear-gradient(135deg,#A8492A,#8B3520)",color:"#FBF3EB",fontSize:15,fontWeight:700,textDecoration:"none",textAlign:"center",boxShadow:"0 8px 24px rgba(168,73,42,.35)"}}>
-              Abrir la app →
+              {TR.open_app}
             </a>
           </div>
         )}
@@ -279,14 +440,15 @@ function Nav({ appHref }) {
       <div className="wrap nav-in">
         <a href="#top"><Logo /></a>
         <nav className="nav-links">
-          <a href="#producto">Producto</a>
-          <a href="#semana">Semana a semana</a>
-          <a href="#expertos">Respaldo médico</a>
-          <a href="#precios">Precios</a>
+          <a href="#producto">{TR.nav_producto}</a>
+          <a href="#semana">{TR.nav_semana}</a>
+          <a href="#expertos">{TR.nav_expertos}</a>
+          <a href="#precios">{TR.nav_precios}</a>
         </nav>
         <div className="nav-actions">
-          <button className="nav-login" onClick={() => setShowLogin(true)}>Iniciar sesión</button>
-          <button className="btn btn-primary nav-cta" onClick={() => setShowLogin(true)}>Empezar gratis</button>
+          <button className="nav-login" onClick={() => setLang(CUR_LANG === "es" ? "en" : "es")} style={{fontWeight:700,letterSpacing:".04em"}} title="Language / Idioma">{CUR_LANG === "es" ? "EN" : "ES"}</button>
+          <button className="nav-login" onClick={() => setShowLogin(true)}>{TR.nav_login}</button>
+          <button className="btn btn-primary nav-cta" onClick={() => setShowLogin(true)}>{TR.nav_cta}</button>
         </div>
       </div>
     </header>
@@ -303,6 +465,10 @@ function Hero({ t, appHref }) {
   const idx = weekIndex(week);
   const [split, setSplit] = React.useState(52);
   const splitRef = React.useRef(null);
+  const heroEyebrow = CUR_LANG === "en" ? TR.hero_eyebrow : t.eyebrow;
+  const heroTitle = CUR_LANG === "en" ? TR.hero_title : t.heroTitle;
+  const heroSub = CUR_LANG === "en" ? TR.hero_sub : t.heroSub;
+  const heroCta = CUR_LANG === "en" ? TR.hero_cta : t.ctaText;
   const startDrag = (e) => {
     e.preventDefault();
     const rect = splitRef.current.getBoundingClientRect();
@@ -321,22 +487,22 @@ function Hero({ t, appHref }) {
         <div className="hero-overlay" aria-hidden="true"></div>
         <div className="hero-left">
           <div className="hero-left-in">
-            <span className="eyebrow reveal">{t.eyebrow}</span>
-            <h1 className="hero-h1 reveal" dangerouslySetInnerHTML={{ __html: t.heroTitle }}></h1>
-            <p className="hero-sub reveal">{t.heroSub}</p>
+            <span className="eyebrow reveal">{heroEyebrow}</span>
+            <h1 className="hero-h1 reveal" dangerouslySetInnerHTML={{ __html: heroTitle }}></h1>
+            <p className="hero-sub reveal">{heroSub}</p>
             <div className="hero-cta reveal">
-              <a className="btn btn-primary btn-lg" href="#" onClick={(e)=>{e.preventDefault();window.__lumeOpenModal?.();}}>{t.ctaText}</a>
-              <a className="btn btn-line btn-lg" href="#producto">Conocer el producto</a>
+              <a className="btn btn-primary btn-lg" href="#" onClick={(e)=>{e.preventDefault();window.__lumeOpenModal?.();}}>{heroCta}</a>
+              <a className="btn btn-line btn-lg" href="#producto">{TR.hero_secondary_cta}</a>
             </div>
             <div className="hero-meta reveal">
               <div className="hero-rating">
                 <div className="r-top" style={{fontSize:11,fontWeight:800,letterSpacing:".1em",color:"var(--primary)"}}>✦ BETA 2026</div>
-                <span className="r-sub">Acceso anticipado</span>
+                <span className="r-sub">{TR.hero_early_access}</span>
               </div>
               <span className="divider"></span>
               <div className="hero-endorse-row">
                 <span className="hero-avas" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-                <p className="hero-endorse"><strong>Basada</strong> en guías médicas de referencia</p>
+                <p className="hero-endorse"><strong>{TR.hero_based}</strong> {TR.hero_based_rest}</p>
               </div>
             </div>
           </div>
@@ -353,32 +519,38 @@ function Hero({ t, appHref }) {
           el.style.transition = 'transform .5s cubic-bezier(.23,1,.32,1)';
           el.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)';
         }} style={{transformStyle:'preserve-3d',cursor:'default'}}>
-          <span className="fc-k">Pruébalo · mueve la semana</span>
+          <span className="fc-k">{TR.hero_slider_hint}</span>
           <div className="fc-week-row">
             <button className="fc-step" onClick={() => setWeek((w) => Math.max(5, w - 1))} aria-label="Anterior">−</button>
-            <strong className="fc-wknum">Semana {week}</strong>
+            <strong className="fc-wknum">{TR.week_label} {week}</strong>
             <button className="fc-step" onClick={() => setWeek((w) => Math.min(40, w + 1))} aria-label="Siguiente">+</button>
           </div>
           <input className="fc-slider" type="range" min="5" max="40" value={week} onChange={(e) => setWeek(+e.target.value)} aria-label="Semana" />
-          <div className="fc-size"><span className="fc-fruit-ic" style={{ transform: `scale(${0.62 + dot * 0.45})` }}><FruitIcon idx={idx} size={36} tri={data.tri} /></span><span className="fc-sub">Tu bebé es como {data.fruit}</span></div>
+          <div className="fc-size"><span className="fc-fruit-ic" style={{ transform: `scale(${0.62 + dot * 0.45})` }}><FruitIcon idx={idx} size={36} tri={data.tri} /></span><span className="fc-sub">{TR.hero_baby_like} {data.fruit}</span></div>
         </div>
       </div>
     </section>);
 }
 
 function Trust() {
-  const PRESS = [
+  const PRESS_ES = [
     ["Tracker semanal",1],["NUTRICIÓN PRENATAL",0],["Asistente 24/7",1],
     ["MEDITACIÓN",0],["Control de peso",1],["CITAS MÉDICAS",0],["Diario del embarazo",1],
     ["PATADAS",0],["Nombres de bebé",1],["MODO PAREJA",0],
   ];
+  const PRESS_EN = [
+    ["Weekly tracker",1],["PRENATAL NUTRITION",0],["24/7 Assistant",1],
+    ["MEDITATION",0],["Weight tracking",1],["MEDICAL APPOINTMENTS",0],["Pregnancy diary",1],
+    ["KICK COUNTER",0],["Baby names",1],["PARTNER MODE",0],
+  ];
+  const PRESS = CUR_LANG === "en" ? PRESS_EN : PRESS_ES;
   const render = (pfx) => PRESS.map(([n, s], i) => (
     <span key={pfx+i} className={s ? "ser" : ""}>{n}</span>
   ));
   return (
     <section className="trust">
       <div className="wrap trust-in">
-        <span className="trust-label">Todo lo que Lumé acompaña, semana a semana</span>
+        <span className="trust-label">{TR.trust_label}</span>
         <div className="marquee" aria-hidden="true">
           <div className="marquee-track">{render("a")}{render("b")}{render("c")}</div>
         </div>
@@ -387,7 +559,7 @@ function Trust() {
   );
 }
 
-const VALUES = [
+const VALUES_ES = [
   { ic:"spark",     plan:"bien", t:"Asistente IA ilimitado",         d:"Pregunta sin límites, a cualquier hora. Responde con calidez y precisión clínica." },
   { ic:"leaf",      plan:"bien", t:"Plan nutricional a medida",       d:"Recetas generadas por IA según tus síntomas y trimestre. Actualizable en tiempo real." },
   { ic:"meditation",plan:"bien", t:"Meditaciones prenatales",         d:"Sesiones guiadas para calmar el cuerpo y la mente en cada etapa del embarazo." },
@@ -398,17 +570,29 @@ const VALUES = [
   { ic:"heart",     plan:"pro",  t:"Meditación para bebés",           d:"Sonidos y frecuencias pensados para crear calma alrededor del bebé. Solo en Profesional." },
   { ic:"star",      plan:"bien", t:"Meditación con música para mamá", d:"Fusión de música envolvente y meditación guiada para reducir el estrés prenatal." },
 ];
+const VALUES_EN = [
+  { ic:"spark",     plan:"bien", t:"Unlimited AI assistant",         d:"Ask without limits, anytime. Answers with warmth and clinical accuracy." },
+  { ic:"leaf",      plan:"bien", t:"Tailored nutrition plan",       d:"AI-generated recipes based on your symptoms and trimester. Updatable in real time." },
+  { ic:"meditation",plan:"bien", t:"Prenatal meditations",         d:"Guided sessions to calm the body and mind at every stage of pregnancy." },
+  { ic:"book",      plan:"bien", t:"Weekly premium content",       d:"New guides every week, verified by specialists and adapted to your stage." },
+  { ic:"pulse",     plan:null,   t:"Symptom tracking",         d:"Detailed history with smart alerts that help you always feel at ease." },
+  { ic:"exercise",  plan:"bien", t:"Exercises and postures",           d:"Safe routines designed for every trimester, from the couch or wherever you are." },
+  { ic:"bell",      plan:"bien", t:"Music for your baby",             d:"Musical selections to stimulate your baby from the womb. Curated by specialists." },
+  { ic:"heart",     plan:"pro",  t:"Meditation for babies",           d:"Sounds and frequencies designed to create calm around your baby. Professional only." },
+  { ic:"star",      plan:"bien", t:"Meditation with music for mom", d:"A blend of ambient music and guided meditation to reduce prenatal stress." },
+];
+const VALUES = CUR_LANG === "en" ? VALUES_EN : VALUES_ES;
 
 
 function ValueProps() {
-  const PLAN_BADGE = { bien: { label:"Bienestar", col:"#A8492A" }, pro: { label:"Profesional ✦", col:"#C8952A" } };
+  const PLAN_BADGE = { bien: { label:CUR_LANG==="en"?"Wellness":"Bienestar", col:"#A8492A" }, pro: { label:(CUR_LANG==="en"?"Professional":"Profesional")+" ✦", col:"#C8952A" } };
   return (
     <section className="section vp-band" id="producto">
       <div className="wrap">
         <div className="sec-head center reveal">
-          <span className="eyebrow center">Qué incluye</span>
-          <h2 className="sec-title">Vive tu embarazo<br />con todo Lumé.</h2>
-          <p className="sec-lead">Acompañamiento completo, semana a semana, con la tecnología más avanzada.</p>
+          <span className="eyebrow center">{TR.vp_eyebrow}</span>
+          <h2 className="sec-title" dangerouslySetInnerHTML={{ __html: TR.vp_h2 }}></h2>
+          <p className="sec-lead">{TR.vp_lead}</p>
         </div>
         <div className="vp-grid">
           {VALUES.map((v, i) => {
@@ -459,8 +643,8 @@ function WeekPanel() {
         boxShadow:'0 30px 80px -14px rgba(80,30,16,.44), 0 8px 24px rgba(80,30,16,.14), 0 1px 0 rgba(255,255,255,.9) inset',
         borderRadius:28}}>
       <div className="wk-panel-top">
-        <div className="tri-pills">{TRI_LABELS.map((l, i) => <span key={i} className={"tri-pill" + (i === data.tri ? " on" : "")}>{["1.er", "2.º", "3.er"][i]} trim.</span>)}</div>
-        <span className="wk-num2">Semana {week}</span>
+        <div className="tri-pills">{TRI_LABELS.map((l, i) => <span key={i} className={"tri-pill" + (i === data.tri ? " on" : "")}>{TRI_SHORT[i]} {TR.tri_suffix}</span>)}</div>
+        <span className="wk-num2">{TR.week_label} {week}</span>
       </div>
       <div className="wk-orb-wrap">
         <div className="wk-orb-bg"></div>
@@ -469,8 +653,8 @@ function WeekPanel() {
         </div>
       </div>
       <div className="wk-meta">
-        <span className="lbl">Tamaño del bebé</span>
-        <div className="fruit">Como {data.fruit}</div>
+        <span className="lbl">{TR.wk_size_label}</span>
+        <div className="fruit">{TR.wk_como} {data.fruit}</div>
         <span className="dims">{data.cm} cm{data.g ? ` · ${data.g >= 1000 ? (data.g / 1000).toFixed(1) + " kg" : data.g + " g"}` : ""}</span>
       </div>
       <p className="wk-note">{data.note}</p>
@@ -482,35 +666,35 @@ function WeekPanel() {
 
 function Showcase() {
   return (
-    <section className="section section-paper" id="semana">
+    <section className="section section-paper" id="showcase">
       <div className="wrap">
         <div className="show">
           <div className="show-copy reveal">
-            <span className="num">01 — Asistente IA</span>
-            <h2>Respuestas claras cuando más las necesitas.</h2>
-            <p>Pregunta lo que sea —médico o emocional— y recibe una respuesta serena y fundamentada, a las 3 de la mañana o entre dos reuniones.</p>
+            <span className="num">{TR.sh1_num}</span>
+            <h2>{TR.sh1_h2}</h2>
+            <p>{TR.sh1_p}</p>
             <ul className="show-list">
-              <li><span className="ck"><I d={ICONS.check} /></span>Basado en guías clínicas actualizadas</li>
-              <li><span className="ck"><I d={ICONS.check} /></span>Detecta señales de alerta y te orienta</li>
-              <li><span className="ck"><I d={ICONS.check} /></span>Recuerda tu semana y tu historial</li>
+              <li><span className="ck"><I d={ICONS.check} /></span>{TR.sh1_li1}</li>
+              <li><span className="ck"><I d={ICONS.check} /></span>{TR.sh1_li2}</li>
+              <li><span className="ck"><I d={ICONS.check} /></span>{TR.sh1_li3}</li>
             </ul>
           </div>
           <div className="show-media reveal">
             <div className="mockup-wrap" style={{width:'58%'}}>
               <img src="uploads/asistente-mockup.png" alt="Asistente Lumé" className="mockup-img"/>
             </div>
-            <div className="show-tag glass"><span className="ti"><I d={ICONS.spark} /></span><div><b>Respuesta en segundos</b><span>siempre con tacto humano</span></div></div>
+            <div className="show-tag glass"><span className="ti"><I d={ICONS.spark} /></span><div><b>{TR.sh1_tag_b}</b><span>{TR.sh1_tag_s}</span></div></div>
           </div>
         </div>
 
-        <div className="show flip">
+        <div className="show flip" id="semana" style={{scrollMarginTop:100}}>
           <div className="show-copy reveal">
-            <span className="num">02 — Semana a semana</span>
-            <h2>Mira crecer a tu bebé, semana tras semana.</h2>
-            <p>Desarrollo verificado, cambios en tu cuerpo y hábitos de bienestar, con comparaciones de tamaño que te sacarán una sonrisa.</p>
+            <span className="num">{TR.sh2_num}</span>
+            <h2>{TR.sh2_h2}</h2>
+            <p>{TR.sh2_p}</p>
             <ul className="show-list">
-              <li><span className="ck"><I d={ICONS.check} /></span>Hitos del desarrollo por trimestre</li>
-              <li><span className="ck"><I d={ICONS.check} /></span>Qué esperar y cómo cuidarte</li>
+              <li><span className="ck"><I d={ICONS.check} /></span>{TR.sh2_li1}</li>
+              <li><span className="ck"><I d={ICONS.check} /></span>{TR.sh2_li2}</li>
             </ul>
           </div>
           <div className="show-media reveal">
@@ -522,17 +706,17 @@ function Showcase() {
 
         <div className="show">
           <div className="show-copy reveal">
-            <span className="num">03 — Nutrición</span>
-            <h2>Comer bien, sin complicarte.</h2>
-            <p>Recetas y nutrientes clave según tu trimestre y tus síntomas. Menos dudas, más energía para las dos.</p>
+            <span className="num">{TR.sh3_num}</span>
+            <h2>{TR.sh3_h2}</h2>
+            <p>{TR.sh3_p}</p>
             <ul className="show-list">
-              <li><span className="ck"><I d={ICONS.check} /></span>Planes adaptados a náuseas, acidez o anemia</li>
-              <li><span className="ck"><I d={ICONS.check} /></span>Lista de la compra automática</li>
+              <li><span className="ck"><I d={ICONS.check} /></span>{TR.sh3_li1}</li>
+              <li><span className="ck"><I d={ICONS.check} /></span>{TR.sh3_li2}</li>
             </ul>
           </div>
           <div className="show-media reveal">
-            <image-slot id="pr-show3" class="show-photo" shape="rounded" radius="20" placeholder="Foto de comida saludable"></image-slot>
-            <div className="show-tag glass"><span className="ti"><I d={ICONS.leaf} /></span><div><b>+200 recetas</b><span>por trimestre y síntoma</span></div></div>
+            <img src="uploads/ue (1).png" alt="Comida saludable para el embarazo" className="show-photo" style={{aspectRatio:"500/180",objectFit:"cover",objectPosition:"center"}} />
+            <div className="show-tag glass"><span className="ti"><I d={ICONS.leaf} /></span><div><b>{TR.sh3_tag_b}</b><span>{TR.sh3_tag_s}</span></div></div>
           </div>
         </div>
       </div>
@@ -540,11 +724,17 @@ function Showcase() {
 
 }
 
-const SOURCES_LIST = [
+const SOURCES_ES = [
   { role:"Salud materna y perinatal", name:"Organización Mundial de la Salud", badge:"Guías públicas",    initials:"OMS", color:"#3A8070", from:"Recomendaciones de cuidado prenatal" },
   { role:"Ginecología y Obstetricia",  name:"Sociedades de ginecología",       badge:"Guías clínicas",   initials:"GO",  color:"#C4693A", from:"Protocolos de seguimiento del embarazo" },
   { role:"Nutrición perinatal",        name:"Guías de nutrición prenatal",     badge:"Fuentes oficiales", initials:"NP",  color:"#8B72CF", from:"Recomendaciones nutricionales públicas" },
 ];
+const SOURCES_EN = [
+  { role:"Maternal & perinatal health", name:"World Health Organization", badge:"Public guidelines",    initials:"WHO", color:"#3A8070", from:"Prenatal care recommendations" },
+  { role:"Gynecology & Obstetrics",  name:"Gynecology societies",       badge:"Clinical guidelines",   initials:"GO",  color:"#C4693A", from:"Pregnancy monitoring protocols" },
+  { role:"Perinatal nutrition",        name:"Prenatal nutrition guidelines",     badge:"Official sources", initials:"PN",  color:"#8B72CF", from:"Public nutritional recommendations" },
+];
+const SOURCES_LIST = CUR_LANG === "en" ? SOURCES_EN : SOURCES_ES;
 
 function ExpertFiche({ e }) {
   const [hov, setHov] = React.useState(false);
@@ -585,29 +775,29 @@ function Experts() {
           <div className="experts-glow" aria-hidden="true"></div>
           <div className="experts-in">
             <div>
-              <span className="eyebrow">Fuentes y rigor</span>
-              <h2>Construido sobre guías médicas de referencia.</h2>
-              <p>El contenido de Lumé se elabora contrastando guías clínicas públicas de organismos de referencia en salud materna. Porque en el embarazo, la confianza no se improvisa.</p>
+              <span className="eyebrow">{TR.exp_eyebrow}</span>
+              <h2>{TR.exp_h2}</h2>
+              <p>{TR.exp_p}</p>
 
               <div style={{display:"flex",flexDirection:"column",gap:9,marginTop:22}}>
                 {SOURCES_LIST.map((e,i)=>(<ExpertFiche key={i} e={e} />))}
               </div>
               <div style={{display:"inline-flex",alignItems:"center",gap:7,padding:"5px 12px",borderRadius:99,background:"rgba(212,175,80,.1)",border:"1px solid rgba(212,175,80,.22)",marginBottom:12,marginTop:16}}>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,80,.8)" strokeWidth="2.5" strokeLinecap="round"><path d="M12 3c.6 3.8 1.6 4.8 5.4 5.4-3.8.6-4.8 1.6-5.4 5.4-.6-3.8-1.6-4.8-5.4-5.4C10.4 7.8 11.4 6.8 12 3Z"/></svg>
-                <span style={{fontSize:11,fontWeight:700,color:"rgba(212,175,80,.85)",letterSpacing:".04em"}}>Comité en formación · 2026</span>
+                <span style={{fontSize:11,fontWeight:700,color:"rgba(212,175,80,.85)",letterSpacing:".04em"}}>{TR.exp_committee}</span>
               </div>
               <div style={{marginTop:16,display:"flex",alignItems:"center",gap:8}}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,80,.75)" strokeWidth="2" strokeLinecap="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"/><path d="M9 12l2 2 4-4"/></svg>
-                <a href="expertos.html" style={{fontSize:12,color:"rgba(212,175,80,.8)",fontWeight:600,textDecoration:"none",letterSpacing:".02em",borderBottom:"1px solid rgba(212,175,80,.28)",paddingBottom:1}}>¿Eres profesional de la salud? Únete al comité asesor →</a>
+                <a href="expertos.html" style={{fontSize:12,color:"rgba(212,175,80,.8)",fontWeight:600,textDecoration:"none",letterSpacing:".02em",borderBottom:"1px solid rgba(212,175,80,.28)",paddingBottom:1}}>{TR.exp_join}</a>
               </div>
             </div>
 
             <div className="exp-stats">
               {[
-                { svg: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,80,.85)" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12l4 4L19 7"/></svg>, n:"100%", l:"del contenido contrastado con guías clínicas de referencia" },
-                { svg: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,80,.85)" strokeWidth="2" strokeLinecap="round"><path d="M12 2a5 5 0 0 1 5 5v2a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5z"/><path d="M6.3 14.5A9 9 0 0 0 3 21h18a9 9 0 0 0-3.3-6.5"/></svg>, n:"2026", l:"comité clínico asesor en formación — con verificación colegiada" },
-                { svg: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,80,.85)" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>, n:"24/7", l:"asistente IA disponible a cualquier hora, sin esperas" },
-                { svg: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,80,.85)" strokeWidth="2" strokeLinecap="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/></svg>, n:"RGPD", l:"datos cifrados, privados y nunca cedidos a terceros" },
+                { svg: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,80,.85)" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12l4 4L19 7"/></svg>, n:"100%", l:TR.exp_stat1 },
+                { svg: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,80,.85)" strokeWidth="2" strokeLinecap="round"><path d="M12 2a5 5 0 0 1 5 5v2a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5z"/><path d="M6.3 14.5A9 9 0 0 0 3 21h18a9 9 0 0 0-3.3-6.5"/></svg>, n:"2026", l:TR.exp_stat2 },
+                { svg: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,80,.85)" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>, n:"24/7", l:TR.exp_stat3 },
+                { svg: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,80,.85)" strokeWidth="2" strokeLinecap="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/></svg>, n:"RGPD", l:TR.exp_stat4 },
               ].map((s,i) => (
                 <div className="exp-stat" key={i} style={{position:"relative",overflow:"hidden"}}>
                   <div style={{marginBottom:8,opacity:.9}}>{s.svg}</div>
@@ -622,7 +812,7 @@ function Experts() {
     </section>);
 }
 
-const TST = [
+const TST_ES = [
   { q: "Me sentí acompañada en cada cambio. El asistente me sacó de dudas a las 3 de la mañana, sin hacerme sentir tonta.", n: "Camila R.", a: "Semana 32", tag: "Asistente" },
   { q: "Saber que todo se apoya en guías médicas oficiales me dio una tranquilidad enorme. Es la única app que recomendé a mi grupo.", n: "Valeria M.", a: "Semana 18", tag: "Confianza" },
   { q: "El plan de nutrición me ayudó muchísimo con las náuseas. Por fin algo pensado de verdad para nosotras.", n: "Lucía F.", a: "Semana 26", tag: "Nutrición" },
@@ -632,6 +822,17 @@ const TST = [
   { q: "La sección de síntomas me alertó de que debía llamar a mi matrona. Gracias a Lumé fui a tiempo.", n: "María G.", a: "Semana 28", tag: "Salud" },
   { q: "Las recetas del plan nutricional son ricas de verdad. Por fin puedo comer sano sin que me dé asco.", n: "Paula S.", a: "Semana 20", tag: "Nutrición" },
 ];
+const TST_EN = [
+  { q: "I felt truly accompanied through every change. The assistant answered my doubts at 3am without making me feel silly.", n: "Camila R.", a: "Week 32", tag: "Assistant" },
+  { q: "Knowing everything is backed by official medical guidelines gave me huge peace of mind. It's the only app I recommended to my group.", n: "Valeria M.", a: "Week 18", tag: "Trust" },
+  { q: "The nutrition plan helped me so much with nausea. Finally something truly designed for us.", n: "Lucía F.", a: "Week 26", tag: "Nutrition" },
+  { q: "I never thought an app would make me cry with joy. Watching my baby grow week by week is something special.", n: "Andrea P.", a: "Week 14", tag: "Emotion" },
+  { q: "I entered the first trimester full of fears and Lumé was with me through every symptom. I felt less alone.", n: "Sofía T.", a: "Week 10", tag: "Reassurance" },
+  { q: "Marking favorite names with my partner was a precious moment. We have 47 marked and still can't decide.", n: "Isabel C.", a: "Week 22", tag: "Names" },
+  { q: "The symptoms section alerted me to call my midwife. Thanks to Lumé I got there in time.", n: "María G.", a: "Week 28", tag: "Health" },
+  { q: "The nutrition plan recipes are genuinely delicious. I can finally eat healthy without feeling sick.", n: "Paula S.", a: "Week 20", tag: "Nutrition" },
+];
+const TST = CUR_LANG === "en" ? TST_EN : TST_ES;
 
 function TstCard({ t }) {
   const ref = React.useRef(null);
@@ -688,10 +889,10 @@ function Testimonials() {
     <section className="section tst-section">
       <div className="wrap">
         <div className="sec-head center reveal">
-          <span className="eyebrow center">Mamás Lumé</span>
-          <h2 className="sec-title">Cuidadas de verdad.</h2>
-          <p className="sec-lead">Así queremos que lo viva cada mamá.</p>
-          <p style={{fontSize:11,color:"var(--muted)",opacity:.65,marginTop:6,fontStyle:"italic"}}>Historias ilustrativas. Pronto, los testimonios reales de nuestras primeras usuarias.</p>
+          <span className="eyebrow center">{TR.tst_eyebrow}</span>
+          <h2 className="sec-title">{TR.tst_h2}</h2>
+          <p className="sec-lead">{TR.tst_lead}</p>
+          <p style={{fontSize:11,color:"var(--muted)",opacity:.65,marginTop:6,fontStyle:"italic"}}>{TR.tst_note}</p>
         </div>
       </div>
       <div className="tst-track-wrap">
@@ -712,12 +913,11 @@ function DescargaSection({ appHref }) {
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:64,alignItems:"center"}}>
           {/* Copy */}
           <div className="reveal">
-            <span className="eyebrow">Descárgala</span>
-            <h2 style={{fontFamily:"var(--font-display)",fontSize:"clamp(32px,4vw,52px)",lineHeight:1.05,letterSpacing:"-.03em",margin:"16px 0 0"}}>
-              Lumé en tu bolsillo,<br/><em style={{color:"var(--primary)"}}>desde el primer día.</em>
+            <span className="eyebrow">{TR.desc_eyebrow}</span>
+            <h2 style={{fontFamily:"var(--font-display)",fontSize:"clamp(32px,4vw,52px)",lineHeight:1.05,letterSpacing:"-.03em",margin:"16px 0 0"}} dangerouslySetInnerHTML={{ __html: TR.desc_h2 }}>
             </h2>
             <p style={{fontSize:16.5,color:"var(--ink-2)",margin:"20px 0 32px",lineHeight:1.65,maxWidth:420}}>
-              Disponible pronto en App Store y Google Play. Únete ahora y sé de las primeras en acceder — 7 días completos de Bienestar sin tarjeta.
+              {TR.desc_p}
             </p>
             <div style={{display:"flex",gap:14,flexWrap:"wrap"}}>
               {/* App Store */}
@@ -726,8 +926,8 @@ function DescargaSection({ appHref }) {
                 onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="0 6px 20px rgba(20,10,6,.25)"}}>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
                 <div>
-                  <div style={{fontSize:10,fontWeight:600,opacity:.7,letterSpacing:".04em"}}>Próximamente</div>
-                  <div style={{fontSize:15,fontWeight:700,letterSpacing:"-.01em"}}>App Store</div>
+                  <div style={{fontSize:10,fontWeight:600,opacity:.7,letterSpacing:".04em"}}>{TR.desc_soon}</div>
+                  <div style={{fontSize:15,fontWeight:700,letterSpacing:"-.01em"}}>{TR.desc_appstore}</div>
                 </div>
               </a>
               {/* Google Play */}
@@ -736,14 +936,14 @@ function DescargaSection({ appHref }) {
                 onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="0 6px 20px rgba(20,10,6,.25)"}}>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5v-17c0-.83.94-1.3 1.6-.8l14 8.5c.6.36.6 1.24 0 1.6l-14 8.5c-.66.5-1.6.03-1.6-.8z" fill="#34A853"/><path d="M3 3.5l9 9-9 8V3.5z" fill="#4285F4"/><path d="M12 12.5l3 3-12 7 9-10z" fill="#EA4335"/><path d="M3 3.5l12 7-3 3-9-10z" fill="#FBBC05"/></svg>
                 <div>
-                  <div style={{fontSize:10,fontWeight:600,opacity:.7,letterSpacing:".04em"}}>Próximamente</div>
-                  <div style={{fontSize:15,fontWeight:700,letterSpacing:"-.01em"}}>Google Play</div>
+                  <div style={{fontSize:10,fontWeight:600,opacity:.7,letterSpacing:".04em"}}>{TR.desc_soon}</div>
+                  <div style={{fontSize:15,fontWeight:700,letterSpacing:"-.01em"}}>{TR.desc_googleplay}</div>
                 </div>
               </a>
             </div>
             {/* Social proof pills */}
             <div style={{display:"flex",gap:10,flexWrap:"wrap",marginTop:28}}>
-              {[["Pronto","App Store & Play"],["7 días","Prueba gratis"],["Sin tarjeta","Cancela cuando quieras"]].map(([n,l],i)=>(
+              {[[TR.desc_pill1_n,TR.desc_pill1_l],[TR.desc_pill2_n,TR.desc_pill2_l],[TR.desc_pill3_n,TR.desc_pill3_l]].map(([n,l],i)=>(
 
                 <div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 14px",borderRadius:99,background:"var(--surface)",border:"1px solid var(--line)",boxShadow:"var(--sh-1)"}}>
                   <span style={{fontFamily:"var(--font-display)",fontSize:16,fontWeight:700,color:"var(--primary)"}}>{n}</span>
@@ -777,7 +977,7 @@ function DescargaSection({ appHref }) {
                 <div style={{width:32,height:32,borderRadius:10,background:"linear-gradient(135deg,#A8492A,#C8952A)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12l4 4L19 7"/></svg>
                 </div>
-                <div><div style={{fontSize:13,fontWeight:700,color:"var(--ink)"}}>Sin tarjeta</div><div style={{fontSize:11,color:"var(--muted)"}}>7 días gratis</div></div>
+                <div><div style={{fontSize:13,fontWeight:700,color:"var(--ink)"}}>{TR.desc_tag1_t}</div><div style={{fontSize:11,color:"var(--muted)"}}>{TR.desc_tag1_s}</div></div>
               </div>
               <div style={{position:"absolute",bottom:200,left:-24,
                 background:"rgba(255,255,255,.52)",backdropFilter:"blur(20px) saturate(180%)",WebkitBackdropFilter:"blur(20px) saturate(180%)",
@@ -788,7 +988,7 @@ function DescargaSection({ appHref }) {
                 <div style={{width:28,height:28,borderRadius:8,background:"linear-gradient(135deg,#E4BC7E,#A8492A)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12l5 5L19 7"/></svg>
                 </div>
-                <div><div style={{fontSize:12,fontWeight:700,color:"var(--ink)"}}>Ejercicios prenatales</div><div style={{fontSize:10,color:"var(--muted)"}}>seguros en cada trimestre</div></div>
+                <div><div style={{fontSize:12,fontWeight:700,color:"var(--ink)"}}>{TR.desc_tag2_t}</div><div style={{fontSize:10,color:"var(--muted)"}}>{TR.desc_tag2_s}</div></div>
               </div>
             </div>
           </div>
@@ -835,13 +1035,13 @@ function StripeCheckoutModal({ planId, onClose }) {
       <div onClick={(e) => e.stopPropagation()} style={{width:"min(480px, 100%)",maxHeight:"88vh",overflowY:"auto",background:"#FBF3EB",borderRadius:24,boxShadow:"0 32px 80px rgba(0,0,0,.4)",padding:"22px 18px 26px",position:"relative"}}>
         <button onClick={onClose} aria-label="Cerrar" style={{position:"absolute",top:14,right:14,width:32,height:32,borderRadius:"50%",border:"1px solid rgba(168,73,42,.2)",background:"#fff",color:"#A8492A",fontSize:16,cursor:"pointer",lineHeight:1}}>×</button>
         <div style={{textAlign:"center",marginBottom:12}}>
-          <div style={{fontFamily:"var(--font-display, Georgia, serif)",fontSize:24,color:"#3d1a0e"}}>Completa tu suscripción</div>
-          <div style={{fontSize:13,color:"#8a6a5a",marginTop:4}}>Pago seguro con Stripe. Dentro del recuadro puedes elegir facturación mensual o anual.</div>
-          <div style={{fontSize:11,color:"#a08070",marginTop:6,fontStyle:"italic"}}>¿No ves el botón de pago o no redirige? Prueba en tu sitio ya publicado — esta vista previa de diseño bloquea el redireccionamiento de Stripe.</div>
+          <div style={{fontFamily:"var(--font-display, Georgia, serif)",fontSize:24,color:"#3d1a0e"}}>{TR.stripe_title}</div>
+          <div style={{fontSize:13,color:"#8a6a5a",marginTop:4}}>{TR.stripe_sub}</div>
+          <div style={{fontSize:11,color:"#a08070",marginTop:6,fontStyle:"italic"}}>{TR.stripe_note}</div>
         </div>
         {ready
           ? <stripe-pricing-table pricing-table-id={STRIPE_TABLES[planId] || STRIPE_TABLES.bienestar} publishable-key={STRIPE_PK}></stripe-pricing-table>
-          : <div style={{padding:"48px 0",textAlign:"center",color:"#8a6a5a",fontSize:14}}>Cargando pago seguro…</div>}
+          : <div style={{padding:"48px 0",textAlign:"center",color:"#8a6a5a",fontSize:14}}>{TR.stripe_loading}</div>}
       </div>
     </div>
   );
@@ -852,7 +1052,7 @@ function Pricing({ appHref }) {
   const [stripePlan, setStripePlan] = React.useState(null);
   const [showSignup, setShowSignup] = React.useState(false);
 
-  const PLANS = [
+  const PLANS_ES = [
     {
       id: "esencial",
       name: "Esencial",
@@ -935,16 +1135,100 @@ function Pricing({ appHref }) {
     },
   ];
 
+  const PLANS_EN = [
+    {
+      id: "esencial",
+      name: "Essential",
+      tag: "To start your journey",
+      price: 0,
+      annualTotal: 0,
+      annualMonthly: 0,
+      badge: null,
+      accent: "#8a6a5a",
+      cta: "Create a free account",
+      ctaClass: "btn btn-line price-btn",
+      features: [
+        { t:"Weekly baby tracker",              inc:true },
+        { t:"Medical appointment log",         inc:true },
+        { t:"Symptoms & wellness",              inc:true },
+        { t:"Weight and kick tracking",         inc:true },
+        { t:"Basic photos and ultrasounds",      inc:true },
+        { t:"Baby names",                   inc:true },
+        { t:"3 assistant chats/day",      inc:true },
+        { t:"Unlimited AI assistant",            inc:false },
+        { t:"Prenatal meditations & music",    inc:false },
+        { t:"Expert consultations",            inc:false },
+      ]
+    },
+    {
+      id: "bienestar",
+      name: "Wellness",
+      tag: "The complete companion",
+      price: 9,
+      annualTotal: 75,
+      annualMonthly: 6.25,
+      annualSaving: 31,
+      badge: "Most popular",
+      accent: "#A8492A",
+      cta: "Try 7 days free",
+      ctaClass: "btn btn-primary price-btn",
+      featured: true,
+      features: [
+        { t:"Everything in Essential",                   inc:true },
+        { t:"Unlimited AI assistant",                inc:true },
+        { t:"AI-personalized nutrition plan", inc:true },
+        { t:"Prenatal meditations",               inc:true },
+        { t:"Music for your baby",                   inc:true },
+        { t:"Meditation with music for mom",       inc:true },
+        { t:"Prenatal exercises and postures",      inc:true },
+        { t:"Weekly premium guide",                  inc:true },
+        { t:"Pregnancy diary",                   inc:true },
+        { t:"Unlimited ultrasounds",                inc:true },
+        { t:"Partner mode",                           inc:true },
+        { t:"Meditation for babies",                 inc:false },
+        { t:"Expert consultations",                inc:false },
+      ]
+    },
+    {
+      id: "profesional",
+      name: "Professional",
+      tag: "No limits, no commitments",
+      price: 19,
+      annualTotal: 144,
+      annualMonthly: 12,
+      annualSaving: 37,
+      badge: "✦ Premium",
+      badgeGold: true,
+      accent: "#C8952A",
+      cta: "Choose Professional",
+      ctaClass: "btn btn-line price-btn",
+      features: [
+        { t:"Everything in Wellness",              inc:true },
+        { t:"Meditation for babies (Hz)",        inc:true },
+        { t:"Exportable medical history",       inc:true },
+        { t:"Early access to new features",     inc:true },
+        { t:"24/7 priority support",          inc:true },
+        { t:"── COMING SOON ──",               inc:true, soon:true, divider:true },
+        { t:"Consultations with committee experts", inc:true, soon:true },
+        { t:"Postpartum and newborn tracking", inc:true, soon:true },
+        { t:"Shared medical dashboard",      inc:true, soon:true },
+        { t:"Baby mode: first months of life", inc:true, soon:true },
+        { t:"Network of partner clinics",           inc:true, soon:true },
+      ]
+    },
+  ];
+  const PLANS = CUR_LANG === "en" ? PLANS_EN : PLANS_ES;
+
   return (
     <section className="section" id="precios">
       <div className="wrap">
         <div className="sec-head center reveal">
-          <span className="eyebrow center">Planes</span>
-          <h2 className="sec-title">Elige cómo vivirlo.</h2>
-          <p className="sec-lead">Empieza gratis. Mejora cuando quieras. Cancela en cualquier momento.</p>
+          <span className="eyebrow center">{TR.pricing_eyebrow}</span>
+          <h2 className="sec-title">{TR.pricing_h2}</h2>
+          <p className="sec-lead">{TR.pricing_lead}</p>
           <div className="bill" role="group" aria-label="Facturación">
-            <button className={!annual ? "on" : ""} onClick={() => setAnnual(false)}>Mensual</button>
-            <button className={annual ? "on" : ""} onClick={() => setAnnual(true)}>Anual <em>ahorra hasta 37%</em></button>
+            <button className={!annual ? "on" : ""} onClick={() => setAnnual(false)}>{TR.bill_monthly}</button>
+            <button className={annual ? "on" : ""} onClick={() => setAnnual(true)}>{TR.bill_annual} <em>{TR.bill_save}</em></button>
           </div>
         </div>
 
@@ -960,10 +1244,10 @@ function Pricing({ appHref }) {
                 <div className="price-tag">{plan.tag}</div>
                 <div className="price-amt">
                   {displayPrice === 0
-                    ? <span className="price-big">Gratis</span>
-                    : <><span className="price-cur">$</span><span className="price-big">{displayPrice}</span><span className="price-per">/mes</span></>}
+                    ? <span className="price-big">{TR.free_label}</span>
+                    : <><span className="price-cur">$</span><span className="price-big">{displayPrice}</span><span className="price-per">{TR.per_month}</span></>}
                   {displayPrice > 0 && annual && (
-                    <div style={{ fontSize:11, color:plan.accent, opacity:.8, marginTop:3, fontWeight:600 }}>Facturado ${plan.annualTotal}/año · ahorras {plan.annualSaving}%</div>
+                    <div style={{ fontSize:11, color:plan.accent, opacity:.8, marginTop:3, fontWeight:600 }}>{TR.billed} ${plan.annualTotal}{TR.per_year} · {TR.saves} {plan.annualSaving}%</div>
                   )}
                 </div>
 
@@ -971,7 +1255,7 @@ function Pricing({ appHref }) {
                   {plan.features.map((f, i) => f.divider ? (
                     <li key={i} style={{ display:"flex", alignItems:"center", gap:8, margin:"8px 0 4px", listStyle:"none" }}>
                       <div style={{ flex:1, height:1, background:`${plan.accent}25` }} />
-                      <span style={{ fontSize:9, fontWeight:800, letterSpacing:".1em", textTransform:"uppercase", color:plan.accent, padding:"2px 8px", borderRadius:99, background:`${plan.accent}12`, border:`1px solid ${plan.accent}25`, whiteSpace:"nowrap" }}>Próximamente</span>
+                      <span style={{ fontSize:9, fontWeight:800, letterSpacing:".1em", textTransform:"uppercase", color:plan.accent, padding:"2px 8px", borderRadius:99, background:`${plan.accent}12`, border:`1px solid ${plan.accent}25`, whiteSpace:"nowrap" }}>{TR.desc_soon}</span>
                       <div style={{ flex:1, height:1, background:`${plan.accent}25` }} />
                     </li>
                   ) : (
@@ -1000,14 +1284,14 @@ function Pricing({ appHref }) {
                   : <button className={plan.ctaClass} style={{cursor:"pointer"}} onClick={() => {
                       setStripePlan(plan.id);
                       try { if (window.gtag) window.gtag("event", "begin_checkout", { plan: plan.id }); } catch (e) {}
-                    }}>{(plan.id==="bienestar" && annual) ? `Elegir ${plan.name}` : plan.cta}</button>}
+                    }}>{(plan.id==="bienestar" && annual) ? `${CUR_LANG==="en"?"Choose":"Elegir"} ${plan.name}` : plan.cta}</button>}
               </article>
             );
           })}
         </div>
 
         <p className="sec-lead center reveal" style={{ marginTop:28, fontSize:13, opacity:.6 }}>
-          Bienestar mensual incluye 7 días de prueba gratis · Sin tarjeta de crédito · Cancela cuando quieras
+          {TR.pricing_disclaimer}
         </p>
 
         {stripePlan && <StripeCheckoutModal planId={stripePlan} onClose={() => setStripePlan(null)} />}
@@ -1017,7 +1301,7 @@ function Pricing({ appHref }) {
   );
 }
 
-const FAQS = [
+const FAQS_ES = [
   { ico:"shield", tag:"Contenido",  q:"¿La información está revisada por profesionales?", a:"El contenido de Lumé se elabora contrastando guías clínicas públicas de organismos de referencia en salud materna (como la OMS y las sociedades de ginecología). Además, estamos formando un comité clínico asesor con verificación colegiada; si eres profesional, puedes unirte desde nuestra página de expertos." },
   { ico:"spark",  tag:"Asistente",  q:"¿El asistente reemplaza a mi médico?",              a:"No, y nunca lo hará. Lumé te informa, te tranquiliza y te ayuda a preparar tus consultas, pero siempre te orientará a tu profesional de salud ante cualquier señal de alerta." },
   { ico:"check",  tag:"Planes",     q:"¿Puedo cancelar cuando quiera?",                    a:"Por supuesto. Puedes cancelar tu suscripción en cualquier momento desde la app, sin preguntas ni penalizaciones. Conservarás el acceso hasta el final del periodo pagado." },
@@ -1025,6 +1309,15 @@ const FAQS = [
   { ico:"leaf",   tag:"Inicio",     q:"¿Desde qué semana puedo empezar a usar Lumé?",      a:"Desde el primer día que sabes que estás embarazada. La app crece contigo semana a semana, adaptándose al trimestre y a los hitos de tu bebé." },
   { ico:"heart",  tag:"Planes",     q:"¿Hay alguna versión gratuita?",                     a:"Sí: los primeros 7 días son completamente gratis, sin tarjeta de crédito. También tenemos un plan básico gratuito con funciones esenciales." },
 ];
+const FAQS_EN = [
+  { ico:"shield", tag:"Content",  q:"Is the information reviewed by professionals?", a:"Lumé's content is developed by cross-checking public clinical guidelines from leading maternal health organizations (like the WHO and gynecology societies). We're also forming a clinical advisory committee with peer verification; if you're a healthcare professional, you can join from our experts page." },
+  { ico:"spark",  tag:"Assistant",  q:"Does the assistant replace my doctor?",              a:"No, and it never will. Lumé informs you, reassures you and helps you prepare for your appointments, but will always direct you to your healthcare provider for any warning sign." },
+  { ico:"check",  tag:"Plans",     q:"Can I cancel anytime?",                    a:"Of course. You can cancel your subscription at any time from the app, no questions asked and no penalties. You'll keep access until the end of the paid period." },
+  { ico:"shield", tag:"Privacy", q:"Is my data safe?",                         a:"Your privacy is sacred. We encrypt all your information, comply with GDPR, and never sell your data to third parties. You decide what to share." },
+  { ico:"leaf",   tag:"Getting started",     q:"From what week can I start using Lumé?",      a:"From the first day you know you're pregnant. The app grows with you week by week, adapting to your trimester and your baby's milestones." },
+  { ico:"heart",  tag:"Plans",     q:"Is there a free version?",                     a:"Yes: the first 7 days are completely free, no credit card required. We also have a free basic plan with essential features." },
+];
+const FAQS = CUR_LANG === "en" ? FAQS_EN : FAQS_ES;
 
 function FAQ() {
   const [open, setOpen] = React.useState(null);
@@ -1032,9 +1325,9 @@ function FAQ() {
     <section className="section faq-premium" id="faq">
       <div className="wrap">
         <div className="sec-head center reveal">
-          <span className="eyebrow center">Dudas frecuentes</span>
-          <h2 className="sec-title">Lo que toda mamá pregunta.</h2>
-          <p className="sec-lead">Respuestas directas, sin rodeos.</p>
+          <span className="eyebrow center">{TR.faq_eyebrow}</span>
+          <h2 className="sec-title">{TR.faq_h2}</h2>
+          <p className="sec-lead">{TR.faq_lead}</p>
         </div>
         <div className="faq-grid reveal">
           {FAQS.map(({ ico, tag, q, a }, i) => (
@@ -1116,23 +1409,23 @@ function FinalCTA({ appHref }) {
             {/* Beta badge */}
             <div style={{display:'inline-flex',alignItems:'center',gap:10,padding:'8px 16px',borderRadius:99,background:'rgba(212,175,80,.12)',border:'1px solid rgba(212,175,80,.28)',marginBottom:24}}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,80,.9)" strokeWidth="2" strokeLinecap="round"><path d="M12 3c.6 3.8 1.6 4.8 5.4 5.4-3.8.6-4.8 1.6-5.4 5.4-.6-3.8-1.6-4.8-5.4-5.4C10.4 7.8 11.4 6.8 12 3Z"/></svg>
-              <span style={{fontSize:12.5,fontWeight:700,color:'rgba(212,175,80,.9)'}}>✦ Acceso anticipado · Beta 2026</span>
-              <span style={{fontSize:11,color:'rgba(255,255,255,.4)'}}>· 7 días gratis</span>
+              <span style={{fontSize:12.5,fontWeight:700,color:'rgba(212,175,80,.9)'}}>{TR.final_badge}</span>
+              <span style={{fontSize:11,color:'rgba(255,255,255,.4)'}}>{TR.final_badge2}</span>
             </div>
 
-            <h2>Tu embarazo merece<br /><em>esta calma.</em></h2>
-            <p style={{marginBottom:22}}>Lumé te acompaña semana a semana con contenido clínico, herramientas de seguimiento y un asistente que no duerme.</p>
+            <h2 dangerouslySetInnerHTML={{ __html: TR.final_h2 }}></h2>
+            <p style={{marginBottom:22}}>{TR.final_p}</p>
 
             {/* Testimonial pull quote */}
             <div style={{padding:"18px 20px",borderRadius:18,background:"rgba(255,255,255,.07)",border:"1px solid rgba(255,255,255,.11)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",marginBottom:26}}>
-              <p style={{fontSize:14.5,fontStyle:"italic",color:"rgba(255,255,255,.82)",lineHeight:1.72,margin:"0 0 14px"}}>"Me sentí acompañada en cada cambio. El asistente me sacó de dudas a las 3 de la mañana, sin hacerme sentir tonta."</p>
+              <p style={{fontSize:14.5,fontStyle:"italic",color:"rgba(255,255,255,.82)",lineHeight:1.72,margin:"0 0 14px"}}>"{TST[0].q}"</p>
               <div style={{display:"flex",alignItems:"center",gap:10}}>
                 <div style={{width:36,height:36,borderRadius:"50%",flexShrink:0,background:"linear-gradient(135deg,rgba(168,73,42,.75),rgba(200,149,42,.65))",display:"flex",alignItems:"center",justifyContent:"center",border:"1.5px solid rgba(212,175,80,.32)"}}>
                   <span style={{fontSize:15,fontWeight:800,color:"rgba(255,255,255,.92)",fontFamily:"'Cormorant Garamond',serif"}}>C</span>
                 </div>
                 <div style={{flex:1}}>
-                  <div style={{fontSize:13,fontWeight:700,color:"rgba(255,255,255,.9)"}}>Camila R.</div>
-                  <div style={{fontSize:11,color:"rgba(212,175,80,.65)",fontWeight:500}}>Semana 32 · Beta Lumé</div>
+                  <div style={{fontSize:13,fontWeight:700,color:"rgba(255,255,255,.9)"}}>{TST[0].n}</div>
+                  <div style={{fontSize:11,color:"rgba(212,175,80,.65)",fontWeight:500}}>{TST[0].a} {TR.final_quote_meta}</div>
                 </div>
                 <div style={{display:"flex",gap:2}}>{[1,2,3,4,5].map(i=><svg key={i} width="11" height="11" viewBox="0 0 24 24" fill="rgba(212,175,80,.85)" stroke="none"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8L3.5 9.7l5.9-.9L12 3.5Z"/></svg>)}</div>
               </div>
@@ -1140,11 +1433,7 @@ function FinalCTA({ appHref }) {
 
             {/* What you get */}
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px 16px',marginBottom:28,textAlign:'left'}}>
-              {[
-                'Tracker semanal del bebé','Asistente IA 24/7',
-                'Seguimiento de síntomas','Plan nutricional',
-                'Control de citas','Sistema de recompensas'
-              ].map((item,i) => (
+              {TR.final_items.map((item,i) => (
                 <div key={i} style={{display:'flex',alignItems:'center',gap:8}}>
                   <div style={{width:16,height:16,borderRadius:'50%',background:'rgba(100,200,80,.18)',border:'1px solid rgba(100,200,80,.4)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
                     <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="rgba(120,210,90,.9)" strokeWidth="3.5" strokeLinecap="round"><path d="M5 12l4 4L19 7"/></svg>
@@ -1155,10 +1444,10 @@ function FinalCTA({ appHref }) {
             </div>
 
             <div className="final-cta">
-              <a className="btn btn-primary" href="#" onClick={e=>{e.preventDefault();window.__lumeOpenModal?.();}}>Empezar gratis — 7 días</a>
-              <a className="btn btn-ghost-inv" href="#precios">Ver planes</a>
+              <a className="btn btn-primary" href="#" onClick={e=>{e.preventDefault();window.__lumeOpenModal?.();}}>{TR.final_cta1}</a>
+              <a className="btn btn-ghost-inv" href="#precios">{TR.final_cta2}</a>
             </div>
-            <p className="final-note">Sin tarjeta de crédito · cancela cuando quieras · datos protegidos RGPD</p>
+            <p className="final-note">{TR.final_note}</p>
           </div>
         </div>
       </div>
@@ -1173,7 +1462,7 @@ function Footer() {
         <div className="fp-top">
           <div className="fp-brand">
             <Logo />
-            <p>Tu compañera de maternidad consciente.<br/>Semana a semana, con calma y ciencia.</p>
+            <p>{TR.footer_tagline}<br/>{TR.footer_tagline2}</p>
             <div className="fp-social">
               <a href="#" aria-label="Instagram" className="fp-soc-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg></a>
               <a href="#" aria-label="TikTok" className="fp-soc-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.6 3a4 4 0 01-4-4h-3v14.5a2.5 2.5 0 11-2.5-2.4V8a6.5 6.5 0 106.5 6.5V7.2a7.5 7.5 0 004.5 1.5V5.5A4 4 0 0119.6 3z"/></svg></a>
@@ -1182,28 +1471,28 @@ function Footer() {
           </div>
           <div className="fp-links-group">
             <div className="fp-col">
-              <h5>Producto</h5>
-              <a href="#caracteristicas">Características</a>
-              <a href="#semana">Seguimiento semanal</a>
-              <a href="#precios">Precios</a>
-              <a href="#faq">Preguntas frecuentes</a>
+              <h5>{TR.footer_col_producto}</h5>
+              <a href="#caracteristicas">{TR.footer_caracteristicas}</a>
+              <a href="#semana">{TR.footer_seguimiento}</a>
+              <a href="#precios">{TR.footer_precios}</a>
+              <a href="#faq">{TR.footer_faq}</a>
             </div>
             <div className="fp-col">
-              <h5>Compañía</h5>
-              <a href="#expertos">Fuentes y rigor</a>
-              <a href="expertos.html" style={{color:"var(--gold,#E6CFA1)",fontWeight:600}}>¿Eres profesional? Únete →</a>
-              <a href="mailto:contacto@lume-app.com">Contacto</a>
+              <h5>{TR.footer_col_compania}</h5>
+              <a href="#expertos">{TR.footer_fuentes}</a>
+              <a href="expertos.html" style={{color:"var(--gold,#E6CFA1)",fontWeight:600}}>{TR.footer_profesional}</a>
+              <a href="mailto:contacto@lume-app.com">{TR.footer_contacto}</a>
             </div>
             <div className="fp-col">
-              <h5>Legal</h5>
-              <a href="legal.html">Privacidad</a>
-              <a href="legal.html">Términos de uso</a>
-              <a href="legal.html">Cookies</a>
+              <h5>{TR.footer_col_legal}</h5>
+              <a href="legal.html">{TR.footer_privacidad}</a>
+              <a href="legal.html">{TR.footer_terminos}</a>
+              <a href="legal.html">{TR.footer_cookies}</a>
             </div>
           </div>
         </div>
         <div className="fp-bottom">
-          <span>© 2026 Lumé · Hecho con cuidado, semana a semana.</span>
+          <span>{TR.footer_copyright}</span>
           <div className="fp-badges">
             <span className="fp-badge">RGPD</span>
             <span className="fp-badge">Beta 2026</span>
@@ -1234,15 +1523,14 @@ function CookieBanner() {
         <path d="M12 3c.6 3.8 1.6 4.8 5.4 5.4-3.8.6-4.8 1.6-5.4 5.4-.6-3.8-1.6-4.8-5.4-5.4C10.4 7.8 11.4 6.8 12 3Z"/>
       </svg>
       <p style={{flex:1, fontSize:13, color:"rgba(255,255,255,.68)", lineHeight:1.55, margin:0, minWidth:200}}>
-        Usamos cookies esenciales y de analítica para mejorar tu experiencia.
-        Consulta nuestra <a href="legal.html" style={{color:"rgba(212,175,80,.9)", textDecoration:"none", fontWeight:600}}>Política de privacidad</a>.
+        {TR.cookie_text} <a href="legal.html" style={{color:"rgba(212,175,80,.9)", textDecoration:"none", fontWeight:600}}>{TR.cookie_link}</a>.
       </p>
       <div style={{display:"flex", gap:10, flexShrink:0}}>
         <button onClick={reject} style={{padding:"9px 16px", borderRadius:10, border:"1px solid rgba(255,255,255,.18)", background:"transparent", color:"rgba(255,255,255,.5)", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit", transition:"color .15s"}} onMouseEnter={e=>e.target.style.color="rgba(255,255,255,.8)"} onMouseLeave={e=>e.target.style.color="rgba(255,255,255,.5)"}>
-          Solo esenciales
+          {TR.cookie_reject}
         </button>
         <button onClick={accept} style={{padding:"9px 20px", borderRadius:10, border:"none", background:"linear-gradient(135deg,#A8492A,#8B3520)", color:"#FBF3EB", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit", boxShadow:"0 4px 14px rgba(168,73,42,.45)"}}>
-          Aceptar todo
+          {TR.cookie_accept}
         </button>
       </div>
     </div>
