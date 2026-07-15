@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Legal — Lumé</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --terra: #A8492A;
+  --terra-dark: #8B3520;
+  --cream: #F9F1EB;
+  --cream-dark: #EFE7DB;
+  --ink: #3d1a0e;
+  --ink-soft: #5a3a2a;
+  --ink-muted: #8a6a5a;
+  --gold: #E6CFA1;
+}
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--cream-dark);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(239,231,219,.94); backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(168,73,42,.1);
+  padding: 0 clamp(20px,5vw,64px);
+  display: flex; align-items: center; justify-content: space-between; height: 64px;
+}
+.nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+.nav-logo img { width:34px; height:34px; object-fit:contain; }
+.nav-logo span { font-family:'Cormorant Garamond',serif; font-size:21px; font-weight:600; color:var(--ink); }
+.nav-actions { display:flex; align-items:center; gap:16px; }
+.nav-back { display:flex; align-items:center; gap:6px; text-decoration:none; font-size:13px; font-weight:600; color:var(--terra); transition:gap .2s; }
+.nav-back:hover { gap:10px; }
+.lang-btn { background:transparent; border:1px solid rgba(168,73,42,.25); border-radius:99px; padding:5px 12px; font-family:inherit; font-size:12px; font-weight:700; letter-spacing:.04em; color:var(--terra); cursor:pointer; }
+.lang-btn:hover { background:rgba(168,73,42,.08); }
+
+/* ── HEADER ── */
+.page-header {
+  background: linear-gradient(155deg,#2a0f08 0%,#5a2a14 45%,#8B3520 100%);
+  padding: clamp(56px,7vw,88px) clamp(20px,5vw,64px) 48px;
+  position: relative; overflow: hidden;
+}
+.page-header::before {
+  content:''; position:absolute; top:-80px; right:-60px;
+  width:340px; height:340px; border-radius:50%;
+  background: radial-gradient(circle,rgba(230,207,161,.22) 0%,transparent 70%);
+  pointer-events:none;
+}
+.page-header::after {
+  content:''; position:absolute; bottom:-70px; left:-50px;
+  width:220px; height:220px; border-radius:50%;
+  background: radial-gradient(circle,rgba(255,150,100,.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.page-header-inner { max-width: 800px; margin: 0 auto; position:relative; z-index:1; }
+.page-header-tag {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:5px 13px; border-radius:99px;
+  background:rgba(230,207,161,.12); border:1px solid rgba(230,207,161,.32);
+  font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:16px;
+}
+.page-header h1 {
+  font-family:'Cormorant Garamond',serif; font-size:clamp(34px,5vw,54px);
+  font-weight:500; color:#fff; line-height:1.12; margin-bottom:14px;
+  text-shadow: 0 2px 24px rgba(0,0,0,.2);
+}
+.page-header p { font-size:14.5px; color:rgba(255,245,238,.62); line-height:1.65; max-width:480px; }
+.last-update {
+  display:inline-flex; align-items:center; gap:6px; margin-top:18px;
+  padding:6px 13px; border-radius:8px; background:rgba(255,255,255,.08); border:1px solid rgba(230,207,161,.2);
+  font-size:11px; color:rgba(255,245,238,.55);
+}
+
+/* ── TABS ── */
+.tabs-bar {
+  background: var(--cream); border-bottom: 1px solid rgba(168,73,42,.1);
+  padding: 0 clamp(20px,5vw,64px);
+  display: flex; gap: 0; position: sticky; top: 64px; z-index: 90;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.tab-btn {
+  padding: 14px 20px; border: none; background: transparent;
+  font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+  color: var(--ink-muted); border-bottom: 2px solid transparent;
+  white-space: nowrap; transition: color .2s, border-color .2s;
+}
+.tab-btn:hover { color: var(--terra); }
+.tab-btn.active { color: var(--terra); border-bottom-color: var(--terra); }
+
+/* ── CONTENT ── */
+.content-wrap {
+  max-width: 800px; margin: 0 auto;
+  padding: 48px clamp(20px,5vw,48px) 80px;
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Typography */
+.doc-section { margin-bottom: 40px; }
+.doc-section h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 600; color: var(--ink);
+  margin-bottom: 12px; padding-bottom: 10px;
+  border-bottom: 1px solid rgba(168,73,42,.1);
+}
+.doc-section h3 {
+  font-size: 15px; font-weight: 700; color: var(--ink);
+  margin: 20px 0 8px;
+}
+.doc-section p { color: var(--ink-soft); margin-bottom: 12px; line-height: 1.75; }
+.doc-section ul, .doc-section ol {
+  padding-left: 20px; color: var(--ink-soft); margin-bottom: 12px;
+}
+.doc-section li { margin-bottom: 6px; line-height: 1.65; }
+.doc-section a { color: var(--terra); text-decoration: underline; text-underline-offset: 3px; }
+
+/* Callout boxes */
+.callout {
+  border-radius: 14px; padding: 16px 20px; margin: 16px 0;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.callout.warn { background: rgba(200,150,26,.08); border: 1px solid rgba(200,150,26,.2); }
+.callout.info { background: rgba(168,73,42,.06); border: 1px solid rgba(168,73,42,.15); }
+.callout.health { background: rgba(139,90,158,.08); border: 1px solid rgba(139,90,158,.2); }
+.callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.callout p { margin: 0; font-size: 13.5px; line-height: 1.6; }
+.callout strong { color: var(--ink); display:block; margin-bottom:3px; font-size:13px; }
+
+/* Rights table */
+.rights-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0;
+}
+@media(max-width:600px){ .rights-grid { grid-template-columns: 1fr; } }
+.right-item {
+  background: rgba(255,255,255,.7); border: 1px solid rgba(168,73,42,.1);
+  border-radius: 14px; padding: 14px 16px;
+}
+.right-item .r-title {
+  font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px;
+  display: flex; align-items: center; gap: 8px;
+}
+.right-item .r-dot { width:8px; height:8px; border-radius:50%; background:var(--terra); flex-shrink:0; }
+.right-item p { margin:0; font-size:12.5px; color:var(--ink-muted); line-height:1.55; }
+
+/* Plan comparison mini */
+.plan-note {
+  background: rgba(255,255,255,.65); border: 1px solid rgba(168,73,42,.1);
+  border-radius: 14px; padding: 16px 18px; margin: 16px 0;
+}
+.plan-note strong { color: var(--terra); }
+
+/* Footer */
+footer {
+  background: var(--ink); text-align: center;
+  padding: 24px 20px; font-size: 12px; color: rgba(255,255,255,.45);
+}
+footer a { color: var(--gold); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <img src="uploads/logo-lume.png" alt="Lumé" />
+    <span>Lumé</span>
+  </a>
+  <div class="nav-actions">
+    <button class="lang-btn" id="lang-toggle-btn" onclick="toggleLang()">EN</button>
+    <a href="index.html" class="nav-back" id="nav-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      <span id="nav-back-text">Volver</span>
+    </a>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-header-tag">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span id="hdr-tag">Información legal</span>
+    </div>
+    <h1 id="hdr-h1">Privacidad, Términos<br/>y Cookies</h1>
+    <p id="hdr-p">Leemos tu privacidad con la misma seriedad con la que tú lees los ingredientes de lo que comes durante el embarazo.</p>
+    <div class="last-update">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      <span id="hdr-update">Última actualización: 3 de julio de 2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <button class="tab-btn active" onclick="showTab('privacidad',this)" id="tab-btn-priv">Política de Privacidad</button>
+  <button class="tab-btn" onclick="showTab('terminos',this)" id="tab-btn-term">Términos de Uso</button>
+  <button class="tab-btn" onclick="showTab('cookies',this)" id="tab-btn-cook">Cookies</button>
+</div>
+
+<!-- CONTENT -->
+<div class="content-wrap">
+
+  <!-- ══ PRIVACIDAD ══ -->
+  <div id="tab-privacidad" class="tab-panel active">
+
+    <div class="callout health" id="sec-p-callout">
+      <div class="callout-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8B5A9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
+      <div>
+        <p><strong>Datos de salud — categoría especial</strong>Lumé trata datos de salud (embarazo, síntomas, peso, citas médicas). Bajo el RGPD, estos son datos de categoría especial que requieren tu consentimiento explícito y protección reforzada. Te explicamos exactamente qué hacemos con ellos.</p>
+      </div>
+    </div>
+
+    <div class="doc-section" id="sec-p1">
+      <h2>1. Responsable del tratamiento</h2>
+      <p><strong>Lumé App S.L.</strong> (en constitución) es la entidad responsable del tratamiento de tus datos personales.</p>
+      <ul>
+        <li><strong>Email de contacto:</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c3b3b1aab5a2a0aaa7a2a783afb6aea6eea2b3b3eda0acae">[email&#160;protected]</a></li>
+        <li><strong>Dirección:</strong> A completar al constituir la empresa</li>
+        <li><strong>Delegado de Protección de Datos (DPD):</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="eb8f9b8fab879e868ec68a9b9bc5888486">[email&#160;protected]</a></li>
+      </ul>
+    </div>
+
+    <div class="doc-section" id="sec-p2">
+      <h2>2. Datos que recopilamos</h2>
+      <h3>Datos que tú nos proporcionas</h3>
+      <ul>
+        <li>Nombre, email y contraseña al registrarte</li>
+        <li>Semanas de embarazo y fecha probable de parto</li>
+        <li>Registros de síntomas, peso, patadas y citas médicas</li>
+        <li>Fotos de ecografías (solo almacenadas localmente en tu dispositivo)</li>
+        <li>Consultas realizadas al asistente IA</li>
+        <li>Nombres de bebé guardados como favoritos</li>
+      </ul>
+      <h3>Datos que recopilamos automáticamente</h3>
+      <ul>
+        <li>Datos de uso anónimos (pantallas visitadas, funciones utilizadas)</li>
+        <li>Información del dispositivo (sistema operativo, versión de la app)</li>
+        <li>Datos de rendimiento y errores técnicos</li>
+      </ul>
+      <div class="callout info">
+        <div class="callout-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></div>
+        <div><p><strong>Almacenamiento local</strong>En la versión actual (prototipo), todos tus datos se almacenan únicamente en tu dispositivo mediante localStorage. No se envían a ningún servidor externo. Cuando se implemente el backend, esta política se actualizará.</p></div>
+      </div>
+    </div>
+
+    <div class="doc-section" id="sec-p3">
+      <h2>3. Para qué usamos tus datos</h2>
+      <ul>
+        <li><strong>Prestación del servicio:</strong> personalizar tu experiencia de embarazo semana a semana</li>
+        <li><strong>Asistente IA:</strong> responder tus preguntas de forma contextualizada a tu semana de gestación</li>
+        <li><strong>Mejora del producto:</strong> analizar (de forma agregada y anónima) cómo se usa la app</li>
+        <li><strong>Comunicaciones:</strong> enviarte notificaciones de la app si las activas y newsletters si te suscribes</li>
+        <li><strong>Gestión de suscripciones:</strong> procesar pagos y gestionar tu plan</li>
+      </ul>
+      <h3>Base jurídica del tratamiento</h3>
+      <ul>
+        <li><strong>Datos de salud:</strong> Consentimiento explícito (art. 9.2.a RGPD)</li>
+        <li><strong>Datos de cuenta:</strong> Ejecución de contrato (art. 6.1.b RGPD)</li>
+        <li><strong>Análisis de uso:</strong> Interés legítimo (art. 6.1.f RGPD)</li>
+        <li><strong>Comunicaciones comerciales:</strong> Consentimiento (art. 6.1.a RGPD)</li>
+      </ul>
+    </div>
+
+    <div class="doc-section" id="sec-p4">
+      <h2>4. ¿Con quién compartimos tus datos?</h2>
+      <div class="callout warn">
+        <div class="callout-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C8952A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div>
+        <div><p><strong>Nunca vendemos tus datos</strong>Lumé no vende, alquila ni cede tus datos personales a terceros con fines comerciales. Punto.</p></div>
+      </div>
+      <p>Solo compartimos datos con terceros cuando es estrictamente necesario para operar el servicio:</p>
+      <ul>
+        <li><strong>Procesadores de pago</strong> (Stripe / RevenueCat): para gestionar suscripciones. Nunca almacenamos datos de tarjetas.</li>
+        <li><strong>Infraestructura en la nube</strong> (AWS / Supabase): para alojar los datos de forma segura y cifrada.</li>
+        <li><strong>Análisis de uso</strong> (Firebase Analytics): datos anónimos y agregados. Sin identificación personal.</li>
+        <li><strong>Calendly</strong>: solo cuando tú decides agendar con una experta. Lumé no tiene acceso a esa agenda.</li>
+      </ul>
+      <p>Todos nuestros proveedores tienen firmado un Acuerdo de Tratamiento de Datos (DPA) conforme al RGPD.</p>
+    </div>
+
+    <div class="doc-section" id="sec-p5">
+      <h2>5. Durante cuánto tiempo guardamos tus datos</h2>
+      <ul>
+        <li><strong>Datos de cuenta:</strong> Mientras tu cuenta esté activa + 2 años tras la baja</li>
+        <li><strong>Registros de salud:</strong> Hasta que los elimines o des de baja la cuenta</li>
+        <li><strong>Datos de pago:</strong> 5 años por obligación fiscal</li>
+        <li><strong>Datos de uso anónimos:</strong> 24 meses máximo</li>
+      </ul>
+    </div>
+
+    <div class="doc-section" id="sec-p6">
+      <h2>6. Tus derechos</h2>
+      <p>Como usuaria de Lumé tienes los siguientes derechos sobre tus datos:</p>
+      <div class="rights-grid">
+        <div class="right-item">
+          <div class="r-title"><div class="r-dot"></div>Acceso</div>
+          <p>Solicitar una copia de todos tus datos personales que tenemos.</p>
+        </div>
+        <div class="right-item">
+          <div class="r-title"><div class="r-dot"></div>Rectificación</div>
+          <p>Corregir datos inexactos o incompletos sobre ti.</p>
+        </div>
+        <div class="right-item">
+          <div class="r-title"><div class="r-dot"></div>Supresión</div>
+          <p>Solicitar la eliminación de todos tus datos ("derecho al olvido").</p>
+        </div>
+        <div class="right-item">
+          <div class="r-title"><div class="r-dot"></div>Portabilidad</div>
+          <p>Recibir tus datos en formato legible (CSV / JSON) para llevarlos a otro servicio.</p>
+        </div>
+        <div class="right-item">
+          <div class="r-title"><div class="r-dot"></div>Oposición</div>
+          <p>Oponerte al tratamiento para fines de marketing o análisis de uso.</p>
+        </div>
+        <div class="right-item">
+          <div class="r-title"><div class="r-dot"></div>Limitación</div>
+          <p>Solicitar que limitemos el uso de tus datos en ciertos supuestos.</p>
+        </div>
+      </div>
+      <p>Para ejercer cualquiera de estos derechos, escríbenos a <a href="/cdn-cgi/l/email-protection#5e2e2c37283f3d373a3f3a1e322b333b733f2e2e703d3133"><span class="__cf_email__" data-cfemail="09797b607f686a606d686d49657c646c24687979276a6664">[email&#160;protected]</span></a>. Responderemos en un máximo de 30 días.</p>
+      <p>También puedes presentar una reclamación ante la <strong>Agencia Española de Protección de Datos (AEPD)</strong>: <a href="https://www.aepd.es" target="_blank">www.aepd.es</a></p>
+    </div>
+
+    <div class="doc-section" id="sec-p7">
+      <h2>7. Transferencias internacionales de datos</h2>
+      <p>Algunos de nuestros proveedores técnicos pueden procesar datos fuera del Espacio Económico Europeo (EEE). En esos casos, nos aseguramos de que existan garantías adecuadas:</p>
+      <ul>
+        <li>Cláusulas Contractuales Tipo aprobadas por la Comisión Europea</li>
+        <li>Certificación del proveedor en el marco EU-US Data Privacy Framework (cuando aplica)</li>
+      </ul>
+      <p>Puedes consultar las garantías específicas escribiendo a <a href="/cdn-cgi/l/email-protection#6111130817000208050005210d140c044c0011114f020e0c"><span class="__cf_email__" data-cfemail="4d3d3f243b2c2e24292c290d21382028602c3d3d632e2220">[email&#160;protected]</span></a>.</p>
+    </div>
+
+    <div class="doc-section" id="sec-p8">
+      <h2>8. Seguridad</h2>
+      <ul>
+        <li>Cifrado de extremo a extremo de todos los datos de salud</li>
+        <li>Almacenamiento en servidores dentro de la Unión Europea</li>
+        <li>Acceso restringido a los datos (principio de mínimo privilegio)</li>
+        <li>Auditorías de seguridad periódicas</li>
+        <li>Plan de respuesta a brechas de seguridad conforme al RGPD (notificación en 72h)</li>
+      </ul>
+    </div>
+
+    <div class="doc-section" id="sec-p9">
+      <h2>9. Menores de edad</h2>
+      <p>Lumé está destinada a mujeres mayores de 18 años. No recopilamos conscientemente datos de menores. Si detectas que una menor ha creado una cuenta, contáctanos para eliminarla.</p>
+    </div>
+
+    <div class="doc-section" id="sec-p10">
+      <h2>10. Cambios en esta política</h2>
+      <p>Notificaremos cualquier cambio material en esta política mediante un aviso en la app y/o por email con al menos 30 días de antelación. Continuar usando Lumé tras ese período implica aceptar la nueva política.</p>
+    </div>
+
+  </div>
+
+  <!-- ══ TÉRMINOS ══ -->
+  <div id="tab-terminos" class="tab-panel">
+
+    <div class="callout warn" id="sec-t-callout">
+      <div class="callout-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C8952A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <div><p><strong>Lumé no es un servicio médico</strong>Lumé proporciona información de apoyo durante el embarazo. No sustituye la atención médica profesional ni el criterio de tu ginecóloga o matrona. Ante cualquier duda de salud, consulta siempre a un profesional.</p></div>
+    </div>
+
+    <div class="doc-section" id="sec-t1">
+      <h2>1. Descripción del servicio</h2>
+      <p>Lumé es una aplicación de acompañamiento durante el embarazo que ofrece:</p>
+      <ul>
+        <li>Seguimiento semanal del desarrollo del bebé</li>
+        <li>Herramientas de registro de salud (síntomas, peso, citas, ultrasonidos)</li>
+        <li>Asistente conversacional de IA con información prenatal</li>
+        <li>Contenido editorial revisado por profesionales de salud</li>
+        <li>Directorio de profesionales perinatales (plan Profesional)</li>
+      </ul>
+    </div>
+
+    <div class="doc-section" id="sec-t2">
+      <h2>2. Registro y cuenta</h2>
+      <ul>
+        <li>Debes ser mayor de 18 años para crear una cuenta en Lumé.</li>
+        <li>Eres responsable de mantener la confidencialidad de tu contraseña.</li>
+        <li>Solo está permitida una cuenta por persona.</li>
+        <li>La información que proporciones debe ser veraz y actualizada.</li>
+      </ul>
+    </div>
+
+    <div class="doc-section" id="sec-t3">
+      <h2>3. Planes, suscripciones y reembolsos</h2>
+      <div class="plan-note">
+        <p><strong>Plan Esencial (gratuito)</strong> — acceso básico sin límite de tiempo. Puede incluir publicidad no intrusiva.</p>
+        <p style="margin-top:8px;"><strong>Plan Bienestar ($9/mes o $7/mes anual)</strong> — 7 días de prueba gratuita. Sin cargo durante el período de prueba.</p>
+        <p style="margin-top:8px;"><strong>Plan Profesional ($19/mes o $15/mes anual)</strong> — sin período de prueba gratuita. Acceso inmediato.</p>
+      </div>
+      <ul>
+        <li>Las suscripciones se renuevan automáticamente al final de cada período.</li>
+        <li>Puedes cancelar en cualquier momento desde <strong>Ajustes → Gestionar suscripción</strong>. La cancelación entra en vigor al final del período ya pagado.</li>
+        <li>Los precios pueden cambiar con 30 días de aviso previo por email.</li>
+      </ul>
+      <h3>Política de reembolsos</h3>
+      <ul>
+        <li><strong>Período de prueba:</strong> si cancelas dentro de los 7 días de prueba gratuita, no se realiza ningún cargo.</li>
+        <li><strong>Primer cobro:</strong> si solicitas el reembolso en las primeras 48 horas desde el primer cargo (fuera del período de prueba), lo tramitamos sin preguntas.</li>
+        <li><strong>Resto de períodos:</strong> no se reembolsan períodos parciales ya facturados, salvo obligación legal o fallo técnico atribuible a Lumé.</li>
+        <li><strong>Fallo técnico:</strong> si la app no ha estado disponible más del 20% del período facturado, tienes derecho a reembolso proporcional.</li>
+        <li>Para solicitar un reembolso: <a href="/cdn-cgi/l/email-protection#22514d524d505647624e574f470f4352520c414d4f"><span class="__cf_email__" data-cfemail="01726e716e737564416d746c642c6071712f626e6c">[email&#160;protected]</span></a>. Respondemos en 5 días hábiles.</li>
+      </ul>
+    </div>
+
+    <div class="doc-section" id="sec-t4">
+      <h2>4. Uso aceptable</h2>
+      <p>Al usar Lumé te comprometes a no:</p>
+      <ul>
+        <li>Usar la app para fines distintos al acompañamiento personal durante el embarazo</li>
+        <li>Compartir tu cuenta con terceros</li>
+        <li>Intentar acceder a datos de otras usuarias</li>
+        <li>Realizar ingeniería inversa del software</li>
+        <li>Publicar contenido ofensivo, falso o que viole derechos de terceros</li>
+      </ul>
+    </div>
+
+    <div class="doc-section" id="sec-t5">
+      <h2>5. Contenido del asistente IA</h2>
+      <div class="callout info">
+        <div class="callout-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c4.6 0 8 3 8 6.8 0 3.8-3.4 6.8-8 6.8-1 0-1.9-.1-2.8-.4L4 18l1-3.4C4.4 13.5 4 11.7 4 9.8 4 6 7.4 3 12 3Z"/></svg></div>
+        <div><p>El asistente de Lumé utiliza inteligencia artificial para responder preguntas. Aunque el contenido está guiado por información médica validada, <strong>las respuestas pueden contener errores</strong>. Siempre contrasta la información con tu equipo médico, especialmente ante síntomas preocupantes.</p></div>
+      </div>
+      <ul>
+        <li>Lumé no se hace responsable de decisiones médicas tomadas basándose exclusivamente en las respuestas del asistente IA.</li>
+        <li>El asistente no tiene acceso a tu historial médico completo.</li>
+        <li>No está diseñado para responder emergencias médicas. Ante una urgencia, llama al 112.</li>
+      </ul>
+    </div>
+
+    <div class="doc-section" id="sec-t6">
+      <h2>6. Propiedad intelectual</h2>
+      <p>Todo el contenido de Lumé (textos, imágenes, diseño, software, marca) es propiedad de Lumé App S.L. o está licenciado para su uso. Queda prohibida su reproducción, distribución o modificación sin autorización expresa.</p>
+      <p>El contenido que tú generas (registros, fotos, notas) es tuyo. Lumé solo lo usa para prestarte el servicio.</p>
+    </div>
+
+    <div class="doc-section" id="sec-t7">
+      <h2>7. Limitación de responsabilidad</h2>
+      <p>Lumé no será responsable de daños indirectos, incidentales o consecuentes derivados del uso o imposibilidad de uso de la app, incluyendo pérdida de datos o interrupciones del servicio, en la medida máxima permitida por la ley aplicable.</p>
+      <p>La responsabilidad total de Lumé frente a ti no excederá el importe pagado por el servicio en los últimos 12 meses.</p>
+    </div>
+
+    <div class="doc-section" id="sec-t8">
+      <h2>8. Ley aplicable</h2>
+      <p>Estos términos se rigen por la legislación española. Para cualquier controversia, las partes se someten a los juzgados y tribunales del domicilio del consumidor, conforme a la normativa de protección al consumidor de la UE.</p>
+    </div>
+
+    <div class="doc-section" id="sec-t9">
+      <h2>9. Contacto</h2>
+      <p>Para cualquier consulta sobre estos términos: <a href="/cdn-cgi/l/email-protection#fa969f9d9b96ba968f979fd79b8a8ad4999597"><span class="__cf_email__" data-cfemail="600c0507010c200c150d054d0110104e030f0d">[email&#160;protected]</span></a></p>
+    </div>
+
+  </div>
+
+  <!-- ══ COOKIES ══ -->
+  <div id="tab-cookies" class="tab-panel">
+
+    <div class="doc-section" id="sec-c1">
+      <h2>¿Qué son las cookies?</h2>
+      <p>Las cookies son pequeños archivos de texto que se almacenan en tu dispositivo cuando visitas nuestra web o usas nuestra app. Nos ayudan a que la experiencia funcione correctamente y a entender cómo se usa el servicio.</p>
+    </div>
+
+    <div class="doc-section" id="sec-c2">
+      <h2>Cookies que utilizamos</h2>
+
+      <h3>Esenciales (siempre activas)</h3>
+      <p>Necesarias para que la app funcione. Sin ellas, no podríamos mantener tu sesión activa ni recordar tus preferencias básicas.</p>
+      <ul>
+        <li><code>lume_cookie_consent</code> — guarda tu decisión sobre cookies (accepted / rejected)</li>
+        <li><code>lume_onboarded</code> — recuerda si completaste el onboarding</li>
+        <li><code>lume_weeks</code> — tus semanas de embarazo</li>
+        <li><code>lume_due</code> — fecha probable de parto (solo local)</li>
+        <li><code>lume_nombre</code> — tu nombre para personalizar la app</li>
+        <li><code>lume_points</code> — tus puntos de recompensas</li>
+        <li><code>lume_premium</code> — estado de tu suscripción</li>
+        <li><code>lume_dir</code> — tu preferencia de tema visual</li>
+      </ul>
+
+      <h3>Analíticas (requieren consentimiento)</h3>
+      <p>Nos ayudan a entender cómo se usa la app para mejorarla. Los datos son anónimos.</p>
+      <ul>
+        <li><strong>Firebase Analytics</strong> — pantallas visitadas, tiempo de uso, eventos de interacción. Datos agregados y anónimos.</li>
+      </ul>
+
+      <h3>Publicidad (requieren consentimiento)</h3>
+      <p>Solo en el plan gratuito. Las redes publicitarias (Google AdMob) pueden utilizar identificadores anónimos del dispositivo para mostrar anuncios relevantes.</p>
+      <ul>
+        <li><strong>Google AdMob</strong> — para mostrar anuncios en el plan Esencial. Puedes elegir no ver anuncios personalizados en los ajustes de tu dispositivo.</li>
+      </ul>
+    </div>
+
+    <div class="doc-section" id="sec-c3">
+      <h2>Cómo gestionar las cookies</h2>
+      <p>Puedes controlar las cookies desde:</p>
+      <ul>
+        <li><strong>Ajustes de la app</strong> → Privacidad → Gestión de cookies</li>
+        <li><strong>Ajustes de tu dispositivo</strong> → Privacidad → Publicidad → Limitar seguimiento de anuncios</li>
+        <li><strong>Tu navegador</strong> (si accedes desde web): herramientas → ajustes → privacidad y seguridad</li>
+      </ul>
+      <div class="callout warn">
+        <div class="callout-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C8952A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div>
+        <div><p>Desactivar las cookies esenciales puede impedir que Lumé funcione correctamente. Las cookies analíticas y publicitarias son opcionales.</p></div>
+      </div>
+    </div>
+
+    <div class="doc-section" id="sec-c4">
+      <h2>Más información</h2>
+      <p>Para más información sobre cómo gestionamos las cookies y tu privacidad: <a href="/cdn-cgi/l/email-protection#ccbcbea5baadafa5a8ada88ca0b9a1a9e1adbcbce2afa3a1"><span class="__cf_email__" data-cfemail="5222203b2433313b363336123e273f377f3322227c313d3f">[email&#160;protected]</span></a></p>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span id="footer-text">© 2026 Lumé · <a href="index.html">Landing</a> · <a href="expertos.html">Para profesionales</a> · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="234f4644424f634f564e460e4253530d404c4e">[email&#160;protected]</a></span>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: document.querySelector('.tabs-bar').offsetTop - 64 });
+}
+
+/* ── Idioma (ES/EN) ── */
+var ES_CONTENT = {};
+var EN_SMALL = {
+  'nav-back-text': 'Back',
+  'hdr-tag': 'Legal information',
+  'hdr-update': 'Last updated: July 3, 2026',
+  'tab-btn-priv': 'Privacy Policy',
+  'tab-btn-term': 'Terms of Use',
+  'tab-btn-cook': 'Cookies',
+};
+var ES_SMALL = {};
+var EN_HTML = {
+  'hdr-h1': 'Privacy, Terms<br/>and Cookies',
+  'hdr-p': 'We read your privacy with the same seriousness you read the ingredients of what you eat during pregnancy.',
+  'footer-text': '© 2026 Lumé · <a href="index.html">Landing</a> · <a href="expertos.html">For professionals</a> · legal@lume-app.com',
+  'sec-p-callout': '<div class="callout-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8B5A9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div><div><p><strong>Health data — special category</strong>Lumé processes health data (pregnancy, symptoms, weight, medical appointments). Under GDPR, this is special-category data requiring your explicit consent and enhanced protection. Here is exactly what we do with it.</p></div>',
+  'sec-p1': '<h2>1. Data controller</h2><p><strong>Lumé App S.L.</strong> (in formation) is the entity responsible for processing your personal data.</p><ul><li><strong>Contact email:</strong> privacidad@lume-app.com</li><li><strong>Address:</strong> To be completed once the company is incorporated</li><li><strong>Data Protection Officer (DPO):</strong> dpd@lume-app.com</li></ul>',
+  'sec-p2': '<h2>2. Data we collect</h2><h3>Data you provide us</h3><ul><li>Name, email and password when you sign up</li><li>Weeks of pregnancy and estimated due date</li><li>Symptom, weight, kick and medical appointment logs</li><li>Ultrasound photos (stored only locally on your device)</li><li>Questions asked to the AI assistant</li><li>Baby names saved as favorites</li></ul><h3>Data we collect automatically</h3><ul><li>Anonymous usage data (screens visited, features used)</li><li>Device information (operating system, app version)</li><li>Performance data and technical errors</li></ul><div class="callout info"><div class="callout-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></div><div><p><strong>Local storage</strong>In the current (prototype) version, all your data is stored only on your device via localStorage. Nothing is sent to any external server. This policy will be updated once the backend is implemented.</p></div></div>',
+  'sec-p3': '<h2>3. What we use your data for</h2><ul><li><strong>Providing the service:</strong> personalizing your pregnancy experience week by week</li><li><strong>AI assistant:</strong> answering your questions in the context of your gestational week</li><li><strong>Product improvement:</strong> analyzing (in aggregate and anonymized form) how the app is used</li><li><strong>Communications:</strong> sending you app notifications if enabled and newsletters if you subscribe</li><li><strong>Subscription management:</strong> processing payments and managing your plan</li></ul><h3>Legal basis for processing</h3><ul><li><strong>Health data:</strong> Explicit consent (Art. 9.2.a GDPR)</li><li><strong>Account data:</strong> Performance of contract (Art. 6.1.b GDPR)</li><li><strong>Usage analysis:</strong> Legitimate interest (Art. 6.1.f GDPR)</li><li><strong>Marketing communications:</strong> Consent (Art. 6.1.a GDPR)</li></ul>',
+  'sec-p4': '<h2>4. Who do we share your data with?</h2><div class="callout warn"><div class="callout-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C8952A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div><div><p><strong>We never sell your data</strong>Lumé does not sell, rent or transfer your personal data to third parties for commercial purposes. Period.</p></div></div><p>We only share data with third parties when strictly necessary to operate the service:</p><ul><li><strong>Payment processors</strong> (Stripe / RevenueCat): to manage subscriptions. We never store card data.</li><li><strong>Cloud infrastructure</strong> (AWS / Supabase): to host data securely and encrypted.</li><li><strong>Usage analytics</strong> (Firebase Analytics): anonymous, aggregated data. No personal identification.</li><li><strong>Calendly</strong>: only when you choose to book with an expert. Lumé has no access to that calendar.</li></ul><p>All our providers have signed a Data Processing Agreement (DPA) compliant with GDPR.</p>',
+  'sec-p5': '<h2>5. How long we keep your data</h2><ul><li><strong>Account data:</strong> While your account is active + 2 years after closure</li><li><strong>Health records:</strong> Until you delete them or close your account</li><li><strong>Payment data:</strong> 5 years, per tax obligations</li><li><strong>Anonymous usage data:</strong> 24 months maximum</li></ul>',
+  'sec-p6': '<h2>6. Your rights</h2><p>As a Lumé user you have the following rights over your data:</p><div class="rights-grid"><div class="right-item"><div class="r-title"><div class="r-dot"></div>Access</div><p>Request a copy of all the personal data we hold about you.</p></div><div class="right-item"><div class="r-title"><div class="r-dot"></div>Rectification</div><p>Correct inaccurate or incomplete data about you.</p></div><div class="right-item"><div class="r-title"><div class="r-dot"></div>Erasure</div><p>Request deletion of all your data ("right to be forgotten").</p></div><div class="right-item"><div class="r-title"><div class="r-dot"></div>Portability</div><p>Receive your data in a readable format (CSV / JSON) to move it to another service.</p></div><div class="right-item"><div class="r-title"><div class="r-dot"></div>Objection</div><p>Object to processing for marketing or usage-analysis purposes.</p></div><div class="right-item"><div class="r-title"><div class="r-dot"></div>Restriction</div><p>Request that we restrict use of your data in certain cases.</p></div></div><p>To exercise any of these rights, write to us at <a href="mailto:privacidad@lume-app.com">privacidad@lume-app.com</a>. We will respond within 30 days.</p><p>You may also file a complaint with the <strong>Spanish Data Protection Agency (AEPD)</strong>: <a href="https://www.aepd.es" target="_blank">www.aepd.es</a></p>',
+  'sec-p7': '<h2>7. International data transfers</h2><p>Some of our technical providers may process data outside the European Economic Area (EEA). In those cases, we ensure adequate safeguards are in place:</p><ul><li>Standard Contractual Clauses approved by the European Commission</li><li>Provider certification under the EU-US Data Privacy Framework (where applicable)</li></ul><p>You can request details of the specific safeguards by writing to <a href="mailto:privacidad@lume-app.com">privacidad@lume-app.com</a>.</p>',
+  'sec-p8': '<h2>8. Security</h2><ul><li>End-to-end encryption of all health data</li><li>Storage on servers within the European Union</li><li>Restricted data access (principle of least privilege)</li><li>Periodic security audits</li><li>GDPR-compliant security breach response plan (notification within 72h)</li></ul>',
+  'sec-p9': '<h2>9. Minors</h2><p>Lumé is intended for women over 18. We do not knowingly collect data from minors. If you discover a minor has created an account, contact us to have it removed.</p>',
+  'sec-p10': '<h2>10. Changes to this policy</h2><p>We will notify you of any material change to this policy via a notice in the app and/or by email, at least 30 days in advance. Continuing to use Lumé after that period means you accept the new policy.</p>',
+  'sec-t-callout': '<div class="callout-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C8952A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="M9 12l2 2 4-4"/></svg></div><div><p><strong>Lumé is not a medical service</strong>Lumé provides supportive information during pregnancy. It does not replace professional medical care or the judgment of your OB/GYN or midwife. For any health concern, always consult a professional.</p></div>',
+  'sec-t1': '<h2>1. Service description</h2><p>Lumé is a pregnancy companion app that offers:</p><ul><li>Weekly tracking of baby development</li><li>Health logging tools (symptoms, weight, appointments, ultrasounds)</li><li>Conversational AI assistant with prenatal information</li><li>Editorial content reviewed by health professionals</li><li>Directory of perinatal professionals (Professional plan)</li></ul>',
+  'sec-t2': '<h2>2. Registration and account</h2><ul><li>You must be over 18 to create a Lumé account.</li><li>You are responsible for keeping your password confidential.</li><li>Only one account per person is allowed.</li><li>The information you provide must be accurate and up to date.</li></ul>',
+  'sec-t3': '<h2>3. Plans, subscriptions and refunds</h2><div class="plan-note"><p><strong>Essential Plan (free)</strong> — basic access with no time limit. May include non-intrusive advertising.</p><p style="margin-top:8px;"><strong>Wellness Plan ($9/mo or $7/mo annual)</strong> — 7-day free trial. No charge during the trial period.</p><p style="margin-top:8px;"><strong>Professional Plan ($19/mo or $15/mo annual)</strong> — no free trial. Immediate access.</p></div><ul><li>Subscriptions renew automatically at the end of each period.</li><li>You can cancel anytime from <strong>Settings → Manage subscription</strong>. Cancellation takes effect at the end of the already-paid period.</li><li>Prices may change with 30 days\' prior notice by email.</li></ul><h3>Refund policy</h3><ul><li><strong>Trial period:</strong> if you cancel within the 7-day free trial, no charge is made.</li><li><strong>First charge:</strong> if you request a refund within the first 48 hours of the first charge (outside the trial), we process it no questions asked.</li><li><strong>Other periods:</strong> partial periods already billed are not refunded, except where legally required or due to a technical failure attributable to Lumé.</li><li><strong>Technical failure:</strong> if the app was unavailable for more than 20% of the billed period, you are entitled to a proportional refund.</li><li>To request a refund: <a href="mailto:soporte@lume-app.com">soporte@lume-app.com</a>. We respond within 5 business days.</li></ul>',
+  'sec-t4': '<h2>4. Acceptable use</h2><p>By using Lumé you agree not to:</p><ul><li>Use the app for purposes other than personal pregnancy support</li><li>Share your account with third parties</li><li>Attempt to access other users’ data</li><li>Reverse-engineer the software</li><li>Post offensive, false content or content that violates third-party rights</li></ul>',
+  'sec-t5': '<h2>5. AI assistant content</h2><div class="callout info"><div class="callout-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c4.6 0 8 3 8 6.8 0 3.8-3.4 6.8-8 6.8-1 0-1.9-.1-2.8-.4L4 18l1-3.4C4.4 13.5 4 11.7 4 9.8 4 6 7.4 3 12 3Z"/></svg></div><div><p>Lumé’s assistant uses artificial intelligence to answer questions. While content is guided by validated medical information, <strong>responses may contain errors</strong>. Always cross-check information with your medical team, especially for concerning symptoms.</p></div></div><ul><li>Lumé is not liable for medical decisions made based solely on the AI assistant’s responses.</li><li>The assistant does not have access to your complete medical history.</li><li>It is not designed to handle medical emergencies. In an emergency, call your local emergency number.</li></ul>',
+  'sec-t6': '<h2>6. Intellectual property</h2><p>All Lumé content (text, images, design, software, brand) is owned by Lumé App S.L. or licensed for its use. Reproduction, distribution or modification without express authorization is prohibited.</p><p>Content you generate (logs, photos, notes) is yours. Lumé only uses it to provide you the service.</p>',
+  'sec-t7': '<h2>7. Limitation of liability</h2><p>Lumé shall not be liable for indirect, incidental or consequential damages arising from use or inability to use the app, including data loss or service interruptions, to the maximum extent permitted by applicable law.</p><p>Lumé’s total liability to you will not exceed the amount paid for the service in the last 12 months.</p>',
+  'sec-t8': '<h2>8. Governing law</h2><p>These terms are governed by Spanish law. For any dispute, the parties submit to the courts of the consumer’s domicile, in accordance with EU consumer protection regulations.</p>',
+  'sec-t9': '<h2>9. Contact</h2><p>For any inquiry about these terms: <a href="mailto:legal@lume-app.com">legal@lume-app.com</a></p>',
+  'sec-c1': '<h2>What are cookies?</h2><p>Cookies are small text files stored on your device when you visit our website or use our app. They help the experience work properly and help us understand how the service is used.</p>',
+  'sec-c2': '<h2>Cookies we use</h2><h3>Essential (always active)</h3><p>Necessary for the app to work. Without them, we could not keep your session active or remember your basic preferences.</p><ul><li><code>lume_cookie_consent</code> — stores your cookie decision (accepted / rejected)</li><li><code>lume_onboarded</code> — remembers if you completed onboarding</li><li><code>lume_weeks</code> — your weeks of pregnancy</li><li><code>lume_due</code> — estimated due date (local only)</li><li><code>lume_nombre</code> — your name to personalize the app</li><li><code>lume_points</code> — your reward points</li><li><code>lume_premium</code> — your subscription status</li><li><code>lume_dir</code> — your visual theme preference</li></ul><h3>Analytics (require consent)</h3><p>Help us understand how the app is used so we can improve it. The data is anonymous.</p><ul><li><strong>Firebase Analytics</strong> — screens visited, time spent, interaction events. Aggregated, anonymous data.</li></ul><h3>Advertising (require consent)</h3><p>Only on the free plan. Ad networks (Google AdMob) may use anonymous device identifiers to show relevant ads.</p><ul><li><strong>Google AdMob</strong> — to show ads on the Essential plan. You can opt out of personalized ads in your device settings.</li></ul>',
+  'sec-c3': '<h2>How to manage cookies</h2><p>You can control cookies from:</p><ul><li><strong>App settings</strong> → Privacy → Cookie management</li><li><strong>Your device settings</strong> → Privacy → Advertising → Limit ad tracking</li><li><strong>Your browser</strong> (if accessing from the web): tools → settings → privacy and security</li></ul><div class="callout warn"><div class="callout-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C8952A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div><div><p>Disabling essential cookies may prevent Lumé from working properly. Analytics and advertising cookies are optional.</p></div></div>',
+  'sec-c4': '<h2>More information</h2><p>For more information on how we manage cookies and your privacy: <a href="mailto:privacidad@lume-app.com">privacidad@lume-app.com</a></p>',
+};
+
+function getLegalLang() { try { return localStorage.getItem('lume_lang') || 'es'; } catch(e) { return 'es'; } }
+
+function applyLang(lang) {
+  var ids = Object.keys(EN_HTML);
+  ids.forEach(function(id){
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (!(id in ES_CONTENT)) ES_CONTENT[id] = el.innerHTML;
+    el.innerHTML = lang === 'en' ? EN_HTML[id] : ES_CONTENT[id];
+  });
+  Object.keys(EN_SMALL).forEach(function(id){
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (!(id in ES_SMALL)) ES_SMALL[id] = el.textContent;
+    el.textContent = lang === 'en' ? EN_SMALL[id] : ES_SMALL[id];
+  });
+  document.documentElement.lang = lang === 'en' ? 'en' : 'es';
+  document.title = lang === 'en' ? 'Legal — Lumé' : 'Legal — Lumé';
+  document.getElementById('lang-toggle-btn').textContent = lang === 'en' ? 'ES' : 'EN';
+}
+
+function toggleLang() {
+  var cur = getLegalLang();
+  var next = cur === 'en' ? 'es' : 'en';
+  try { localStorage.setItem('lume_lang', next); } catch(e) {}
+  applyLang(next);
+}
+
+applyLang(getLegalLang());
+</script>
+
+</body>
+</html>
