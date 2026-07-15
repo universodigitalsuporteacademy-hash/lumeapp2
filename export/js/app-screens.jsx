@@ -118,7 +118,7 @@ function CitasScreen({ goBack }) {
   };
 
   return (
-    <div style={{ backgroundColor: "#f0e2d6", backgroundImage: "linear-gradient(160deg,rgba(249,241,235,.82) 0%,rgba(240,226,214,.8) 45%,rgba(232,213,198,.78) 100%), url('uploads/Dise%C3%B1o%20sin%20t%C3%ADtulo%20(6).png')", backgroundSize: "100% 100%, auto 68%", backgroundPosition: "0 0, right -10px top 180px", backgroundRepeat: "no-repeat, no-repeat", minHeight: "100%", overflowY: "auto", overflowX: "hidden" }}>
+    <div style={{ backgroundColor: "#f0e2d6", backgroundImage: "linear-gradient(160deg,rgba(249,241,235,.82) 0%,rgba(240,226,214,.8) 45%,rgba(232,213,198,.78) 100%), url('uploads/citas-bg.png')", backgroundSize: "100% 100%, auto 68%", backgroundPosition: "0 0, right -10px top 180px", backgroundRepeat: "no-repeat, no-repeat", minHeight: "100%", overflowY: "auto", overflowX: "hidden" }}>
 
       {/* ── Header sticky glass ── */}
       <div style={{ position: "sticky", top: 0, zIndex: 20, backdropFilter: "blur(24px) saturate(160%)", WebkitBackdropFilter: "blur(24px) saturate(160%)", background: "rgba(246,237,228,.82)", borderBottom: "1px solid rgba(168,73,42,.08)", padding: "52px 20px 18px", display: "flex", alignItems: "center", gap: 14 }}>
@@ -1138,7 +1138,7 @@ function UltrasonidosScreen({ goBack, goToTab }) {
   };
 
   return (
-    <div style={{ backgroundColor: "#f0e2d6", backgroundImage: "linear-gradient(160deg,rgba(249,241,235,.78) 0%,rgba(240,226,214,.76) 45%,rgba(232,213,198,.74) 100%), url('uploads/Ajustar%20el%20pie%20(menos%20evidente)%20(2).png')", backgroundSize: "100% 100%, auto 100%", backgroundPosition: "0 0, center center", backgroundRepeat: "no-repeat, no-repeat", minHeight: "100%", overflowY: "auto", overflowX: "hidden" }}>
+    <div style={{ backgroundColor: "#f0e2d6", backgroundImage: "linear-gradient(160deg,rgba(249,241,235,.78) 0%,rgba(240,226,214,.76) 45%,rgba(232,213,198,.74) 100%), url('uploads/ultrasound-bg.png')", backgroundSize: "100% 100%, auto 100%", backgroundPosition: "0 0, center center", backgroundRepeat: "no-repeat, no-repeat", minHeight: "100%", overflowY: "auto", overflowX: "hidden" }}>
 
       {/* ── Header sticky glass ── */}
       <div style={{ position: "sticky", top: 0, zIndex: 20, backdropFilter: "blur(24px) saturate(160%)", WebkitBackdropFilter: "blur(24px) saturate(160%)", background: "rgba(246,237,228,.82)", borderBottom: "1px solid rgba(168,73,42,.1)", padding: "52px 20px 18px", display: "flex", alignItems: "center", gap: 14 }}>
@@ -2082,7 +2082,7 @@ function KickTrackerScreen({ goBack }) {
   const pct = Math.min(100, count / 10 * 100);
 
   return (
-    <div className="screen s-enter kick-screen" style={{ position: 'relative', backgroundImage: 'url("uploads/Ajustar el pie (menos evidente).png")', backgroundSize: 'cover', backgroundPosition: 'center top' }}>
+    <div className="screen s-enter kick-screen" style={{ position: 'relative', backgroundImage: 'url("uploads/kicks-bg.png")', backgroundSize: 'cover', backgroundPosition: 'center top' }}>
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(20,6,6,.18) 0%, rgba(20,8,8,.32) 60%, rgba(10,4,4,.5) 100%)', zIndex: 0, pointerEvents: 'none' }}></div>
       <div style={{ position: 'relative', zIndex: 1 }}>
       <div style={{ padding: '54px 16px 10px', display: 'flex', flexDirection: 'column', gap: 12 }}>
