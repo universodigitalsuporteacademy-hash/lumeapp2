@@ -9,6 +9,25 @@ const addPoints = (n) => {const p = (LS.get("lume_points") || 126) + n;LS.set("l
 
 /* ── CITAS ─── */
 function CitasScreen({ goBack }) {
+  const citasLang = getAppLang2();
+  const CT = citasLang==="en" ? {
+    eyebrow:"OB check-ups", title:"Medical appointments", sub:"Tap + to schedule · Never miss a check-up",
+    reminderToday:"Reminder · Today", reminderTomorrow:"Reminder · Tomorrow", reminderIn:(n)=>`Reminder · in ${n} days`,
+    newAppt:"New appointment", apptType:"Appointment type", apptTypePh:"e.g. OB check-up, Ultrasound…",
+    date:"Date", time:"Time", notes:"Notes", notesPh:"Doctor, address, preparation…", schedule:"Schedule appointment",
+    toast:"✓ Appointment scheduled · +5 points", emptyTitle:"No appointments scheduled",
+    emptyBody:"Tap the ", emptyBody2:" to add your first OB check-up.",
+    upcoming:"Upcoming", past:"Past",
+  } : {
+    eyebrow:"Controles obstétricos", title:"Citas médicas", sub:"Toca + para agendar · No pierdas ningún control",
+    reminderToday:"Recordatorio · Hoy", reminderTomorrow:"Recordatorio · Mañana", reminderIn:(n)=>`Recordatorio · en ${n} días`,
+    newAppt:"Nueva cita", apptType:"Tipo de cita", apptTypePh:"ej. Control obstétrico, Ecografía…",
+    date:"Fecha", time:"Hora", notes:"Notas", notesPh:"Médico, dirección, preparación…", schedule:"Agendar cita",
+    toast:"✓ Cita agendada · +5 puntos", emptyTitle:"Sin citas agendadas",
+    emptyBody:"Toca el ", emptyBody2:" para añadir tu primer control obstétrico.",
+    upcoming:"Próximas", past:"Pasadas",
+  };
+  const dtLocale = citasLang==="en" ? "en-US" : "es-ES";
   const APPT_DEFAULTS = [
     { id: 1, title: "Control obstétrico", date: "2026-04-10", time: "10:30", notes: "Dr. Ramírez — Clínica del Valle" },
     { id: 2, title: "Ecografía morfológica", date: "2026-07-18", time: "09:00", notes: "Llevar resultados anteriores" }
@@ -57,8 +76,8 @@ function CitasScreen({ goBack }) {
     const d = new Date(iso + "T00:00:00");
     return {
       day: d.getDate(),
-      mon: d.toLocaleDateString("es-ES", { month: "short" }),
-      full: d.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })
+      mon: d.toLocaleDateString(dtLocale, { month: "short" }),
+      full: d.toLocaleDateString(dtLocale, { weekday: "long", day: "numeric", month: "long" })
     };
   };
 
@@ -79,7 +98,7 @@ function CitasScreen({ goBack }) {
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: 17, color: "#3d1a0e", lineHeight: 1.2, marginBottom: 4 }}>{a.title}</div>
-              <div style={{ fontSize: 11.5, color: "#b09080", letterSpacing: ".01em" }}>{dt.full}{a.time ? " · " + a.time + " h" : ""}</div>
+              <div style={{ fontSize: 11.5, color: "#b09080", letterSpacing: ".01em" }}>{dt.full}{a.time ? " · " + a.time + (citasLang==="en"?"":" h") : ""}</div>
               {a.notes && (
                 <div style={{ display: "flex", gap: 6, alignItems: "flex-start", marginTop: 9, padding: "8px 10px", borderRadius: 10, background: "rgba(168,73,42,.05)" }}>
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#A8492A" strokeWidth="2" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 1, opacity: .5 }}>
@@ -107,9 +126,9 @@ function CitasScreen({ goBack }) {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .65, marginBottom: 5 }}>Controles obstétricos</div>
-          <h2 style={{ margin: 0, fontSize: 23, fontWeight: 800, color: "#3d1a0e", letterSpacing: "-.3px", lineHeight: 1, marginBottom: 4 }}>Citas médicas</h2>
-          <p style={{ margin: 0, fontSize: 11.5, color: "#a08070" }}>Toca + para agendar · No pierdas ningún control</p>
+          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .65, marginBottom: 5 }}>{CT.eyebrow}</div>
+          <h2 style={{ margin: 0, fontSize: 23, fontWeight: 800, color: "#3d1a0e", letterSpacing: "-.3px", lineHeight: 1, marginBottom: 4 }}>{CT.title}</h2>
+          <p style={{ margin: 0, fontSize: 11.5, color: "#a08070" }}>{CT.sub}</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
@@ -131,11 +150,11 @@ function CitasScreen({ goBack }) {
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(255,255,255,.6)", marginBottom: 3 }}>
-                  {daysUntil === 0 ? "Recordatorio · Hoy" : daysUntil === 1 ? "Recordatorio · Mañana" : `Recordatorio · en ${daysUntil} días`}
+                  {daysUntil === 0 ? CT.reminderToday : daysUntil === 1 ? CT.reminderTomorrow : CT.reminderIn(daysUntil)}
                 </div>
                 <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 19, fontWeight: 700, color: "#fff", lineHeight: 1.15 }}>{nextAppt.title}</div>
                 <div style={{ fontSize: 11.5, color: "rgba(255,255,255,.72)", marginTop: 3 }}>
-                  {new Date(nextAppt.date + "T00:00:00").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}{nextAppt.time ? " · " + nextAppt.time + " h" : ""}
+                  {new Date(nextAppt.date + "T00:00:00").toLocaleDateString(dtLocale, { weekday: "long", day: "numeric", month: "long" })}{nextAppt.time ? " · " + nextAppt.time + (citasLang==="en"?"":" h") : ""}
                 </div>
               </div>
             </div>
@@ -144,34 +163,34 @@ function CitasScreen({ goBack }) {
 
         {showForm && (
           <div style={{ ...glassCard, borderRadius: 26, padding: "22px 18px", marginBottom: 22, animation: "fadeSlideUp .3s cubic-bezier(.23,1,.32,1)" }}>
-            <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".16em", textTransform: "uppercase", color: "#A8492A", marginBottom: 18 }}>Nueva cita</div>
+            <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".16em", textTransform: "uppercase", color: "#A8492A", marginBottom: 18 }}>{CT.newAppt}</div>
 
             <div style={{ marginBottom: 12 }}>
-              <div className="field-label">Tipo de cita</div>
-              <input className="app-field" placeholder="ej. Control obstétrico, Ecografía…" value={titulo} onChange={(e) => setTitulo(e.target.value)} />
+              <div className="field-label">{CT.apptType}</div>
+              <input className="app-field" placeholder={CT.apptTypePh} value={titulo} onChange={(e) => setTitulo(e.target.value)} />
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
               <div>
-                <div className="field-label">Fecha</div>
+                <div className="field-label">{CT.date}</div>
                 <input type="date" className="app-field" value={fecha} onChange={(e) => setFecha(e.target.value)} />
               </div>
               <div>
-                <div className="field-label">Hora</div>
+                <div className="field-label">{CT.time}</div>
                 <input type="time" className="app-field" value={hora} onChange={(e) => setHora(e.target.value)} />
               </div>
             </div>
 
             <div style={{ marginBottom: 18 }}>
-              <div className="field-label">Notas</div>
-              <textarea className="app-field" style={{ minHeight: 64, resize: "none" }} placeholder="Médico, dirección, preparación…" value={notas} onChange={(e) => setNotas(e.target.value)}></textarea>
+              <div className="field-label">{CT.notes}</div>
+              <textarea className="app-field" style={{ minHeight: 64, resize: "none" }} placeholder={CT.notesPh} value={notas} onChange={(e) => setNotas(e.target.value)}></textarea>
             </div>
 
             <button
               onClick={addAppt}
               style={{ width: "100%", padding: "15px", borderRadius: 16, border: "none", background: titulo && fecha ? "linear-gradient(135deg,#c4693a,#A8492A)" : "rgba(200,185,180,.3)", color: titulo && fecha ? "#fff" : "#b0a09a", fontWeight: 700, fontSize: 15, cursor: titulo && fecha ? "pointer" : "default", boxShadow: titulo && fecha ? "0 12px 32px rgba(168,73,42,.42)" : "none", fontFamily: "inherit", transition: "all .25s" }}
             >
-              Agendar cita
+              {CT.schedule}
             </button>
           </div>
         )}
@@ -179,7 +198,7 @@ function CitasScreen({ goBack }) {
         {/* ── Toast ── */}
         {saved && (
           <div style={{ padding: "14px 18px", borderRadius: 16, background: "rgba(123,191,106,.14)", color: "#3e8836", fontWeight: 700, textAlign: "center", fontSize: 13.5, border: "1px solid rgba(123,191,106,.28)", marginBottom: 20, animation: "fadeSlideUp .3s cubic-bezier(.23,1,.32,1)" }}>
-            ✓ Cita agendada · +5 puntos
+            ✓ {CT.toast.replace("✓ ","")}
           </div>
         )}
 
@@ -191,8 +210,8 @@ function CitasScreen({ goBack }) {
                 <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/>
               </svg>
             </div>
-            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 600, color: "#5a3a2a", marginBottom: 8 }}>Sin citas agendadas</div>
-            <p style={{ fontSize: 13.5, color: "#a08070", lineHeight: 1.65, margin: 0 }}>Toca el <strong style={{ color: "#A8492A" }}>+</strong> para añadir tu primer control obstétrico.</p>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 600, color: "#5a3a2a", marginBottom: 8 }}>{CT.emptyTitle}</div>
+            <p style={{ fontSize: 13.5, color: "#a08070", lineHeight: 1.65, margin: 0 }}>{CT.emptyBody}<strong style={{ color: "#A8492A" }}>+</strong>{CT.emptyBody2}</p>
           </div>
         )}
 
@@ -201,7 +220,7 @@ function CitasScreen({ goBack }) {
           <div style={{ marginBottom: 8 }}>
             <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#A8492A" }}></div>
-              Próximas · {upcoming.length}
+              {CT.upcoming} · {upcoming.length}
             </div>
             {upcoming.map((a) => <ApptCard key={a.id} a={a} dim={false} />)}
           </div>
@@ -215,7 +234,7 @@ function CitasScreen({ goBack }) {
               style={{ width: "100%", display: "flex", alignItems: "center", gap: 8, marginBottom: showPast ? 14 : 0, marginTop: upcoming.length > 0 ? 12 : 0, background: "none", border: "none", cursor: "pointer", padding: "6px 0", fontFamily: "inherit" }}
             >
               <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#b09080" }}></div>
-              <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#b09080" }}>Pasadas · {past.length}</span>
+              <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#b09080" }}>{CT.past} · {past.length}</span>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b09080" strokeWidth="2.4" strokeLinecap="round" style={{ marginLeft: "auto", transition: "transform .25s", transform: showPast ? "rotate(180deg)" : "none" }}><path d="M6 9l6 6 6-6"/></svg>
             </button>
             {showPast && (
@@ -272,11 +291,34 @@ const SX_META = {
   "Hinchazón":    { color: "#5ba8d9", bg: "rgba(91,168,217,.12)",  advice: "Eleva las piernas, reduce la sal, camina a diario. Hinchazón brusca en cara: llama ya." },
   "Buen ánimo":   { color: "#7bbf6a", bg: "rgba(123,191,106,.12)", advice: "¡Aprovéchalo! Conecta con tu bebé, camina, prepara algo que te ilusione." }
 };
+const SX_LABEL_EN = {
+  "Náuseas":"Nausea", "Cansancio":"Fatigue", "Dolor lumbar":"Lower back pain", "Acidez":"Heartburn",
+  "Insomnio":"Insomnia", "Mareos":"Dizziness", "Calambres":"Cramps", "Antojos":"Cravings",
+  "Hinchazón":"Bloating", "Buen ánimo":"Feeling good"
+};
+const SX_ADVICE_EN = {
+  "Náuseas":      "Eat small, frequent meals; ginger or warm tea helps. If you vomit 3+ times a day, call your doctor.",
+  "Cansancio":    "20-min naps and iron in your diet. Your body works 24/7 building a life.",
+  "Dolor lumbar": "15 min of local heat, cat-cow stretches, pillow between knees while sleeping.",
+  "Acidez":       "Eat a light dinner 2h before bed; avoid fried food and coffee. Sips of cold water bring instant relief.",
+  "Insomnio":     "Left side with a prenatal pillow, 4-7-8 breathing, no screens 1h before bed.",
+  "Mareos":       "Get up slowly, eat something light when you wake up. If it persists, tell your doctor.",
+  "Calambres":    "Flex your foot upward, massage the muscle; hydration and magnesium help.",
+  "Antojos":      "Indulge in moderation. Intense ice cravings can signal an iron deficiency.",
+  "Hinchazón":    "Elevate your legs, cut back on salt, walk daily. Sudden facial swelling: call right away.",
+  "Buen ánimo":   "Make the most of it! Connect with your baby, take a walk, do something you love.",
+};
 
 const SEV_DATA = [
 { key: "Leve", dot: "#7bbf6a", glow: "rgba(123,191,106,.3)", tip: "Sin preocupación mayor. Solo monitorea cómo evoluciona." },
 { key: "Moderado", dot: "#d4a843", glow: "rgba(212,168,67,.3)", tip: "Anótalo y coméntalo en tu próxima cita médica." },
 { key: "Intenso", dot: "#cf7272", glow: "rgba(207,114,114,.3)", tip: "Busca atención médica pronto. No esperes a la próxima cita." }];
+const SEV_LABEL_EN = { "Leve":"Mild", "Moderado":"Moderate", "Intenso":"Intense" };
+const SEV_TIP_EN = {
+  "Leve":"Nothing to worry about. Just keep an eye on how it develops.",
+  "Moderado":"Note it down and mention it at your next check-up.",
+  "Intenso":"Seek medical attention soon. Don't wait for your next appointment.",
+};
 
 
 function SxButtons({ sel, toggle }) {
@@ -333,6 +375,22 @@ function SxButtons({ sel, toggle }) {
 }
 
 function SintomasScreen({ goBack }) {
+  const sxLang = getAppLang2();
+  const ST = sxLang==="en" ? {
+    historyEyebrow:"History · health log", wellnessPrefix:"Wellness · ", yourLog:"Your log", howFeel:"How are you feeling?",
+    noRecords:"No records yet", today:"Today", todaySx:"Today's symptoms · tap to select", otherSx:"Other symptom…",
+    guidance:"Guidance · ", intensity:"Overall intensity", saved:"✓ Saved to your log · +3 points", watchAd:"Watch short ad → ", points50:"+50 points",
+    saveBtn:"Save to my log →", selectOne:"Select at least one symptom", prevRecords:"Previous records · ",
+  } : {
+    historyEyebrow:"Historial · bitácora de salud", wellnessPrefix:"Bienestar · ", yourLog:"Tu bitácora", howFeel:"¿Cómo te sientes?",
+    noRecords:"Sin registros todavía", today:"Hoy", todaySx:"Síntomas de hoy · toca para seleccionar", otherSx:"Otro síntoma…",
+    guidance:"Orientación · ", intensity:"Intensidad general", saved:"✓ Guardado en tu bitácora · +3 puntos", watchAd:"Ver anuncio breve → ", points50:"+50 puntos",
+    saveBtn:"Guardar en mi bitácora →", selectOne:"Selecciona al menos un síntoma", prevRecords:"Registros anteriores · ",
+  };
+  const sxLabel = (s) => sxLang==="en" ? (SX_LABEL_EN[s]||s) : s;
+  const sxAdvice = (s) => sxLang==="en" ? SX_ADVICE_EN[s] : SX_META[s]?.advice;
+  const sevLabel = (k) => sxLang==="en" ? (SEV_LABEL_EN[k]||k) : k;
+  const sevTip = (k) => sxLang==="en" ? SEV_TIP_EN[k] : SEV_DATA.find(d=>d.key===k)?.tip;
   const [sel, setSel] = React.useState([]);
   const [sev, setSev] = React.useState("Leve");
   const [nota, setNota] = React.useState("");
@@ -347,14 +405,14 @@ function SintomasScreen({ goBack }) {
   const addEntry = () => {
     const syms = nota.trim() ? [...sel, nota.trim()] : [...sel];
     if (!syms.length) return;
-    const entry = { id: Date.now(), symptoms: syms, sev, date: new Date().toLocaleDateString("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) };
+    const entry = { id: Date.now(), symptoms: syms, sev, date: new Date().toLocaleDateString(sxLang==="en"?"en-US":"es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) };
     const h = [entry, ...hist].slice(0, 30);
     setHist(h); LS.set("lume_sx_hist", h);
     addPoints(3); setSel([]); setNota(""); setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
 
-  const today = new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" });
+  const today = new Date().toLocaleDateString(sxLang==="en"?"en-US":"es-ES", { weekday: "long", day: "numeric", month: "long" });
 
   return (
     <div style={{ background: "linear-gradient(170deg,#faf2ec 0%,#f2e3d8 50%,#ead5c5 100%)", minHeight: "100%", overflowY: "auto", overflowX: "hidden" }}>
@@ -367,10 +425,10 @@ function SintomasScreen({ goBack }) {
           </button>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "#A8492A", opacity: .65, marginBottom: 3 }}>
-              {showHist ? "Historial · bitácora de salud" : "Bienestar · " + today}
+              {showHist ? ST.historyEyebrow : ST.wellnessPrefix + today}
             </div>
             <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, fontWeight: 600, color: "#3d1a0e", lineHeight: 1 }}>
-              {showHist ? "Tu bitácora" : "¿Cómo te sientes?"}
+              {showHist ? ST.yourLog : ST.howFeel}
             </div>
           </div>
           {!showHist && hist.length > 0 && (
@@ -387,7 +445,7 @@ function SintomasScreen({ goBack }) {
           /* ── HISTORY VIEW ── */
           <div>
             {hist.length === 0 && (
-              <div style={{ textAlign: "center", padding: "48px 24px", color: "#a08070", fontSize: 14 }}>Sin registros todavía</div>
+              <div style={{ textAlign: "center", padding: "48px 24px", color: "#a08070", fontSize: 14 }}>{ST.noRecords}</div>
             )}
             {hist.map((h, i) => {
               const sevCfg = SEV_DATA.find(d => d.key === h.sev);
@@ -405,7 +463,7 @@ function SintomasScreen({ goBack }) {
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
                       {h.symptoms.map((s, j) => {
                         const meta = SX_META[s];
-                        return <span key={j} style={{ fontSize: 11.5, fontWeight: 600, padding: "4px 10px", borderRadius: 99, background: meta ? meta.bg : "rgba(168,73,42,.07)", color: meta ? meta.color : "#A8492A" }}>{s}</span>;
+                        return <span key={j} style={{ fontSize: 11.5, fontWeight: 600, padding: "4px 10px", borderRadius: 99, background: meta ? meta.bg : "rgba(168,73,42,.07)", color: meta ? meta.color : "#A8492A" }}>{sxLabel(s)}</span>;
                       })}
                     </div>
                   </div>
@@ -418,13 +476,13 @@ function SintomasScreen({ goBack }) {
             {/* ── SELECTED TRAY ── */}
             {sel.length > 0 && (
               <div style={{ display: "flex", gap: 7, flexWrap: "wrap", padding: "11px 14px", borderRadius: 18, background: "rgba(168,73,42,.07)", border: "1px solid rgba(168,73,42,.12)", animation: "fadeSlideUp .25s cubic-bezier(.23,1,.32,1)" }}>
-                <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "#A8492A", opacity: .7, alignSelf: "center", marginRight: 2 }}>Hoy</span>
+                <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "#A8492A", opacity: .7, alignSelf: "center", marginRight: 2 }}>{ST.today}</span>
                 {sel.map(s => {
                   const meta = SX_META[s];
                   return (
                     <button key={s} onClick={() => toggle(s)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px 5px 8px", borderRadius: 99, border: "1px solid " + (meta ? meta.color + "40" : "rgba(168,73,42,.3)"), background: meta ? meta.bg : "rgba(168,73,42,.1)", cursor: "pointer", fontFamily: "inherit" }}>
                       <span style={{ color: meta ? meta.color : "#A8492A" }}>{SX_ICONS[s] && SX_ICONS[s](meta ? meta.color : "#A8492A")}</span>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: meta ? meta.color : "#A8492A" }}>{s}</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: meta ? meta.color : "#A8492A" }}>{sxLabel(s)}</span>
                       <span style={{ fontSize: 14, color: meta ? meta.color : "#A8492A", opacity: .5, lineHeight: 1 }}>×</span>
                     </button>
                   );
@@ -434,7 +492,7 @@ function SintomasScreen({ goBack }) {
 
             {/* ── SYMPTOM GRID 2-col ── */}
             <div style={{ background: "rgba(255,255,255,.7)", backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)", borderRadius: 24, padding: "18px 14px 14px", boxShadow: "0 14px 40px -10px rgba(90,40,24,.28), 0 1px 0 rgba(255,255,255,.95) inset", border: "1px solid rgba(255,255,255,.85)" }}>
-              <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .7, marginBottom: 12 }}>Síntomas de hoy · toca para seleccionar</div>
+              <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .7, marginBottom: 12 }}>{ST.todaySx}</div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 {Object.entries(SX_META).map(([name, meta]) => {
                   const on = sel.includes(name);
@@ -457,7 +515,7 @@ function SintomasScreen({ goBack }) {
                       <div style={{ width: 34, height: 34, margin: "11px 10px", borderRadius: 10, background: meta.color + "18", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                         {SX_ICONS[name] && SX_ICONS[name](meta.color)}
                       </div>
-                      <span style={{ fontSize: 12, fontWeight: on ? 700 : 500, color: on ? "#3d1a0e" : "#7a5a4a", flex: 1, lineHeight: 1.3, paddingRight: 8 }}>{name}</span>
+                      <span style={{ fontSize: 12, fontWeight: on ? 700 : 500, color: on ? "#3d1a0e" : "#7a5a4a", flex: 1, lineHeight: 1.3, paddingRight: 8 }}>{sxLabel(name)}</span>
                     </button>
                   );
                 })}
@@ -465,7 +523,7 @@ function SintomasScreen({ goBack }) {
               {/* Custom input */}
               <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 8, padding: "11px 14px", borderRadius: 13, border: "1.5px solid rgba(168,73,42,.1)", background: "rgba(255,255,255,.5)" }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8492A" strokeWidth="2.2" strokeLinecap="round" style={{ flexShrink: 0, opacity: .45 }}><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
-                <input style={{ flex: 1, border: "none", background: "transparent", fontSize: 13, color: "#5a3a2a", fontFamily: "inherit", outline: "none" }} placeholder="Otro síntoma…" value={nota} onChange={e => setNota(e.target.value)} />
+                <input style={{ flex: 1, border: "none", background: "transparent", fontSize: 13, color: "#5a3a2a", fontFamily: "inherit", outline: "none" }} placeholder={ST.otherSx} value={nota} onChange={e => setNota(e.target.value)} />
               </div>
             </div>
 
@@ -481,9 +539,9 @@ function SintomasScreen({ goBack }) {
                         <div style={{ width: 30, height: 30, borderRadius: "50%", background: meta.color + "18", border: "1.5px solid " + meta.color + "28", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                           {SX_ICONS[s] && SX_ICONS[s](meta.color)}
                         </div>
-                        <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: meta.color }}>Orientación · {s}</span>
+                        <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: meta.color }}>{ST.guidance}{sxLabel(s)}</span>
                       </div>
-                      <p style={{ margin: 0, fontSize: 13, color: "#5a3a2a", lineHeight: 1.65 }}>{meta.advice}</p>
+                      <p style={{ margin: 0, fontSize: 13, color: "#5a3a2a", lineHeight: 1.65 }}>{sxAdvice(s)}</p>
                     </div>
                   );
                 })}
@@ -492,7 +550,7 @@ function SintomasScreen({ goBack }) {
 
             {/* ── INTENSIDAD ── */}
             <div style={{ background: "rgba(255,255,255,.62)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderRadius: 22, padding: "16px 14px", boxShadow: "0 6px 22px rgba(168,73,42,.06), 0 1px 0 rgba(255,255,255,.9) inset", border: "1px solid rgba(255,255,255,.78)" }}>
-              <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", marginBottom: 12 }}>Intensidad general</div>
+              <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", marginBottom: 12 }}>{ST.intensity}</div>
               <div style={{ display: "flex", gap: 8, marginBottom: curSev ? 11 : 0 }}>
                 {SEV_DATA.map(cfg => {
                   const on = sev === cfg.key;
@@ -508,7 +566,7 @@ function SintomasScreen({ goBack }) {
                       transition: "all .2s cubic-bezier(.23,1,.32,1)"
                     }}>
                       <div style={{ width: 10, height: 10, borderRadius: "50%", background: on ? cfg.dot : "#d8ccc5", boxShadow: on ? "0 0 0 4px " + cfg.glow : "none", transition: "all .2s" }} />
-                      <span style={{ fontSize: 12, fontWeight: on ? 800 : 500, color: on ? cfg.dot : "#a09090" }}>{cfg.key}</span>
+                      <span style={{ fontSize: 12, fontWeight: on ? 800 : 500, color: on ? cfg.dot : "#a09090" }}>{sevLabel(cfg.key)}</span>
                     </button>
                   );
                 })}
@@ -516,7 +574,7 @@ function SintomasScreen({ goBack }) {
               {curSev && (
                 <div style={{ padding: "10px 13px", borderRadius: 11, background: curSev.dot + "0d", border: "1px solid " + curSev.dot + "22", display: "flex", alignItems: "center", gap: 9 }}>
                   <div style={{ width: 7, height: 7, borderRadius: "50%", background: curSev.dot, boxShadow: "0 0 0 3px " + curSev.glow, flexShrink: 0 }} />
-                  <p style={{ margin: 0, fontSize: 12.5, color: "#5a3a2a", lineHeight: 1.5 }}>{curSev.tip}</p>
+                  <p style={{ margin: 0, fontSize: 12.5, color: "#5a3a2a", lineHeight: 1.5 }}>{sevTip(curSev.key)}</p>
                 </div>
               )}
             </div>
@@ -524,10 +582,10 @@ function SintomasScreen({ goBack }) {
             {/* ── GUARDAR ── */}
             {saved ? (
               <div style={{ borderRadius: 18, overflow: "hidden", border: "1px solid rgba(123,191,106,.25)", animation: "fadeSlideUp .3s cubic-bezier(.23,1,.32,1)" }}>
-                <div style={{ padding: "14px 16px", background: "rgba(123,191,106,.14)", color: "#4a9940", fontWeight: 700, textAlign: "center", fontSize: 13.5 }}>✓ Guardado en tu bitácora · +3 puntos</div>
+                <div style={{ padding: "14px 16px", background: "rgba(123,191,106,.14)", color: "#4a9940", fontWeight: 700, textAlign: "center", fontSize: 13.5 }}>{ST.saved}</div>
                 <button onClick={() => window.triggerRewardedAd && window.triggerRewardedAd("points")} style={{ width: "100%", padding: "11px 16px", border: "none", borderTop: "1px solid rgba(168,73,42,.1)", background: "linear-gradient(135deg,rgba(61,26,14,.96),rgba(90,42,20,.92))", color: "#E6CFA1", fontSize: 12.5, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E6CFA1" strokeWidth="2" strokeLinecap="round"><path d="M20 12v10H4V12"/><rect x="2" y="7" width="20" height="5" rx="1"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-                  Ver anuncio breve → <strong style={{ color: "#fff" }}>+50 puntos</strong>
+                  {ST.watchAd}<strong style={{ color: "#fff" }}>{ST.points50}</strong>
                 </button>
               </div>
             ) : (
@@ -539,7 +597,7 @@ function SintomasScreen({ goBack }) {
                 boxShadow: hasContent ? "0 14px 32px rgba(168,73,42,.38), 0 1px 0 rgba(255,255,255,.2) inset" : "none",
                 fontFamily: "inherit", letterSpacing: ".01em", transition: "all .25s"
               }}>
-                {hasContent ? "Guardar en mi bitácora →" : "Selecciona al menos un síntoma"}
+                {hasContent ? ST.saveBtn : ST.selectOne}
               </button>
             )}
 
@@ -547,7 +605,7 @@ function SintomasScreen({ goBack }) {
             {hist.length > 0 && !saved && (
               <div style={{ borderRadius: 20, overflow: "hidden", border: "1px solid rgba(168,73,42,.1)", background: "rgba(255,255,255,.5)", backdropFilter: "blur(10px)" }}>
                 <button onClick={() => setShowHist(true)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "13px 16px", border: "none", background: "transparent", cursor: "pointer", fontFamily: "inherit" }}>
-                  <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", color: "#A8492A", flex: 1, textAlign: "left" }}>Registros anteriores · {hist.length}</div>
+                  <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", color: "#A8492A", flex: 1, textAlign: "left" }}>{ST.prevRecords}{hist.length}</div>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8492A" strokeWidth="2.5" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
                 </button>
                 {hist.slice(0, 2).map((h, i) => {
@@ -559,7 +617,7 @@ function SintomasScreen({ goBack }) {
                       <div style={{ flex: 1, display: "flex", gap: 4, flexWrap: "wrap" }}>
                         {h.symptoms.slice(0, 3).map((s, j) => {
                           const meta = SX_META[s];
-                          return <span key={j} style={{ fontSize: 10.5, fontWeight: 600, padding: "2px 7px", borderRadius: 99, background: meta ? meta.bg : "rgba(168,73,42,.07)", color: meta ? meta.color : "#A8492A" }}>{s}</span>;
+                          return <span key={j} style={{ fontSize: 10.5, fontWeight: 600, padding: "2px 7px", borderRadius: 99, background: meta ? meta.bg : "rgba(168,73,42,.07)", color: meta ? meta.color : "#A8492A" }}>{sxLabel(s)}</span>;
                         })}
                         {h.symptoms.length > 3 && <span style={{ fontSize: 10.5, color: "#a08070" }}>+{h.symptoms.length - 3}</span>}
                       </div>
@@ -581,6 +639,12 @@ const LEVELS = [
   { name: "Plata",  min: 500,  next: 1500, benefit: "10% de descuento + 1 meditación premium/semana",      color: "#8090A8", light: "#C0CCE0", bg: "rgba(128,144,168,.12)" },
   { name: "Oro",    min: 1500, next: 5000, benefit: "20% de descuento + plan nutricional completo",         color: "#C8961A", light: "#F0CC50", bg: "rgba(200,150,26,.12)" }
 ];
+const LEVEL_NAME_EN = { "Bronce":"Bronze", "Plata":"Silver", "Oro":"Gold" };
+const LEVEL_BENEFIT_EN = {
+  "Bronce":"5% discount on subscriptions",
+  "Plata":"10% discount + 1 premium meditation/week",
+  "Oro":"20% discount + full nutrition plan",
+};
 
 const ACTIONS = [
   { ic: "leaf",     col: "#2ea050", label: "Suscríbete al plan Esencial",    pts: 30 },
@@ -590,6 +654,10 @@ const ACTIONS = [
   { ic: "names",    col: "#d06090", label: "Elige un nombre favorito",       pts: 5  },
   { ic: "pulse",    col: "#c04040", label: "Registra un síntoma",            pts: 3  },
   { ic: "nutri",    col: "#408050", label: "Registra una comida saludable",  pts: 3  }
+];
+const ACTIONS_LABEL_EN = [
+  "Subscribe to the Essential plan","Subscribe to the Wellness plan","Log an ultrasound",
+  "Schedule a medical appointment","Pick a favorite name","Log a symptom","Log a healthy meal"
 ];
 
 const REWARDS_FREE = [
@@ -602,6 +670,7 @@ const REWARDS_FREE = [
   { id:"pro",   title:"1 mes Premium gratis",     desc:"Acceso completo sin costo",             pts:1500, color:"#C8961A", bg:"rgba(200,150,26,.12)",
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> },
 ];
+const REWARDS_FREE_EN = { med:{title:"Guided meditation",desc:"1 prenatal session, 20 min"}, mus:{title:"24h prenatal playlist",desc:"Music for you and your baby"}, nut:{title:"3-day nutrition plan",desc:"AI-personalized menu"}, pro:{title:"1 month Premium free",desc:"Full access at no cost"} };
 
 const REWARDS_PREMIUM = [
   { id:"theme", title:"Tema visual exclusivo",    desc:"Paleta Medianoche o Jardín en la app",  pts:200,  color:"#A8492A", bg:"rgba(168,73,42,.12)",
@@ -615,10 +684,42 @@ const REWARDS_PREMIUM = [
   { id:"box",   title:"Caja regalo Lumé",         desc:"Cuaderno + accesorios bebé premium",    pts:3500, color:"#C8961A", bg:"rgba(200,150,26,.12)",
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg> },
 ];
+const REWARDS_PREMIUM_EN = { theme:{title:"Exclusive visual theme",desc:"Midnight or Garden palette in the app"}, pdf:{title:"Lumé Diary PDF guide",desc:"Exclusive printable pregnancy diary"}, disc:{title:"Partner brand discount",desc:"15% off Mustela or Amazon Baby"}, mes:{title:"Extra month of subscription",desc:"30 days free on your next renewal"}, box:{title:"Lumé gift box",desc:"Notebook + premium baby accessories"} };
 
 const REWARDS = REWARDS_FREE; // legacy alias
 
 function RecompensasScreen({ goBack }) {
+  const rcLang = getAppLang2();
+  const RC = rcLang==="en" ? {
+    program:"Loyalty program", title:"Rewards", yourLevel:"Your current level", level:"Level ", points:"points",
+    maxLevel:"🏆 Max level reached!", missing:(n,lvl)=>({pre:"Only ",post:` to level ${lvl}`,n}),
+    activeBenefit:"Your active benefit", redeemPoints:"Redeem your points", freePlan:"Free plan", subscribers:"Subscribers",
+    premiumOnly:"✦ These rewards are exclusive to paying subscribers", claimed:"✓ Claimed", redeem:"Redeem",
+    earnFast:"Earn points fast", watchAd:"Watch a short ad", dailyLimit:"Daily limit · come back tomorrow",
+    available:(n)=>`+50 points · ${n} available today`, tomorrow:"Tomorrow", watch:"Watch",
+    howToEarn:"How to earn points", current:"Current",
+    cancel:"Cancel", confirmRedeem:"Confirm redemption", ptsWord:"points", leftYou:"→ you'll have ",
+    claimedTitle:"✓ Reward claimed", great:"Great!", ad:"Ad", close:"Close",
+    proMsg:"Your Premium month has been activated. Enjoy full access!", nutMsg:"Your nutrition plan was sent to your email. Check your inbox!", genMsg:(t)=>`${t} is now available in your app. Enjoy!`,
+  } : {
+    program:"Programa de lealtad", title:"Recompensas", yourLevel:"Tu nivel actual", level:"Nivel ", points:"puntos",
+    maxLevel:"🏆 ¡Nivel máximo alcanzado!", missing:(n,lvl)=>({pre:"Faltan ",post:` para nivel ${lvl}`,n}),
+    activeBenefit:"Tu beneficio activo", redeemPoints:"Canjea tus puntos", freePlan:"Plan gratuito", subscribers:"Suscriptoras",
+    premiumOnly:"✦ Estas recompensas son exclusivas para suscriptoras de pago", claimed:"✓ Canjeado", redeem:"Canjear",
+    earnFast:"Gana puntos rápido", watchAd:"Ver un anuncio breve", dailyLimit:"Límite diario · vuelve mañana",
+    available:(n)=>`+50 puntos · ${n} disponible${n!==1?"s":""} hoy`, tomorrow:"Mañana", watch:"Ver",
+    howToEarn:"Cómo ganar puntos", current:"Actual",
+    cancel:"Cancelar", confirmRedeem:"Confirmar canje", ptsWord:"puntos", leftYou:"→ te quedan ",
+    claimedTitle:"✓ Premio reclamado", great:"¡Genial!", ad:"Anuncio", close:"Cerrar",
+    proMsg:"Tu mes Premium ha sido activado. ¡Disfruta acceso completo!", nutMsg:"Tu plan nutricional fue enviado a tu email. ¡Revisa tu bandeja!", genMsg:(t)=>`${t} ya está disponible en tu app. ¡Disfrútalo!`,
+  };
+  const levelName = (n) => rcLang==="en" ? (LEVEL_NAME_EN[n]||n) : n;
+  const levelBenefit = (n) => rcLang==="en" ? LEVEL_BENEFIT_EN[n] : LEVELS.find(l=>l.name===n)?.benefit;
+  const actionLabel = (i) => rcLang==="en" ? ACTIONS_LABEL_EN[i] : ACTIONS[i].label;
+  const rewardText = (r, tab) => {
+    const en = tab==="free" ? REWARDS_FREE_EN[r.id] : REWARDS_PREMIUM_EN[r.id];
+    return rcLang==="en" && en ? en : { title:r.title, desc:r.desc };
+  };
   const [pts, setPts] = React.useState(() => LS.get("lume_points") || 126);
   const [claimed, setClaimed] = React.useState(() => LS.get("lume_claimed") || []);
   const [confirmReward, setConfirmReward] = React.useState(null);
@@ -680,8 +781,8 @@ function RecompensasScreen({ goBack }) {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .65, marginBottom: 5 }}>Programa de lealtad</div>
-          <h2 style={{ margin: 0, fontSize: 23, fontWeight: 800, color: "#3d1a0e", letterSpacing: "-.3px", lineHeight: 1 }}>Recompensas</h2>
+          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .65, marginBottom: 5 }}>{RC.program}</div>
+          <h2 style={{ margin: 0, fontSize: 23, fontWeight: 800, color: "#3d1a0e", letterSpacing: "-.3px", lineHeight: 1 }}>{RC.title}</h2>
         </div>
       </div>
 
@@ -694,16 +795,16 @@ function RecompensasScreen({ goBack }) {
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
             <div>
-              <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "rgba(255,255,255,.6)", marginBottom: 6 }}>Tu nivel actual</div>
+              <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "rgba(255,255,255,.6)", marginBottom: 6 }}>{RC.yourLevel}</div>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <MedalIcon level={level.name} size={44} />
-                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 28, fontWeight: 700, color: "#fff", letterSpacing: "-.02em", lineHeight: 1 }}>Nivel {level.name}</div>
+                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 28, fontWeight: 700, color: "#fff", letterSpacing: "-.02em", lineHeight: 1 }}>{RC.level}{levelName(level.name)}</div>
               </div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,.7)", marginTop: 5, lineHeight: 1.5, maxWidth: 200 }}>{level.benefit}</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,.7)", marginTop: 5, lineHeight: 1.5, maxWidth: 200 }}>{levelBenefit(level.name)}</div>
             </div>
             <div style={{ textAlign: "right", flexShrink: 0 }}>
               <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 52, fontWeight: 700, color: "#fff", lineHeight: 1, letterSpacing: "-.02em" }}>{pts}</div>
-              <div style={{ fontSize: 11, fontWeight: 800, color: "rgba(255,255,255,.6)", letterSpacing: ".08em", textTransform: "uppercase", marginTop: 2 }}>puntos</div>
+              <div style={{ fontSize: 11, fontWeight: 800, color: "rgba(255,255,255,.6)", letterSpacing: ".08em", textTransform: "uppercase", marginTop: 2 }}>{RC.points}</div>
             </div>
           </div>
 
@@ -720,13 +821,13 @@ function RecompensasScreen({ goBack }) {
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 10 }}>
                 <MedalIcon level={nextLevel.name} size={16} />
                 <span style={{ fontSize: 12, color: "rgba(255,255,255,.72)", fontWeight: 600 }}>
-                  Faltan <strong style={{ color: "#fff" }}>{ptsToNext} pts</strong> para nivel {nextLevel.name}
+                  {RC.missing(ptsToNext, levelName(nextLevel.name)).pre}<strong style={{ color: "#fff" }}>{ptsToNext} pts</strong>{RC.missing(ptsToNext, levelName(nextLevel.name)).post}
                 </span>
               </div>
             )}
             {!nextLevel && (
               <div style={{ marginTop: 10, fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600 }}>
-                🏆 ¡Nivel máximo alcanzado!
+                {RC.maxLevel}
               </div>
             )}
           </div>
@@ -740,9 +841,9 @@ function RecompensasScreen({ goBack }) {
             return (
               <div key={l.name} style={{ ...glassCard, borderRadius: 20, padding: "16px 12px", textAlign: "center", opacity: active ? 1 : .45, border: isCurrent ? `1.5px solid ${l.color}55` : "1px solid rgba(255,255,255,.78)", background: isCurrent ? `linear-gradient(160deg,${l.bg},rgba(255,255,255,.48))` : "rgba(255,255,255,.52)", boxShadow: isCurrent ? `0 12px 32px -8px ${l.color}44, 0 1px 0 rgba(255,255,255,.9) inset` : glassCard.boxShadow }}>
                 <MedalIcon level={l.name} size={isCurrent ? 44 : 36} />
-                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: isCurrent ? 16 : 14, fontWeight: 700, color: isCurrent ? l.color : "#5a3a2a", marginTop: 8, lineHeight: 1.1 }}>{l.name}</div>
+                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: isCurrent ? 16 : 14, fontWeight: 700, color: isCurrent ? l.color : "#5a3a2a", marginTop: 8, lineHeight: 1.1 }}>{levelName(l.name)}</div>
                 <div style={{ fontSize: 10, fontWeight: 700, color: "#b09080", marginTop: 4, letterSpacing: ".04em" }}>{l.min}+ pts</div>
-                {isCurrent && <div style={{ marginTop: 8, fontSize: 9, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: l.color, padding: "3px 8px", borderRadius: 99, background: l.bg, display: "inline-block" }}>Actual</div>}
+                {isCurrent && <div style={{ marginTop: 8, fontSize: 9, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: l.color, padding: "3px 8px", borderRadius: 99, background: l.bg, display: "inline-block" }}>{RC.current}</div>}
               </div>
             );
           })}
@@ -750,14 +851,14 @@ function RecompensasScreen({ goBack }) {
 
         {/* ── Beneficio activo ── */}
         <div style={{ ...glassCard, borderRadius: 22, padding: "16px 18px" }}>
-          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", marginBottom: 12 }}>Tu beneficio activo</div>
+          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", marginBottom: 12 }}>{RC.activeBenefit}</div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ width: 44, height: 44, borderRadius: 14, background: level.bg, border: `1.5px solid ${level.color}33`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <MedalIcon level={level.name} size={28} />
             </div>
             <div>
-              <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 17, fontWeight: 700, color: "#3d1a0e", lineHeight: 1.2 }}>Nivel {level.name}</div>
-              <div style={{ fontSize: 13, color: "#7a5a4a", marginTop: 3, lineHeight: 1.5 }}>{level.benefit}</div>
+              <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 17, fontWeight: 700, color: "#3d1a0e", lineHeight: 1.2 }}>{RC.level}{levelName(level.name)}</div>
+              <div style={{ fontSize: 13, color: "#7a5a4a", marginTop: 3, lineHeight: 1.5 }}>{levelBenefit(level.name)}</div>
             </div>
           </div>
         </div>
@@ -765,9 +866,9 @@ function RecompensasScreen({ goBack }) {
         {/* ── Canjea tus puntos ── */}
         <div style={{ ...glassCard, borderRadius: 22, overflow: "hidden" }}>
           <div style={{ padding: "18px 18px 0" }}>
-            <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", marginBottom: 12 }}>Canjea tus puntos</div>
+            <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", marginBottom: 12 }}>{RC.redeemPoints}</div>
             <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
-              {[{key:"free",label:"Plan gratuito"},{key:"premium",label:"Suscriptoras"}].map(t=>(
+              {[{key:"free",label:RC.freePlan},{key:"premium",label:RC.subscribers}].map(t=>(
                 <button key={t.key} onClick={()=>setRewardTab(t.key)}
                   style={{ flex:1, padding:"8px 4px", borderRadius:12, border:"none", fontFamily:"inherit",
                     fontWeight:700, fontSize:11.5, cursor:"pointer", transition:"all .2s",
@@ -780,7 +881,7 @@ function RecompensasScreen({ goBack }) {
             </div>
             {rewardTab==="premium" && !isPremium && (
               <div style={{ marginBottom:12, padding:"10px 14px", borderRadius:12, background:"rgba(168,73,42,.07)", border:"1px solid rgba(168,73,42,.14)", fontSize:12, color:"#8a6a5a", lineHeight:1.5 }}>
-                ✦ Estas recompensas son exclusivas para suscriptoras de pago
+                ✦ {RC.premiumOnly.replace("✦ ","")}
               </div>
             )}
           </div>
@@ -791,8 +892,8 @@ function RecompensasScreen({ goBack }) {
               <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 13, padding: "12px 18px", borderTop: "1px solid rgba(168,73,42,.07)" }}>
                 <div style={{ width: 46, height: 46, borderRadius: 14, background: r.bg, border: `1px solid ${r.color}22`, display: "flex", alignItems: "center", justifyContent: "center", color: r.color, flexShrink: 0 }}>{r.icon}</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 700, fontSize: 13.5, color: "#3d1a0e", lineHeight: 1.2 }}>{r.title}</div>
-                  <div style={{ fontSize: 11.5, color: "#a08070", marginTop: 2 }}>{r.desc}</div>
+                  <div style={{ fontWeight: 700, fontSize: 13.5, color: "#3d1a0e", lineHeight: 1.2 }}>{rewardText(r, rewardTab).title}</div>
+                  <div style={{ fontSize: 11.5, color: "#a08070", marginTop: 2 }}>{rewardText(r, rewardTab).desc}</div>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 5, flexShrink: 0 }}>
                   <div style={{ fontSize: 11, fontWeight: 800, color: r.color, padding: "3px 9px", borderRadius: 99, background: r.bg }}>{r.pts} pts</div>
@@ -804,7 +905,7 @@ function RecompensasScreen({ goBack }) {
                       boxShadow: canClaim && !isClaimed ? "0 4px 14px rgba(168,73,42,.32)" : "none",
                       transition: "all .2s"
                     }}
-                  >{isClaimed ? "✓ Canjeado" : "Canjear"}</button>
+                  >{isClaimed ? RC.claimed : RC.redeem}</button>
                 </div>
               </div>
             );
@@ -814,15 +915,15 @@ function RecompensasScreen({ goBack }) {
 
         {/* ── Rewarded Ads ── */}
         <div style={{ ...glassCard, borderRadius:22, padding:"18px" }}>
-          <div style={{ fontSize:10, fontWeight:800, letterSpacing:".15em", textTransform:"uppercase", color:"#A8492A", marginBottom:14 }}>Gana puntos rápido</div>
+          <div style={{ fontSize:10, fontWeight:800, letterSpacing:".15em", textTransform:"uppercase", color:"#A8492A", marginBottom:14 }}>{RC.earnFast}</div>
           <div style={{ display:"flex", alignItems:"center", gap:14 }}>
             <div style={{ width:52, height:52, borderRadius:16, background:"linear-gradient(135deg,rgba(168,73,42,.12),rgba(200,150,26,.1))", border:"1px solid rgba(168,73,42,.18)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="#A8492A"><polygon points="5 3 19 12 5 21 5 3" opacity=".9"/></svg>
             </div>
             <div style={{ flex:1 }}>
-              <div style={{ fontWeight:700, fontSize:14, color:"#3d1a0e", marginBottom:3 }}>Ver un anuncio breve</div>
+              <div style={{ fontWeight:700, fontSize:14, color:"#3d1a0e", marginBottom:3 }}>{RC.watchAd}</div>
               <div style={{ fontSize:12, color:"#a08070" }}>
-                {adsToday >= 3 ? "Límite diario · vuelve mañana" : `+50 puntos · ${3-adsToday} disponible${3-adsToday!==1?"s":""} hoy`}
+                {adsToday >= 3 ? RC.dailyLimit : RC.available(3-adsToday)}
               </div>
             </div>
             <button onClick={adsToday < 3 ? startRewardedAd : undefined}
@@ -832,7 +933,7 @@ function RecompensasScreen({ goBack }) {
                 color:adsToday < 3 ? "#fff":"#b0a09a",
                 boxShadow:adsToday < 3 ? "0 6px 18px rgba(168,73,42,.35)":"none",
                 flexShrink:0, transition:"all .2s" }}>
-              {adsToday >= 3 ? "Mañana" : "Ver"}
+              {adsToday >= 3 ? RC.tomorrow : RC.watch}
             </button>
           </div>
           {adsToday > 0 && (
@@ -843,13 +944,13 @@ function RecompensasScreen({ goBack }) {
         </div>
 
         <div style={{ ...glassCard, borderRadius: 22, overflow: "hidden" }}>
-          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", padding: "18px 18px 12px" }}>Cómo ganar puntos</div>
+          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", padding: "18px 18px 12px" }}>{RC.howToEarn}</div>
           {ACTIONS.map((a, i) => (
             <div key={i} style={{ display: "flex", alignItems: "center", gap: 13, padding: "12px 18px", borderTop: i === 0 ? "none" : "1px solid rgba(168,73,42,.07)" }}>
               <div style={{ width: 36, height: 36, borderRadius: 12, background: a.col + "18", display: "flex", alignItems: "center", justifyContent: "center", color: a.col, flexShrink: 0 }}>
                 <AppIcon name={a.ic} size={18} />
               </div>
-              <span style={{ flex: 1, fontSize: 13.5, color: "#5a3a2a", lineHeight: 1.4 }}>{a.label}</span>
+              <span style={{ flex: 1, fontSize: 13.5, color: "#5a3a2a", lineHeight: 1.4 }}>{actionLabel(i)}</span>
               <div style={{ display: "flex", alignItems: "center", gap: 3, padding: "4px 10px", borderRadius: 99, background: "rgba(168,73,42,.08)", border: "1px solid rgba(168,73,42,.14)", flexShrink: 0 }}>
                 <span style={{ fontSize: 11, fontWeight: 800, color: "#A8492A" }}>+{a.pts}</span>
                 <span style={{ fontSize: 10, color: "#c08060", fontWeight: 600 }}>pts</span>
@@ -867,16 +968,16 @@ function RecompensasScreen({ goBack }) {
             <div style={{ width: 38, height: 4, borderRadius: 99, background: "rgba(168,73,42,.2)", margin: "0 auto 20px" }}></div>
             <div style={{ width: 72, height: 72, borderRadius: 22, background: confirmReward.bg, display: "flex", alignItems: "center", justifyContent: "center", color: confirmReward.color, margin: "0 auto 16px" }}>{React.cloneElement(confirmReward.icon, {width:36,height:36})}</div>
             <div style={{ textAlign: "center", marginBottom: 20 }}>
-              <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 24, fontWeight: 700, color: "#3d1a0e", marginBottom: 6 }}>{confirmReward.title}</div>
-              <div style={{ fontSize: 13, color: "#8a6a5a", lineHeight: 1.5, marginBottom: 12 }}>{confirmReward.desc}</div>
+              <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 24, fontWeight: 700, color: "#3d1a0e", marginBottom: 6 }}>{rewardText(confirmReward, rewardTab).title}</div>
+              <div style={{ fontSize: 13, color: "#8a6a5a", lineHeight: 1.5, marginBottom: 12 }}>{rewardText(confirmReward, rewardTab).desc}</div>
               <div style={{ display: "inline-flex", gap: 8, padding: "8px 18px", borderRadius: 99, background: confirmReward.bg }}>
-                <span style={{ fontSize: 14, fontWeight: 800, color: confirmReward.color }}>{confirmReward.pts} puntos</span>
-                <span style={{ fontSize: 13, color: "#a08070" }}>→ te quedan {pts - confirmReward.pts}</span>
+                <span style={{ fontSize: 14, fontWeight: 800, color: confirmReward.color }}>{confirmReward.pts} {RC.ptsWord}</span>
+                <span style={{ fontSize: 13, color: "#a08070" }}>{RC.leftYou}{pts - confirmReward.pts}</span>
               </div>
             </div>
             <div style={{ display: "flex", gap: 10 }}>
-              <button onClick={() => setConfirmReward(null)} style={{ flex: 1, padding: "14px", borderRadius: 16, border: "1px solid rgba(168,73,42,.18)", background: "rgba(255,255,255,.7)", color: "#8a6a5a", fontWeight: 700, fontSize: 15, cursor: "pointer", fontFamily: "inherit" }}>Cancelar</button>
-              <button onClick={() => claimReward(confirmReward)} style={{ flex: 2, padding: "14px", borderRadius: 16, border: "none", background: "linear-gradient(135deg,#c4693a,#A8492A)", color: "#fff", fontWeight: 700, fontSize: 15, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 10px 28px rgba(168,73,42,.4)" }}>Confirmar canje</button>
+              <button onClick={() => setConfirmReward(null)} style={{ flex: 1, padding: "14px", borderRadius: 16, border: "1px solid rgba(168,73,42,.18)", background: "rgba(255,255,255,.7)", color: "#8a6a5a", fontWeight: 700, fontSize: 15, cursor: "pointer", fontFamily: "inherit" }}>{RC.cancel}</button>
+              <button onClick={() => claimReward(confirmReward)} style={{ flex: 2, padding: "14px", borderRadius: 16, border: "none", background: "linear-gradient(135deg,#c4693a,#A8492A)", color: "#fff", fontWeight: 700, fontSize: 15, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 10px 28px rgba(168,73,42,.4)" }}>{RC.confirmRedeem}</button>
             </div>
           </div>
         </div>
@@ -889,18 +990,18 @@ function RecompensasScreen({ goBack }) {
             <div style={{ width: 38, height: 4, borderRadius: 99, background: "rgba(168,73,42,.2)", margin: "0 auto 20px" }}></div>
             <div style={{ width: 80, height: 80, borderRadius: 24, background: successReward.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40, margin: "0 auto 16px", boxShadow: `0 12px 32px ${successReward.color}33` }}>{successReward.icon}</div>
             <div style={{ textAlign: "center", marginBottom: 20 }}>
-              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", color: "#7bbf6a", marginBottom: 8 }}>✓ Premio reclamado</div>
-              <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 26, fontWeight: 700, color: "#3d1a0e", marginBottom: 8 }}>{successReward.title}</div>
+              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", color: "#7bbf6a", marginBottom: 8 }}>{RC.claimedTitle}</div>
+              <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 26, fontWeight: 700, color: "#3d1a0e", marginBottom: 8 }}>{rewardText(successReward, rewardTab).title}</div>
               <div style={{ fontSize: 13.5, color: "#8a6a5a", lineHeight: 1.55, marginBottom: 16 }}>
-                {successReward.id === "pro" ? "Tu mes Premium ha sido activado. ¡Disfruta acceso completo!" :
-                 successReward.id === "nut" ? "Tu plan nutricional fue enviado a tu email. ¡Revisa tu bandeja!" :
-                 `${successReward.title} ya está disponible en tu app. ¡Disfrútalo!`}
+                {successReward.id === "pro" ? RC.proMsg :
+                 successReward.id === "nut" ? RC.nutMsg :
+                 RC.genMsg(rewardText(successReward, rewardTab).title)}
               </div>
               {successReward.id === "pro" && (
                 <div style={{ padding: "12px 18px", borderRadius: 14, background: "rgba(200,150,26,.1)", border: "1px solid rgba(200,150,26,.25)", fontFamily: "monospace", fontSize: 16, fontWeight: 700, color: "#A8492A", letterSpacing: ".14em" }}>LUME-PRE-2026</div>
               )}
             </div>
-            <button onClick={() => setSuccessReward(null)} style={{ width: "100%", padding: "15px", borderRadius: 16, border: "none", background: "linear-gradient(135deg,#c4693a,#A8492A)", color: "#fff", fontWeight: 700, fontSize: 15, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 10px 28px rgba(168,73,42,.4)" }}>¡Genial!</button>
+            <button onClick={() => setSuccessReward(null)} style={{ width: "100%", padding: "15px", borderRadius: 16, border: "none", background: "linear-gradient(135deg,#c4693a,#A8492A)", color: "#fff", fontWeight: 700, fontSize: 15, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 10px 28px rgba(168,73,42,.4)" }}>{RC.great}</button>
           </div>
         </div>
       )}
@@ -909,11 +1010,11 @@ function RecompensasScreen({ goBack }) {
       {showRewardedAd && (
         <div style={{ position:"absolute", inset:0, zIndex:60, background:"rgba(8,3,1,.95)", display:"flex", flexDirection:"column" }}>
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"52px 20px 14px", background:"rgba(0,0,0,.15)" }}>
-            <div style={{ fontSize:11, color:"rgba(255,255,255,.35)", fontWeight:700, letterSpacing:".1em", textTransform:"uppercase" }}>Anuncio</div>
+            <div style={{ fontSize:11, color:"rgba(255,255,255,.35)", fontWeight:700, letterSpacing:".1em", textTransform:"uppercase" }}>{RC.ad}</div>
             {adDone
               ? <button onClick={() => { earnRewardedPts(); setShowRewardedAd(false); setAdDone(false); }}
                   style={{ padding:"7px 18px", borderRadius:99, background:"#A8492A", color:"#fff", border:"none", fontWeight:700, fontSize:13, cursor:"pointer", fontFamily:"inherit", boxShadow:"0 4px 14px rgba(168,73,42,.5)" }}>
-                  Cerrar
+                  {RC.close}
                 </button>
               : <div style={{ width:34, height:34, borderRadius:"50%", background:"rgba(255,255,255,.08)", border:"2px solid rgba(255,255,255,.16)", display:"flex", alignItems:"center", justifyContent:"center" }}>
                   <span style={{ fontSize:15, fontWeight:800, color:"rgba(255,255,255,.6)" }}>{adCountdown}</span>
@@ -925,25 +1026,25 @@ function RecompensasScreen({ goBack }) {
               <div style={{ width:"100%" }}>
                 <div style={{ borderRadius:22, background:"linear-gradient(160deg,#1a2e40,#0d1a28)", padding:"32px 24px 28px", textAlign:"center", border:"1px solid rgba(255,255,255,.07)", boxShadow:"0 24px 60px rgba(0,0,0,.5)" }}>
                   <div style={{ width:68, height:68, borderRadius:"50%", background:"linear-gradient(135deg,#2e6fdb,#6bb5f8)", margin:"0 auto 18px", display:"flex", alignItems:"center", justifyContent:"center", fontSize:30, boxShadow:"0 8px 24px rgba(46,111,219,.4)" }}>💊</div>
-                  <div style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:26, fontWeight:600, color:"#fff", marginBottom:8, lineHeight:1.2 }}>Elevit Materna</div>
-                  <div style={{ fontSize:13, color:"rgba(255,255,255,.58)", lineHeight:1.65, marginBottom:22 }}>La vitamina prenatal n.º1 recomendada por ginecólogos. Ácido fólico, hierro y DHA para el desarrollo de tu bebé.</div>
+                  <div style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:26, fontWeight:600, color:"#fff", marginBottom:8, lineHeight:1.2 }}>Elevit {rcLang==="en"?"Maternity":"Materna"}</div>
+                  <div style={{ fontSize:13, color:"rgba(255,255,255,.58)", lineHeight:1.65, marginBottom:22 }}>{rcLang==="en"?"The #1 prenatal vitamin recommended by OB-GYNs. Folic acid, iron, and DHA for your baby's development.":"La vitamina prenatal n.º1 recomendada por ginecólogos. Ácido fólico, hierro y DHA para el desarrollo de tu bebé."}</div>
                   <div style={{ display:"inline-flex", padding:"5px 14px", borderRadius:99, background:"rgba(255,255,255,.07)", border:"1px solid rgba(255,255,255,.12)" }}>
-                    <span style={{ fontSize:11, color:"rgba(255,255,255,.38)", fontWeight:600 }}>elevit.com · Anuncio</span>
+                    <span style={{ fontSize:11, color:"rgba(255,255,255,.38)", fontWeight:600 }}>elevit.com · {RC.ad}</span>
                   </div>
                 </div>
                 <div style={{ height:3, borderRadius:99, background:"rgba(255,255,255,.08)", marginTop:20, overflow:"hidden" }}>
                   <div style={{ height:"100%", borderRadius:99, background:"#A8492A", width:((5-adCountdown)/5*100)+"%", transition:"width 1s linear" }} />
                 </div>
-                <div style={{ textAlign:"center", marginTop:10, fontSize:12, color:"rgba(255,255,255,.25)" }}>Espera {adCountdown}s para cerrar</div>
+                <div style={{ textAlign:"center", marginTop:10, fontSize:12, color:"rgba(255,255,255,.25)" }}>{rcLang==="en"?`Wait ${adCountdown}s to close`:`Espera ${adCountdown}s para cerrar`}</div>
               </div>
             ) : (
               <div style={{ textAlign:"center" }}>
                 <div style={{ fontSize:64, marginBottom:16 }}>🎉</div>
-                <div style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:42, fontWeight:600, color:"#fff", marginBottom:8, letterSpacing:"-.02em" }}>+50 puntos</div>
-                <div style={{ fontSize:14, color:"rgba(255,255,255,.5)", marginBottom:32, lineHeight:1.5 }}>¡Gracias por ver el anuncio!</div>
+                <div style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:42, fontWeight:600, color:"#fff", marginBottom:8, letterSpacing:"-.02em" }}>+50 {RC.points}</div>
+                <div style={{ fontSize:14, color:"rgba(255,255,255,.5)", marginBottom:32, lineHeight:1.5 }}>{rcLang==="en"?"Thanks for watching the ad!":"¡Gracias por ver el anuncio!"}</div>
                 <button onClick={() => { earnRewardedPts(); setShowRewardedAd(false); setAdDone(false); }}
                   style={{ padding:"16px 48px", borderRadius:16, border:"none", background:"linear-gradient(135deg,#c4693a,#A8492A)", color:"#fff", fontWeight:700, fontSize:16, cursor:"pointer", fontFamily:"inherit", boxShadow:"0 12px 32px rgba(168,73,42,.55)" }}>
-                  Cobrar puntos ✓
+                  {rcLang==="en"?"Claim points ✓":"Cobrar puntos ✓"}
                 </button>
               </div>
             )}
@@ -955,7 +1056,30 @@ function RecompensasScreen({ goBack }) {
 }
 
 /* ── ULTRASONIDOS ─── */
-function UltrasonidosScreen({ goBack }) {
+function UltrasonidosScreen({ goBack, goToTab }) {
+  const usLang = getAppLang2();
+  const US = usLang==="en" ? {
+    eyebrow:"Medical monitoring", title:"Ultrasounds", sub:"Tap + to add · Every scan is saved to your history",
+    limitReached:(n)=>`You've reached the ${n}-scan limit on the free plan · Activate Wellness for unlimited`,
+    newScan:"New ultrasound", week:"Week", heartRate:"Heart rate", doctorNotes:"Doctor's notes",
+    notesPh:"Observations, measurements, baby's position...", photo:"Ultrasound photo", saveScan:"Save ultrasound",
+    toast:"✓ Ultrasound saved · +10 points", emptyTitle:"No ultrasounds yet",
+    emptyBody:"Tap the ", emptyBody2:" to log your first ultrasound and save your baby's images.",
+    editingWeek:(w)=>`Editing week ${w}`, bpmLabel:"BPM", notes:"Notes", cancel:"Cancel", saveChanges:"Save changes",
+    deleteUs:"Delete ultrasound", weekWord:"Week", ultrasoundPh:"Ultrasound",
+  } : {
+    eyebrow:"Seguimiento médico", title:"Ultrasonidos", sub:"Toca + para añadir · Cada eco se guarda en tu historial",
+    limitReached:(n)=>`Alcanzaste el límite de ${n} ecografías del plan gratis · Activa Bienestar para ilimitadas`,
+    newScan:"Nueva ecografía", week:"Semana", heartRate:"Ritmo cardíaco", doctorNotes:"Notas del médico",
+    notesPh:"Observaciones, medidas, posición del bebé...", photo:"Foto ecografía", saveScan:"Guardar ecografía",
+    toast:"✓ Ecografía guardada · +10 puntos", emptyTitle:"Sin ecografías aún",
+    emptyBody:"Toca el ", emptyBody2:" para registrar tu primera ecografía y guardar las imágenes de tu bebé.",
+    editingWeek:(w)=>`Editando semana ${w}`, bpmLabel:"BPM", notes:"Notas", cancel:"Cancelar", saveChanges:"Guardar cambios",
+    deleteUs:"Eliminar ultrasonido", weekWord:"Semana", ultrasoundPh:"Ecografía",
+  };
+  const usLocale = usLang==="en"?"en-US":"es-ES";
+  const isPremium = React.useMemo(()=>{try{return !!localStorage.getItem("lume_premium");}catch{return false;}}, []);
+  const FREE_LIMIT = 2;
   const [semana, setSemana] = React.useState("");
   const [notas, setNotas] = React.useState("");
   const [bpm, setBpm] = React.useState("");
@@ -972,7 +1096,7 @@ function UltrasonidosScreen({ goBack }) {
     const id = Date.now();
     const r = [...records, {
       id, week: +semana,
-      date: new Date().toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }),
+      date: new Date().toLocaleDateString(usLocale, { day: "numeric", month: "long", year: "numeric" }),
       notes: notas, bpm,
       slots: [`us-${id}-a`, `us-${id}-b`]
     }];
@@ -1022,12 +1146,12 @@ function UltrasonidosScreen({ goBack }) {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .65, marginBottom: 7 }}>Seguimiento médico</div>
-          <h2 style={{ margin: 0, fontSize: 23, fontWeight: 800, color: "#3d1a0e", letterSpacing: "-.3px", lineHeight: 1, marginBottom: 4 }}>Ultrasonidos</h2>
-          <p style={{ margin: 0, fontSize: 11.5, color: "#a08070", lineHeight: 1.4 }}>Toca + para añadir · Cada eco se guarda en tu historial</p>
+          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .65, marginBottom: 7 }}>{US.eyebrow}</div>
+          <h2 style={{ margin: 0, fontSize: 23, fontWeight: 800, color: "#3d1a0e", letterSpacing: "-.3px", lineHeight: 1, marginBottom: 4 }}>{US.title}</h2>
+          <p style={{ margin: 0, fontSize: 11.5, color: "#a08070", lineHeight: 1.4 }}>{US.sub}</p>
         </div>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => { if (!isPremium && records.length >= FREE_LIMIT) { goToTab && goToTab("premium"); return; } setShowForm(!showForm); }}
           style={{ width: 40, height: 40, borderRadius: "50%", border: "none", background: showForm ? "#A8492A" : "rgba(168,73,42,.12)", color: showForm ? "#fff" : "#A8492A", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all .3s cubic-bezier(.23,1,.32,1)", transform: showForm ? "rotate(45deg)" : "none", boxShadow: showForm ? "0 8px 24px rgba(168,73,42,.42)" : "none", flexShrink: 0 }}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
@@ -1035,31 +1159,36 @@ function UltrasonidosScreen({ goBack }) {
       </div>
 
       <div style={{ padding: "20px 16px 56px" }}>
+        {!isPremium && records.length >= FREE_LIMIT && !showForm && (
+          <div onClick={() => goToTab && goToTab("premium")} style={{ padding: "14px 16px", borderRadius: 16, background: "rgba(168,73,42,.07)", border: "1px dashed rgba(168,73,42,.28)", marginBottom: 18, cursor: "pointer", fontSize: 12.5, color: "#A8492A", fontWeight: 600, textAlign: "center" }}>
+            {US.limitReached(FREE_LIMIT)}
+          </div>
+        )}
 
         {/* ── Formulario nueva ecografía ── */}
         {showForm && (
           <div style={{ ...glassCard, borderRadius: 26, padding: "22px 18px", marginBottom: 22, animation: "fadeSlideUp .3s cubic-bezier(.23,1,.32,1)" }}>
-            <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".16em", textTransform: "uppercase", color: "#A8492A", marginBottom: 18 }}>Nueva ecografía</div>
+            <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".16em", textTransform: "uppercase", color: "#A8492A", marginBottom: 18 }}>{US.newScan}</div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
               <div>
-                <div className="field-label">Semana</div>
+                <div className="field-label">{US.week}</div>
                 <input type="number" className="app-field" min="6" max="40" placeholder="ej. 20" value={semana} onChange={(e) => setSemana(e.target.value)} />
               </div>
               <div>
-                <div className="field-label">Ritmo cardíaco</div>
+                <div className="field-label">{US.heartRate}</div>
                 <input type="number" className="app-field" placeholder="bpm" value={bpm} onChange={(e) => setBpm(e.target.value)} />
               </div>
             </div>
 
             <div style={{ marginBottom: 14 }}>
-              <div className="field-label">Notas del médico</div>
-              <textarea className="app-field" style={{ minHeight: 72, resize: "none" }} placeholder="Observaciones, medidas, posición del bebé..." value={notas} onChange={(e) => setNotas(e.target.value)}></textarea>
+              <div className="field-label">{US.doctorNotes}</div>
+              <textarea className="app-field" style={{ minHeight: 72, resize: "none" }} placeholder={US.notesPh} value={notas} onChange={(e) => setNotas(e.target.value)}></textarea>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 18 }}>
               {[1, 2].map((n) => (
-                <image-slot key={n} id={"us-add-" + n} shape="rounded" radius="12" placeholder="Foto ecografía" style={{ width: "100%", height: "90px", display: "block" }}></image-slot>
+                <image-slot key={n} id={"us-add-" + n} shape="rounded" radius="12" placeholder={US.photo} style={{ width: "100%", height: "90px", display: "block" }}></image-slot>
               ))}
             </div>
 
@@ -1067,7 +1196,7 @@ function UltrasonidosScreen({ goBack }) {
               onClick={addRecord}
               style={{ width: "100%", padding: "15px", borderRadius: 16, border: "none", background: semana ? "linear-gradient(135deg,#c4693a,#A8492A)" : "rgba(200,185,180,.3)", color: semana ? "#fff" : "#b0a09a", fontWeight: 700, fontSize: 15, cursor: semana ? "pointer" : "default", boxShadow: semana ? "0 12px 32px rgba(168,73,42,.42), 0 1px 0 rgba(255,255,255,.25) inset" : "none", fontFamily: "inherit", transition: "all .25s", letterSpacing: ".01em" }}
             >
-              Guardar ecografía
+              {US.saveScan}
             </button>
           </div>
         )}
@@ -1075,7 +1204,7 @@ function UltrasonidosScreen({ goBack }) {
         {/* ── Toast guardado ── */}
         {saved && (
           <div style={{ padding: "14px 18px", borderRadius: 16, background: "rgba(123,191,106,.14)", color: "#3e8836", fontWeight: 700, textAlign: "center", fontSize: 13.5, border: "1px solid rgba(123,191,106,.28)", marginBottom: 20, animation: "fadeSlideUp .3s cubic-bezier(.23,1,.32,1)" }}>
-            ✓ Ecografía guardada · +10 puntos
+            ✓ {US.toast.replace("✓ ","")}
           </div>
         )}
 
@@ -1087,8 +1216,8 @@ function UltrasonidosScreen({ goBack }) {
                 <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="4"/>
               </svg>
             </div>
-            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 600, color: "#5a3a2a", marginBottom: 8 }}>Sin ecografías aún</div>
-            <p style={{ fontSize: 13.5, color: "#a08070", lineHeight: 1.65, margin: 0 }}>Toca el <strong style={{ color: "#A8492A" }}>+</strong> para registrar tu primera ecografía y guardar las imágenes de tu bebé.</p>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 600, color: "#5a3a2a", marginBottom: 8 }}>{US.emptyTitle}</div>
+            <p style={{ fontSize: 13.5, color: "#a08070", lineHeight: 1.65, margin: 0 }}>{US.emptyBody}<strong style={{ color: "#A8492A" }}>+</strong>{US.emptyBody2}</p>
           </div>
         )}
 
@@ -1118,28 +1247,28 @@ function UltrasonidosScreen({ goBack }) {
                     {isEditing ? (
                       /* ── Modo edición ── */
                       <div>
-                        <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "#A8492A", marginBottom: 14 }}>Editando semana {r.week}</div>
+                        <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "#A8492A", marginBottom: 14 }}>{US.editingWeek(r.week)}</div>
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 9, marginBottom: 10 }}>
                           <div>
-                            <div className="field-label">Semana</div>
+                            <div className="field-label">{US.week}</div>
                             <input type="number" className="app-field" value={editData.week} onChange={(e) => setEditData({ ...editData, week: e.target.value })} />
                           </div>
                           <div>
-                            <div className="field-label">BPM</div>
+                            <div className="field-label">{US.bpmLabel}</div>
                             <input type="number" className="app-field" placeholder="bpm" value={editData.bpm} onChange={(e) => setEditData({ ...editData, bpm: e.target.value })} />
                           </div>
                         </div>
                         <div style={{ marginBottom: 14 }}>
-                          <div className="field-label">Notas</div>
+                          <div className="field-label">{US.notes}</div>
                           <textarea className="app-field" style={{ minHeight: 60, resize: "none" }} value={editData.notes} onChange={(e) => setEditData({ ...editData, notes: e.target.value })}></textarea>
                         </div>
                         <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-                          <button onClick={() => setEditId(null)} style={{ flex: 1, padding: "11px", borderRadius: 13, border: "1px solid rgba(168,73,42,.18)", background: "rgba(255,255,255,.55)", color: "#8a6a5a", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "inherit" }}>Cancelar</button>
-                          <button onClick={() => saveEdit(r.id)} style={{ flex: 2, padding: "11px", borderRadius: 13, border: "none", background: "linear-gradient(135deg,#c4693a,#A8492A)", color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 22px rgba(168,73,42,.36)" }}>Guardar cambios</button>
+                          <button onClick={() => setEditId(null)} style={{ flex: 1, padding: "11px", borderRadius: 13, border: "1px solid rgba(168,73,42,.18)", background: "rgba(255,255,255,.55)", color: "#8a6a5a", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "inherit" }}>{US.cancel}</button>
+                          <button onClick={() => saveEdit(r.id)} style={{ flex: 2, padding: "11px", borderRadius: 13, border: "none", background: "linear-gradient(135deg,#c4693a,#A8492A)", color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 22px rgba(168,73,42,.36)" }}>{US.saveChanges}</button>
                         </div>
                         <button onClick={() => deleteRecord(r.id)} style={{ width: "100%", padding: "11px", borderRadius: 13, border: "1px solid rgba(200,60,60,.22)", background: "rgba(220,60,60,.07)", color: "#c04040", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
                           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-                          Eliminar ultrasonido
+                          {US.deleteUs}
                         </button>
                       </div>
                     ) : (
@@ -1147,7 +1276,7 @@ function UltrasonidosScreen({ goBack }) {
                       <div>
                         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 14 }}>
                           <div>
-                            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 19, color: "#3d1a0e", letterSpacing: "-.2px", lineHeight: 1.1 }}>Semana {r.week}</div>
+                            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 19, color: "#3d1a0e", letterSpacing: "-.2px", lineHeight: 1.1 }}>{US.weekWord} {r.week}</div>
                             <div style={{ fontSize: 12, color: "#b09080", marginTop: 5, letterSpacing: ".01em" }}>{r.date}</div>
                           </div>
                           <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
@@ -1166,7 +1295,7 @@ function UltrasonidosScreen({ goBack }) {
                         {r.slots && r.slots.length > 0 && (
                           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: r.notes ? 12 : 0 }}>
                             {r.slots.map((sid) => (
-                              <image-slot key={sid} id={sid} shape="rounded" radius="11" placeholder="Ecografía" style={{ width: "100%", height: "98px", display: "block" }}></image-slot>
+                              <image-slot key={sid} id={sid} shape="rounded" radius="11" placeholder={US.ultrasoundPh} style={{ width: "100%", height: "98px", display: "block" }}></image-slot>
                             ))}
                           </div>
                         )}
@@ -1194,6 +1323,21 @@ function UltrasonidosScreen({ goBack }) {
 
 /* ── CONTROL DE PESO ─── */
 function PesoScreen({ goBack }) {
+  const wLang = getAppLang2();
+  const WG = wLang==="en" ? {
+    eyebrow:"Physical tracking", title:"Weight tracker", sub:"Tap + to log your weight",
+    currentWeight:"Current weight", updated:"Updated · ", total:"total",
+    newRecord:"New record", weightKg:"Weight (kg)", noteOpt:"Note (optional)", notePh:"After breakfast…", saveRecord:"Save record",
+    toast:"✓ Weight logged", watchAd:"Watch short ad → ", points50:"+50 points",
+    history:"History · ", infoNote:"Healthy weight gain varies based on your prior BMI. Check with your doctor for the recommended ranges for you.",
+  } : {
+    eyebrow:"Seguimiento físico", title:"Control de peso", sub:"Toca + para registrar tu peso",
+    currentWeight:"Peso actual", updated:"Actualizado · ", total:"en total",
+    newRecord:"Nuevo registro", weightKg:"Peso (kg)", noteOpt:"Nota (opcional)", notePh:"Después de desayunar…", saveRecord:"Guardar registro",
+    toast:"✓ Peso registrado", watchAd:"Ver anuncio breve → ", points50:"+50 puntos",
+    history:"Historial · ", infoNote:"La ganancia de peso saludable varía según tu IMC previo. Consulta con tu médico los rangos recomendados para ti.",
+  };
+  const wLocale = wLang==="en"?"en-US":"es-ES";
   const [weight, setWeight] = React.useState("");
   const [note, setNote] = React.useState("");
   const stored = LS.get("lume_weight");
@@ -1207,7 +1351,7 @@ function PesoScreen({ goBack }) {
 
   const addEntry = () => {
     if (!weight || isNaN(+weight)) return;
-    const entry = { id: Date.now(), date: new Date().toLocaleDateString("es-ES", { day: "numeric", month: "short" }), w: parseFloat((+weight).toFixed(1)), note };
+    const entry = { id: Date.now(), date: new Date().toLocaleDateString(wLocale, { day: "numeric", month: "short" }), w: parseFloat((+weight).toFixed(1)), note };
     const l = [...log, entry];
     setLog(l); LS.set("lume_weight", l);
     setWeight(""); setNote(""); setSaved(true); setShowForm(false);
@@ -1254,9 +1398,9 @@ function PesoScreen({ goBack }) {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .65, marginBottom: 5 }}>Seguimiento físico</div>
-          <h2 style={{ margin: 0, fontSize: 23, fontWeight: 800, color: "#3d1a0e", letterSpacing: "-.3px", lineHeight: 1, marginBottom: 4 }}>Control de peso</h2>
-          <p style={{ margin: 0, fontSize: 11.5, color: "#a08070" }}>Toca + para registrar tu peso</p>
+          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .65, marginBottom: 5 }}>{WG.eyebrow}</div>
+          <h2 style={{ margin: 0, fontSize: 23, fontWeight: 800, color: "#3d1a0e", letterSpacing: "-.3px", lineHeight: 1, marginBottom: 4 }}>{WG.title}</h2>
+          <p style={{ margin: 0, fontSize: 11.5, color: "#a08070" }}>{WG.sub}</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
@@ -1275,19 +1419,19 @@ function PesoScreen({ goBack }) {
 
             <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 16 }}>
               <div>
-                <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "rgba(255,255,255,.6)", marginBottom: 6 }}>Peso actual</div>
+                <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "rgba(255,255,255,.6)", marginBottom: 6 }}>{WG.currentWeight}</div>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
                   <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 52, fontWeight: 700, color: "#fff", lineHeight: 1, letterSpacing: "-.02em" }}>{last.w}</span>
                   <span style={{ fontSize: 16, color: "rgba(255,255,255,.7)", fontWeight: 600 }}>kg</span>
                 </div>
-                <div style={{ fontSize: 11.5, color: "rgba(255,255,255,.6)", marginTop: 4 }}>Actualizado · {last.date}</div>
+                <div style={{ fontSize: 11.5, color: "rgba(255,255,255,.6)", marginTop: 4 }}>{WG.updated}{last.date}</div>
               </div>
               <div style={{ textAlign: "right", flexShrink: 0 }}>
                 <div style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "5px 11px", borderRadius: 99, background: "rgba(255,255,255,.16)", border: "1px solid rgba(255,255,255,.22)" }}>
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><path d={totalGain >= 0 ? "M12 19V5M5 12l7-7 7 7" : "M12 5v14M5 12l7 7 7-7"}/></svg>
                   <span style={{ fontSize: 12.5, fontWeight: 800, color: "#fff" }}>{totalGain >= 0 ? "+" : ""}{totalGain.toFixed(1)} kg</span>
                 </div>
-                <div style={{ fontSize: 10, color: "rgba(255,255,255,.55)", marginTop: 5, fontWeight: 600 }}>en total</div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,.55)", marginTop: 5, fontWeight: 600 }}>{WG.total}</div>
               </div>
             </div>
 
@@ -1316,20 +1460,20 @@ function PesoScreen({ goBack }) {
         {/* ── Formulario ── */}
         {showForm && (
           <div style={{ ...glassCard, borderRadius: 26, padding: "22px 18px", animation: "fadeSlideUp .3s cubic-bezier(.23,1,.32,1)" }}>
-            <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".16em", textTransform: "uppercase", color: "#A8492A", marginBottom: 18 }}>Nuevo registro</div>
+            <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".16em", textTransform: "uppercase", color: "#A8492A", marginBottom: 18 }}>{WG.newRecord}</div>
             <div style={{ marginBottom: 12 }}>
-              <div className="field-label">Peso (kg)</div>
+              <div className="field-label">{WG.weightKg}</div>
               <input type="number" className="app-field" step="0.1" placeholder="ej. 64.5" value={weight} onChange={(e) => setWeight(e.target.value)} />
             </div>
             <div style={{ marginBottom: 18 }}>
-              <div className="field-label">Nota (opcional)</div>
-              <input className="app-field" placeholder="Después de desayunar…" value={note} onChange={(e) => setNote(e.target.value)} />
+              <div className="field-label">{WG.noteOpt}</div>
+              <input className="app-field" placeholder={WG.notePh} value={note} onChange={(e) => setNote(e.target.value)} />
             </div>
             <button
               onClick={addEntry}
               style={{ width: "100%", padding: "15px", borderRadius: 16, border: "none", background: weight ? "linear-gradient(135deg,#c4693a,#A8492A)" : "rgba(200,185,180,.3)", color: weight ? "#fff" : "#b0a09a", fontWeight: 700, fontSize: 15, cursor: weight ? "pointer" : "default", boxShadow: weight ? "0 12px 32px rgba(168,73,42,.42)" : "none", fontFamily: "inherit", transition: "all .25s" }}
             >
-              Guardar registro
+              {WG.saveRecord}
             </button>
           </div>
         )}
@@ -1337,20 +1481,20 @@ function PesoScreen({ goBack }) {
         {/* ── Toast ── */}
         {saved && (
           <div style={{ borderRadius:16, overflow:"hidden", border:"1px solid rgba(123,191,106,.22)", animation:"fadeSlideUp .3s cubic-bezier(.23,1,.32,1)", marginTop:4 }}>
-            <div style={{ padding:"13px 16px", background:"rgba(123,191,106,.14)", color:"#3e8836", fontWeight:700, textAlign:"center", fontSize:13.5 }}>✓ Peso registrado</div>
+            <div style={{ padding:"13px 16px", background:"rgba(123,191,106,.14)", color:"#3e8836", fontWeight:700, textAlign:"center", fontSize:13.5 }}>{WG.toast}</div>
             <button onClick={()=> window.triggerRewardedAd && window.triggerRewardedAd("points")}
               style={{ width:"100%", padding:"11px 16px", border:"none", borderTop:"1px solid rgba(168,73,42,.1)",
                 background:"linear-gradient(135deg,rgba(61,26,14,.96),rgba(90,42,20,.92))",
                 color:"#E6CFA1", fontSize:12.5, fontWeight:700, cursor:"pointer", fontFamily:"inherit",
                 display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E6CFA1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 12v10H4V12"/><rect x="2" y="7" width="20" height="5" rx="1"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> Ver anuncio breve → <strong style={{color:"#fff"}}>+50 puntos</strong>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E6CFA1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 12v10H4V12"/><rect x="2" y="7" width="20" height="5" rx="1"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> {WG.watchAd}<strong style={{color:"#fff"}}>{WG.points50}</strong>
             </button>
           </div>
         )}
 
         {/* ── Historial ── */}
         <div>
-          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .7, marginBottom: 12, paddingLeft: 2 }}>Historial · {log.length}</div>
+          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .7, marginBottom: 12, paddingLeft: 2 }}>{WG.history}{log.length}</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
             {[...log].reverse().map((r) => {
               const origIdx = log.findIndex((x) => x.id === r.id);
@@ -1385,7 +1529,7 @@ function PesoScreen({ goBack }) {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A8492A" strokeWidth="2" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 1, opacity: .6 }}>
             <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
           </svg>
-          <p style={{ margin: 0, fontSize: 12.5, color: "#7a5a4a", lineHeight: 1.55 }}>La ganancia de peso saludable varía según tu IMC previo. Consulta con tu médico los rangos recomendados para ti.</p>
+          <p style={{ margin: 0, fontSize: 12.5, color: "#7a5a4a", lineHeight: 1.55 }}>{WG.infoNote}</p>
         </div>
 
       </div>
@@ -1396,6 +1540,61 @@ function PesoScreen({ goBack }) {
 /* ── AJUSTES ─── */
 /* ── AJUSTES ─── */
 function AjustesScreen({ goBack, setWeek }) {
+  const ajLang = getAppLang2();
+  const AT = ajLang==="en" ? {
+    yourAccount:"Your account", settings:"Settings", weekOf:"Week ", pts:" pts", premium:"✦ Premium",
+    progress:"Pregnancy progress", wk4:"Wk. 4", wk42:"Wk. 42",
+    myProfile:"My profile", name:"Name", cancel:"Cancel", save:"Save", edit:"Edit",
+    pregWeeks:"Pregnancy weeks", weekTri:(w,t)=>`Week ${w} · Trimester ${t}`,
+    dueDate:"Estimated due date", notSet:"Not set",
+    notifications:"Notifications", apptReminder:"Appointment reminders", apptSub:"Alerts 24h before",
+    dailyTip:"Daily tip", dailyTipSub:"Nutrition tip every morning", kickReminder:"Kick reminders", kickSub:"Count your baby's movements",
+    notifNote:"In the real app, these preferences turn on alerts on your phone",
+    language:"Language", appLanguage:"App language", langSub:"Spanish / English",
+    langNote:"Every screen in the app, the landing page, and the legal pages are available in English.",
+    yourPlan:"Your plan", planEssential:"Essential", planWellness:"Wellness", activeFull:"Active · Full access", freeVersion:"Free version", upgrade:"Upgrade",
+    unlockMsg:"Unlock ", unlockBold:"Meditation, Nutrition plan, Baby music, Diary", unlockRest:" and much more.", tryFree:"Try 7 days free",
+    application:"Application", appName:"Lumé — Mindful motherhood", version:"Version 1.0 Beta",
+    rateApp:"Rate the app", howRate:"How would you rate Lumé?", submitRating:"Submit rating", thanksRating:"Thanks for your rating!", ratingHelps:"Your feedback helps us improve",
+    privacyTerms:"Privacy and terms",
+    activated:"✓ Activated", deactivated:"Deactivated",
+    privacyBack:"Privacy and terms",
+    privacySections:[
+      {t:"Data we collect",b:"Lumé collects information you provide directly: name, pregnancy weeks, symptoms, weight logs, photos, and diary notes. This information is stored securely and never shared with third parties without your explicit consent."},
+      {t:"How we use your information",b:"We use your data exclusively to personalize your experience: tailoring nutrition tips, calculating your baby's progress, reminding you of appointments, and showing content relevant to your pregnancy week."},
+      {t:"Data security",b:"All your information is encrypted in transit and at rest. We use hospital-grade security standards to protect your most sensitive data."},
+      {t:"Your rights",b:"You can request export or deletion of all your data at any time from this screen or by writing to privacy@lume.app. We comply with GDPR and applicable data protection laws."},
+      {t:"Terms of use",b:"By using Lumé you agree that the app's content is informational and does not replace your doctor's or midwife's opinion. Always consult a health professional for any medical concerns."},
+    ],
+    lastUpdated:"Last updated: January 2025 · v1.0",
+  } : {
+    yourAccount:"Tu cuenta", settings:"Ajustes", weekOf:"Semana ", pts:" pts", premium:"✦ Premium",
+    progress:"Progreso del embarazo", wk4:"Sem. 4", wk42:"Sem. 42",
+    myProfile:"Mi perfil", name:"Nombre", cancel:"Cancelar", save:"Guardar", edit:"Editar",
+    pregWeeks:"Semanas de embarazo", weekTri:(w,t)=>`Semana ${w} · Trimestre ${t}`,
+    dueDate:"Fecha probable de parto", notSet:"Sin configurar",
+    notifications:"Notificaciones", apptReminder:"Recordatorio de citas", apptSub:"Alertas 24h antes",
+    dailyTip:"Consejo diario", dailyTipSub:"Tip nutricional cada mañana", kickReminder:"Recordatorio de patadas", kickSub:"Contar movimientos del bebé",
+    notifNote:"En la app real, estas preferencias activan alertas en tu teléfono",
+    language:"Idioma", appLanguage:"Idioma de la app", langSub:"Español / English",
+    langNote:"Todas las pantallas de la app, la landing y las páginas legales están disponibles en inglés.",
+    yourPlan:"Tu plan", planEssential:"Esencial", planWellness:"Bienestar", activeFull:"Activo · Acceso completo", freeVersion:"Versión gratuita", upgrade:"Mejorar",
+    unlockMsg:"Desbloquea ", unlockBold:"Meditaciones, Plan nutricional, Música Bebé, Diario", unlockRest:" y mucho más.", tryFree:"Probar 7 días gratis",
+    application:"Aplicación", appName:"Lumé — Maternidad consciente", version:"Versión 1.0 Beta",
+    rateApp:"Calificar la app", howRate:"¿Cómo valoras Lumé?", submitRating:"Enviar valoración", thanksRating:"¡Gracias por tu valoración!", ratingHelps:"Tu opinión nos ayuda a mejorar",
+    privacyTerms:"Privacidad y términos",
+    activated:"✓ Activado", deactivated:"Desactivado",
+    privacyBack:"Privacidad y términos",
+    privacySections:[
+      {t:"Datos que recopilamos",b:"Lumé recopila información que tú nos proporcionas directamente: nombre, semanas de embarazo, síntomas, registros de peso, fotos y notas del diario. Esta información se almacena de forma segura y nunca se comparte con terceros sin tu consentimiento explícito."},
+      {t:"Cómo usamos tu información",b:"Usamos tus datos exclusivamente para personalizar tu experiencia: adaptar los consejos nutricionales, calcular el progreso del bebé, recordarte citas y mostrarte contenido relevante a tu semana de embarazo."},
+      {t:"Seguridad de los datos",b:"Toda tu información se cifra en tránsito y en reposo. Utilizamos estándares de seguridad de nivel hospitalario para proteger tus datos más sensibles."},
+      {t:"Tus derechos",b:"Puedes solicitar la exportación o eliminación de todos tus datos en cualquier momento desde esta pantalla o escribiéndonos a privacidad@lume.app. Cumplimos con el RGPD y la Ley Orgánica de Protección de Datos."},
+      {t:"Términos de uso",b:"Al usar Lumé aceptas que el contenido de la app es informativo y no reemplaza la opinión de tu médico o matrona. Siempre consulta a un profesional de salud ante cualquier duda médica."},
+    ],
+    lastUpdated:"Última actualización: enero 2025 · v1.0",
+  };
+  const ajLocale = ajLang==="en"?"en-US":"es-ES";
   const [nombre, setNombre] = React.useState(() => {try{return localStorage.getItem("lume_nombre")||"Sofía";}catch{return "Sofía";}});
   const [notif,  setNotif]  = React.useState(() => localStorage.getItem("lume_notif")  !== "false");
   const [tips,   setTips]   = React.useState(() => localStorage.getItem("lume_tips")   !== "false");
@@ -1429,7 +1628,7 @@ function AjustesScreen({ goBack, setWeek }) {
   const requestNotif = (key, val, setter) => {
     setter(val);
     try{localStorage.setItem(key,String(val));}catch{}
-    setNotifToast(val ? "✓ Activado" : "Desactivado");
+    setNotifToast(val ? AT.activated : AT.deactivated);
     setTimeout(()=>setNotifToast(""),2000);
   };
   const tog = (key,val,setter) => {setter(val);try{localStorage.setItem(key,String(val));}catch{}};
@@ -1492,8 +1691,8 @@ function AjustesScreen({ goBack, setWeek }) {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
         <div>
-          <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.7,marginBottom:4}}>Tu cuenta</div>
-          <h2 style={{margin:0,fontSize:22,fontWeight:800,color:"#3d1a0e",letterSpacing:"-.3px"}}>Ajustes</h2>
+          <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.7,marginBottom:4}}>{AT.yourAccount}</div>
+          <h2 style={{margin:0,fontSize:22,fontWeight:800,color:"#3d1a0e",letterSpacing:"-.3px"}}>{AT.settings}</h2>
         </div>
       </div>
 
@@ -1514,21 +1713,21 @@ function AjustesScreen({ goBack, setWeek }) {
               <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:24,fontWeight:700,color:"#fff5ee",lineHeight:1.1,marginBottom:6}}>{nombre}</div>
               <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
                 <div style={{padding:"3px 10px",borderRadius:99,background:"rgba(255,255,255,.15)",border:"1px solid rgba(255,255,255,.2)"}}>
-                  <span style={{fontSize:11,fontWeight:700,color:"rgba(255,245,238,.9)"}}>Semana {weeks} · T{tri}</span>
+                  <span style={{fontSize:11,fontWeight:700,color:"rgba(255,245,238,.9)"}}>{AT.weekOf}{weeks} · T{tri}</span>
                 </div>
                 <div style={{padding:"3px 10px",borderRadius:99,background:"rgba(255,255,255,.15)",border:"1px solid rgba(255,255,255,.2)",display:"flex",alignItems:"center",gap:4}}>
                   <svg viewBox="0 0 24 24" width={10} height={10} fill="#E6CFA1"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                  <span style={{fontSize:11,fontWeight:700,color:"rgba(255,245,238,.9)"}}>{points} pts</span>
+                  <span style={{fontSize:11,fontWeight:700,color:"rgba(255,245,238,.9)"}}>{points}{AT.pts}</span>
                 </div>
                 {isPremium&&<div style={{padding:"3px 10px",borderRadius:99,background:"rgba(230,207,161,.25)",border:"1px solid rgba(230,207,161,.45)"}}>
-                  <span style={{fontSize:11,fontWeight:800,color:"#E6CFA1"}}>✦ Premium</span>
+                  <span style={{fontSize:11,fontWeight:800,color:"#E6CFA1"}}>{AT.premium}</span>
                 </div>}
               </div>
             </div>
           </div>
           <div>
             <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}>
-              <span style={{fontSize:10,color:"rgba(255,245,238,.55)",fontWeight:600}}>Progreso del embarazo</span>
+              <span style={{fontSize:10,color:"rgba(255,245,238,.55)",fontWeight:600}}>{AT.progress}</span>
               <span style={{fontSize:10,color:"rgba(255,245,238,.55)",fontWeight:600}}>{Math.round(((weeks-4)/38)*100)}%</span>
             </div>
             <div style={{height:4,borderRadius:4,background:"rgba(255,255,255,.15)",overflow:"hidden"}}>
@@ -1536,15 +1735,15 @@ function AjustesScreen({ goBack, setWeek }) {
                 background:"linear-gradient(90deg,rgba(230,207,161,.7),rgba(230,207,161,.95))",borderRadius:4}}/>
             </div>
             <div style={{display:"flex",justifyContent:"space-between",marginTop:4}}>
-              <span style={{fontSize:9.5,color:"rgba(255,245,238,.4)"}}>Sem. 4</span>
-              <span style={{fontSize:9.5,color:"rgba(255,245,238,.4)"}}>Sem. 42</span>
+              <span style={{fontSize:9.5,color:"rgba(255,245,238,.4)"}}>{AT.wk4}</span>
+              <span style={{fontSize:9.5,color:"rgba(255,245,238,.4)"}}>{AT.wk42}</span>
             </div>
           </div>
         </div>
 
         {/* Mi perfil */}
         <div>
-          <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.65,marginBottom:10,paddingLeft:2}}>Mi perfil</div>
+          <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.65,marginBottom:10,paddingLeft:2}}>{AT.myProfile}</div>
           <GlassSection>
             {/* Nombre editable inline */}
             <div style={{display:"flex",alignItems:"center",gap:13,padding:"13px 18px",borderBottom:"1px solid rgba(168,73,42,.06)"}}>
@@ -1561,19 +1760,19 @@ function AjustesScreen({ goBack, setWeek }) {
                         background:"rgba(255,255,255,.85)",fontSize:14,fontFamily:"inherit",color:"#3d1a0e",outline:"none",boxSizing:"border-box"}}/>
                     <div style={{display:"flex",gap:8}}>
                       <button onClick={()=>setEditNombre(false)} style={{flex:1,padding:"7px",borderRadius:10,border:"1px solid rgba(168,73,42,.2)",
-                        background:"transparent",color:"#a08070",fontSize:12,cursor:"pointer"}}>Cancelar</button>
+                        background:"transparent",color:"#a08070",fontSize:12,cursor:"pointer"}}>{AT.cancel}</button>
                       <button onClick={saveNombre} style={{flex:2,padding:"7px",borderRadius:10,border:"none",
-                        background:"linear-gradient(135deg,#A8492A,#8B3520)",color:"#fff5ee",fontSize:12,fontWeight:700,cursor:"pointer"}}>Guardar</button>
+                        background:"linear-gradient(135deg,#A8492A,#8B3520)",color:"#fff5ee",fontSize:12,fontWeight:700,cursor:"pointer"}}>{AT.save}</button>
                     </div>
                   </div>
                 ) : (
                   <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                     <div>
-                      <div style={{fontSize:14,fontWeight:600,color:"#3d1a0e"}}>Nombre</div>
+                      <div style={{fontSize:14,fontWeight:600,color:"#3d1a0e"}}>{AT.name}</div>
                       <div style={{fontSize:11.5,color:"#a08070",marginTop:2}}>{nombre}</div>
                     </div>
                     <button onClick={()=>{setTmp(nombre);setEditNombre(true);}} style={{padding:"6px 12px",borderRadius:10,border:"1px solid rgba(168,73,42,.2)",
-                      background:"rgba(168,73,42,.06)",color:"#A8492A",fontSize:11,fontWeight:700,cursor:"pointer"}}>Editar</button>
+                      background:"rgba(168,73,42,.06)",color:"#A8492A",fontSize:11,fontWeight:700,cursor:"pointer"}}>{AT.edit}</button>
                   </div>
                 )}
               </div>
@@ -1593,19 +1792,19 @@ function AjustesScreen({ goBack, setWeek }) {
                         background:"rgba(255,255,255,.85)",fontSize:14,fontFamily:"inherit",color:"#A8492A",fontWeight:700,outline:"none",textAlign:"center",boxSizing:"border-box"}}/>
                     <div style={{display:"flex",gap:8}}>
                       <button onClick={()=>setEditSemanas(false)} style={{flex:1,padding:"7px",borderRadius:10,border:"1px solid rgba(168,73,42,.2)",
-                        background:"transparent",color:"#a08070",fontSize:12,cursor:"pointer"}}>Cancelar</button>
+                        background:"transparent",color:"#a08070",fontSize:12,cursor:"pointer"}}>{AT.cancel}</button>
                       <button onClick={saveSemanas} style={{flex:2,padding:"7px",borderRadius:10,border:"none",
-                        background:"linear-gradient(135deg,#A8492A,#8B3520)",color:"#fff5ee",fontSize:12,fontWeight:700,cursor:"pointer"}}>Guardar</button>
+                        background:"linear-gradient(135deg,#A8492A,#8B3520)",color:"#fff5ee",fontSize:12,fontWeight:700,cursor:"pointer"}}>{AT.save}</button>
                     </div>
                   </div>
                 ) : (
                   <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                     <div>
-                      <div style={{fontSize:14,fontWeight:600,color:"#3d1a0e"}}>Semanas de embarazo</div>
-                      <div style={{fontSize:11.5,color:"#a08070",marginTop:2}}>Semana {weeks} · Trimestre {tri}</div>
+                      <div style={{fontSize:14,fontWeight:600,color:"#3d1a0e"}}>{AT.pregWeeks}</div>
+                      <div style={{fontSize:11.5,color:"#a08070",marginTop:2}}>{AT.weekTri(weeks,tri)}</div>
                     </div>
                     <button onClick={()=>{setTmpSemanas(String(weeks));setEditSemanas(true);}} style={{padding:"6px 12px",borderRadius:10,border:"1px solid rgba(168,73,42,.2)",
-                      background:"rgba(168,73,42,.06)",color:"#A8492A",fontSize:11,fontWeight:700,cursor:"pointer"}}>Editar</button>
+                      background:"rgba(168,73,42,.06)",color:"#A8492A",fontSize:11,fontWeight:700,cursor:"pointer"}}>{AT.edit}</button>
                   </div>
                 )}
               </div>
@@ -1623,19 +1822,19 @@ function AjustesScreen({ goBack, setWeek }) {
                         background:"rgba(255,255,255,.85)",fontSize:14,fontFamily:"inherit",color:"#3d1a0e",outline:"none",boxSizing:"border-box"}}/>
                     <div style={{display:"flex",gap:8}}>
                       <button onClick={()=>setEditFpp(false)} style={{flex:1,padding:"7px",borderRadius:10,border:"1px solid rgba(168,73,42,.2)",
-                        background:"transparent",color:"#a08070",fontSize:12,cursor:"pointer"}}>Cancelar</button>
+                        background:"transparent",color:"#a08070",fontSize:12,cursor:"pointer"}}>{AT.cancel}</button>
                       <button onClick={saveFpp} style={{flex:2,padding:"7px",borderRadius:10,border:"none",
-                        background:"linear-gradient(135deg,#A8492A,#8B3520)",color:"#fff5ee",fontSize:12,fontWeight:700,cursor:"pointer"}}>Guardar</button>
+                        background:"linear-gradient(135deg,#A8492A,#8B3520)",color:"#fff5ee",fontSize:12,fontWeight:700,cursor:"pointer"}}>{AT.save}</button>
                     </div>
                   </div>
                 ) : (
                   <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                     <div>
-                      <div style={{fontSize:14,fontWeight:600,color:"#3d1a0e"}}>Fecha probable de parto</div>
-                      <div style={{fontSize:11.5,color:"#a08070",marginTop:2}}>{due ? new Date(due+"T12:00:00").toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"}) : "Sin configurar"}</div>
+                      <div style={{fontSize:14,fontWeight:600,color:"#3d1a0e"}}>{AT.dueDate}</div>
+                      <div style={{fontSize:11.5,color:"#a08070",marginTop:2}}>{due ? new Date(due+"T12:00:00").toLocaleDateString(ajLocale,{day:"numeric",month:"long",year:"numeric"}) : AT.notSet}</div>
                     </div>
                     <button onClick={()=>{setTmpFpp(due||new Date().toISOString().slice(0,10));setEditFpp(true);}} style={{padding:"6px 12px",borderRadius:10,border:"1px solid rgba(168,73,42,.2)",
-                      background:"rgba(168,73,42,.06)",color:"#A8492A",fontSize:11,fontWeight:700,cursor:"pointer"}}>Editar</button>
+                      background:"rgba(168,73,42,.06)",color:"#A8492A",fontSize:11,fontWeight:700,cursor:"pointer"}}>{AT.edit}</button>
                   </div>
                 )}
               </div>
@@ -1645,12 +1844,12 @@ function AjustesScreen({ goBack, setWeek }) {
 
         {/* Notificaciones */}
         <div>
-          <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.65,marginBottom:10,paddingLeft:2}}>Notificaciones</div>
+          <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.65,marginBottom:10,paddingLeft:2}}>{AT.notifications}</div>
           <GlassSection>
             {[
-              {id:"notif", icon:"bell",  title:"Recordatorio de citas",   sub:"Alertas 24h antes",            key:"lume_notif",        val:notif,  set:setNotif},
-              {id:"tips",  icon:"leaf",  title:"Consejo diario",          sub:"Tip nutricional cada mañana",  key:"lume_tips",         val:tips,   set:setTips},
-              {id:"kicks", icon:"heart", title:"Recordatorio de patadas", sub:"Contar movimientos del bebé",  key:"lume_kicks_notif",  val:kicks,  set:setKicks},
+              {id:"notif", icon:"bell",  title:AT.apptReminder,   sub:AT.apptSub,            key:"lume_notif",        val:notif,  set:setNotif},
+              {id:"tips",  icon:"leaf",  title:AT.dailyTip,          sub:AT.dailyTipSub,  key:"lume_tips",         val:tips,   set:setTips},
+              {id:"kicks", icon:"heart", title:AT.kickReminder, sub:AT.kickSub,  key:"lume_kicks_notif",  val:kicks,  set:setKicks},
             ].map((n,i)=>(
               <div key={n.id} style={{display:"flex",alignItems:"center",gap:13,padding:"15px 18px",
                 borderTop:i>0?"1px solid rgba(168,73,42,.06)":"none"}}>
@@ -1665,7 +1864,7 @@ function AjustesScreen({ goBack, setWeek }) {
                     const next = !n.val;
                     n.set(next);
                     try{localStorage.setItem(n.key,String(next));}catch{}
-                    setNotifToast(next?"✓ Activado":"Desactivado");
+                    setNotifToast(next?AT.activated:AT.deactivated);
                     setTimeout(()=>setNotifToast(""),2000);
                   }}
                   style={{width:44,height:26,borderRadius:99,flexShrink:0,cursor:"pointer",
@@ -1679,33 +1878,62 @@ function AjustesScreen({ goBack, setWeek }) {
             ))}
           </GlassSection>
           <div style={{fontSize:11,color:"#b09080",lineHeight:1.6,padding:"8px 4px 0",textAlign:"center"}}>
-            En la app real, estas preferencias activan alertas en tu teléfono
+            {AT.notifNote}
+          </div>
+        </div>
+
+        {/* Idioma */}
+        <div>
+          <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.65,marginBottom:10,paddingLeft:2}}>{AT.language}</div>
+          <GlassSection>
+            <div style={{display:"flex",alignItems:"center",gap:13,padding:"15px 18px"}}>
+              <div style={{width:34,height:34,borderRadius:10,background:"rgba(168,73,42,.08)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                <svg viewBox="0 0 24 24" width={17} height={17} fill="none" stroke="#A8492A" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 4 5.7 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.7-4-9s1.5-6.5 4-9Z"/></svg>
+              </div>
+              <div style={{flex:1}}>
+                <div style={{fontSize:14,fontWeight:600,color:"#3d1a0e"}}>{AT.appLanguage}</div>
+                <div style={{fontSize:11.5,color:"#a08070"}}>{AT.langSub}</div>
+              </div>
+              <div style={{display:"flex",borderRadius:99,background:"rgba(168,73,42,.08)",padding:3,gap:2}}>
+                {["es","en"].map(l => (
+                  <button key={l} onClick={() => { try{localStorage.setItem("lume_lang", l);}catch{}; window.location.reload(); }}
+                    style={{padding:"6px 14px",borderRadius:99,border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:700,
+                      background:(()=>{try{return (localStorage.getItem("lume_lang")||"es")===l;}catch{return l==="es";}})()?"#A8492A":"transparent",
+                      color:(()=>{try{return (localStorage.getItem("lume_lang")||"es")===l;}catch{return l==="es";}})()?"#fff":"#a08070"}}>
+                    {l.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </GlassSection>
+          <div style={{fontSize:11,color:"#b09080",lineHeight:1.6,padding:"8px 4px 0",textAlign:"center"}}>
+            {AT.langNote}
           </div>
         </div>
 
         {/* Tu plan */}
         <div>
-          <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.65,marginBottom:10,paddingLeft:2}}>Tu plan</div>
+          <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.65,marginBottom:10,paddingLeft:2}}>{AT.yourPlan}</div>
           <div style={{borderRadius:20,overflow:"hidden",background:"rgba(255,255,255,.54)",backdropFilter:"blur(22px)",WebkitBackdropFilter:"blur(22px)",border:"1px solid rgba(255,255,255,.88)",boxShadow:"0 10px 32px rgba(168,73,42,.1)"}}>
             <div style={{padding:"16px 18px",borderBottom:!isPremium?"1px solid rgba(168,73,42,.06)":"none",display:"flex",alignItems:"center",gap:12}}>
               <div style={{width:38,height:38,borderRadius:11,background:isPremium?"rgba(200,149,42,.12)":"rgba(168,73,42,.08)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                 <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke={isPremium?"#C8952A":"#a08070"} strokeWidth="1.8" strokeLinecap="round"><path d="M4 8l3.5 2.5L12 5l4.5 5.5L20 8l-1.4 9.5H5.4L4 8Z"/></svg>
               </div>
               <div style={{flex:1}}>
-                <div style={{fontSize:13,fontWeight:700,color:"#3d1a0e"}}>Plan {isPremium?"Bienestar":"Esencial"}</div>
-                <div style={{fontSize:11.5,color:"#a08070"}}>{isPremium?"Activo · Acceso completo":"Versión gratuita"}</div>
+                <div style={{fontSize:13,fontWeight:700,color:"#3d1a0e"}}>{isPremium?AT.planWellness:AT.planEssential}</div>
+                <div style={{fontSize:11.5,color:"#a08070"}}>{isPremium?AT.activeFull:AT.freeVersion}</div>
               </div>
-              {!isPremium&&<span style={{fontSize:11,fontWeight:700,color:"#A8492A",background:"rgba(168,73,42,.08)",padding:"4px 10px",borderRadius:99,border:"1px solid rgba(168,73,42,.15)"}}>Mejorar</span>}
+              {!isPremium&&<span style={{fontSize:11,fontWeight:700,color:"#A8492A",background:"rgba(168,73,42,.08)",padding:"4px 10px",borderRadius:99,border:"1px solid rgba(168,73,42,.15)"}}>{AT.upgrade}</span>}
             </div>
             {!isPremium&&(
               <div style={{padding:"14px 18px 18px",background:"linear-gradient(135deg,rgba(168,73,42,.06),rgba(200,149,42,.04))"}}>
                 <div style={{fontSize:12.5,color:"#5a3a2a",lineHeight:1.6,marginBottom:12}}>
-                  Desbloquea <strong>Meditaciones, Plan nutricional, Música Bebé, Diario</strong> y mucho más.
+                  {AT.unlockMsg}<strong>{AT.unlockBold}</strong>{AT.unlockRest}
                 </div>
                 <button onClick={()=>goBack&&goBack()} style={{width:"100%",padding:"12px",borderRadius:99,border:"none",cursor:"pointer",
                   background:"linear-gradient(90deg,#A8492A,#8B3520)",color:"#fff5ee",fontFamily:"inherit",
                   fontSize:13.5,fontWeight:800,boxShadow:"0 8px 24px rgba(168,73,42,.38)"}}>
-                  Probar 7 días gratis
+                  {AT.tryFree}
                 </button>
               </div>
             )}
@@ -1714,24 +1942,24 @@ function AjustesScreen({ goBack, setWeek }) {
 
         {/* App */}
         <div>
-          <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.65,marginBottom:10,paddingLeft:2}}>Aplicación</div>
+          <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.65,marginBottom:10,paddingLeft:2}}>{AT.application}</div>
           <div style={{background:"rgba(255,255,255,.54)",backdropFilter:"blur(22px) saturate(165%)",WebkitBackdropFilter:"blur(22px) saturate(165%)",border:"1px solid rgba(255,255,255,.88)",borderRadius:20,overflow:"hidden",boxShadow:"0 10px 32px rgba(168,73,42,.1)"}}>
             {/* Versión */}
             <div style={{display:"flex",alignItems:"center",gap:13,padding:"15px 18px"}}>
               <div style={{width:34,height:34,borderRadius:10,background:"rgba(168,73,42,.08)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><AppIcon name="leaf" size={17}/></div>
-              <div style={{flex:1}}><div style={{fontSize:14,fontWeight:600,color:"#3d1a0e"}}>Lumé — Maternidad consciente</div><div style={{fontSize:11.5,color:"#a08070",marginTop:2}}>Versión 1.0 Beta</div></div>
+              <div style={{flex:1}}><div style={{fontSize:14,fontWeight:600,color:"#3d1a0e"}}>{AT.appName}</div><div style={{fontSize:11.5,color:"#a08070",marginTop:2}}>{AT.version}</div></div>
             </div>
             {/* Calificar */}
             <div style={{borderTop:"1px solid rgba(168,73,42,.06)"}}>
               <div onClick={()=>setShowRate(r=>!r)} style={{display:"flex",alignItems:"center",gap:13,padding:"15px 18px",cursor:"pointer"}}>
                 <div style={{width:34,height:34,borderRadius:10,background:"rgba(168,73,42,.08)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><AppIcon name="star" size={17}/></div>
-                <div style={{flex:1,fontSize:14,fontWeight:600,color:"#3d1a0e"}}>Calificar la app</div>
+                <div style={{flex:1,fontSize:14,fontWeight:600,color:"#3d1a0e"}}>{AT.rateApp}</div>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c0a090" strokeWidth="2.2" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
               </div>
               {showRate && (
                 <div style={{padding:"14px 18px 16px",borderTop:"1px solid rgba(168,73,42,.06)",background:"rgba(255,248,240,.6)"}}>
                   {!rated ? (<>
-                    <div style={{fontSize:12,color:"#8a6a5a",marginBottom:10,textAlign:"center"}}>¿Cómo valoras Lumé?</div>
+                    <div style={{fontSize:12,color:"#8a6a5a",marginBottom:10,textAlign:"center"}}>{AT.howRate}</div>
                     <div style={{display:"flex",justifyContent:"center",gap:8,marginBottom:14}}>
                       {[1,2,3,4,5].map(s=>(
                         <div key={s} onClick={()=>setStars(s)} style={{fontSize:30,cursor:"pointer",transition:"transform .15s",
@@ -1741,13 +1969,13 @@ function AjustesScreen({ goBack, setWeek }) {
                     {stars>0 && (
                       <div onClick={()=>setRated(true)} style={{textAlign:"center",padding:"10px",borderRadius:12,cursor:"pointer",
                         background:"linear-gradient(135deg,#A8492A,#8B3520)",color:"#fff5ee",fontSize:13,fontWeight:700}}>
-                        Enviar valoración
+                        {AT.submitRating}
                       </div>
                     )}
                   </>) : (
                     <div style={{textAlign:"center",padding:"4px 0"}}>
-                      <div style={{fontSize:13,fontWeight:700,color:"#3d1a0e",marginBottom:4}}>¡Gracias por tu valoración!</div>
-                      <div style={{fontSize:11.5,color:"#a08070"}}>Tu opinión nos ayuda a mejorar</div>
+                      <div style={{fontSize:13,fontWeight:700,color:"#3d1a0e",marginBottom:4}}>{AT.thanksRating}</div>
+                      <div style={{fontSize:11.5,color:"#a08070"}}>{AT.ratingHelps}</div>
                     </div>
                   )}
                 </div>
@@ -1756,7 +1984,7 @@ function AjustesScreen({ goBack, setWeek }) {
             {/* Privacidad */}
             <div onClick={()=>setShowPrivacy(true)} style={{borderTop:"1px solid rgba(168,73,42,.06)",display:"flex",alignItems:"center",gap:13,padding:"15px 18px",cursor:"pointer"}}>
               <div style={{width:34,height:34,borderRadius:10,background:"rgba(168,73,42,.08)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><AppIcon name="book" size={17}/></div>
-              <div style={{flex:1,fontSize:14,fontWeight:600,color:"#3d1a0e"}}>Privacidad y términos</div>
+              <div style={{flex:1,fontSize:14,fontWeight:600,color:"#3d1a0e"}}>{AT.privacyTerms}</div>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c0a090" strokeWidth="2.2" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
             </div>
           </div>
@@ -1776,16 +2004,10 @@ function AjustesScreen({ goBack, setWeek }) {
               background:"rgba(168,73,42,.1)",color:"#A8492A",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0}}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
             </button>
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:700,color:"#3d1a0e"}}>Privacidad y términos</div>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:700,color:"#3d1a0e"}}>{AT.privacyBack}</div>
           </div>
           <div style={{padding:"20px 20px 100px",display:"flex",flexDirection:"column",gap:20}}>
-            {[
-              {t:"Datos que recopilamos",b:"Lumé recopila información que tú nos proporcionas directamente: nombre, semanas de embarazo, síntomas, registros de peso, fotos y notas del diario. Esta información se almacena de forma segura y nunca se comparte con terceros sin tu consentimiento explícito."},
-              {t:"Cómo usamos tu información",b:"Usamos tus datos exclusivamente para personalizar tu experiencia: adaptar los consejos nutricionales, calcular el progreso del bebé, recordarte citas y mostrarte contenido relevante a tu semana de embarazo."},
-              {t:"Seguridad de los datos",b:"Toda tu información se cifra en tránsito y en reposo. Utilizamos estándares de seguridad de nivel hospitalario para proteger tus datos más sensibles."},
-              {t:"Tus derechos",b:"Puedes solicitar la exportación o eliminación de todos tus datos en cualquier momento desde esta pantalla o escribiéndonos a privacidad@lume.app. Cumplimos con el RGPD y la Ley Orgánica de Protección de Datos."},
-              {t:"Términos de uso",b:"Al usar Lumé aceptas que el contenido de la app es informativo y no reemplaza la opinión de tu médico o matrona. Siempre consulta a un profesional de salud ante cualquier duda médica."},
-            ].map((s,i)=>(
+            {AT.privacySections.map((s,i)=>(
               <div key={i} style={{background:"rgba(255,255,255,.6)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",
                 border:"1px solid rgba(255,255,255,.85)",borderRadius:18,padding:"16px 18px",
                 boxShadow:"0 6px 20px rgba(168,73,42,.08)"}}>
@@ -1793,7 +2015,7 @@ function AjustesScreen({ goBack, setWeek }) {
                 <div style={{fontSize:12.5,color:"#5a3a2a",lineHeight:1.7}}>{s.b}</div>
               </div>
             ))}
-            <div style={{textAlign:"center",fontSize:11,color:"#b09080",paddingTop:4}}>Última actualización: enero 2025 · v1.0</div>
+            <div style={{textAlign:"center",fontSize:11,color:"#b09080",paddingTop:4}}>{AT.lastUpdated}</div>
           </div>
         </div>
       )}
@@ -1813,6 +2035,19 @@ function AjustesScreen({ goBack, setWeek }) {
 
 /* ── TRACKER DE PATADAS ─── */
 function KickTrackerScreen({ goBack }) {
+  const kLang = getAppLang2();
+  const KT = kLang==="en" ? {
+    title:"Kicks & movements", sub1:"Tap the button with every movement you feel. Medical goal: ", sub2:"10 kicks in 2 hours",
+    goalMet:"Goal reached!", tapHere:"Tap here", kicksWord:"kicks", elapsed:" elapsed",
+    doneMsg:(t)=>`10 movements in ${t}!`, perfectMsg:"Perfect · +5 points logged", newSession:"New session",
+    history:"Session history", movements:"movements", warning:"If you feel ", warningBold:"fewer than 10 movements", warningRest:" in 2 hours frequently, contact your doctor.",
+  } : {
+    title:"Patadas y movimientos", sub1:"Toca el botón con cada movimiento que sientas. Meta médica: ", sub2:"10 patadas en 2 horas",
+    goalMet:"¡Meta lograda!", tapHere:"Toca aquí", kicksWord:"patadas", elapsed:" transcurridos",
+    doneMsg:(t)=>`¡10 movimientos en ${t}!`, perfectMsg:"Perfecto · +5 puntos registrados", newSession:"Nueva sesión",
+    history:"Historial de sesiones", movements:"movimientos", warning:"Si sientes ", warningBold:"menos de 10 movimientos", warningRest:" en 2 horas con frecuencia, consulta a tu médico.",
+  };
+  const kLocale = kLang==="en"?"en-US":"es-ES";
   const [sessions, setSessions] = React.useState(() => LS.get("lume_kicks") || []);
   const [count, setCount] = React.useState(0);
   const [startTime, setStartTime] = React.useState(null);
@@ -1837,7 +2072,7 @@ function KickTrackerScreen({ goBack }) {
     if (nc >= 10) {
       setDone(true);
       const secs = startTime ? Math.floor((now - startTime) / 1000) : 0;
-      const s = { id: now, date: new Date().toLocaleDateString("es-ES", { day: "numeric", month: "short" }), time: new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }), elapsed: secs, kicks: nc };
+      const s = { id: now, date: new Date().toLocaleDateString(kLocale, { day: "numeric", month: "short" }), time: new Date().toLocaleTimeString(kLocale, { hour: "2-digit", minute: "2-digit" }), elapsed: secs, kicks: nc };
       const arr = [s, ...sessions].slice(0, 20);
       setSessions(arr);LS.set("lume_kicks", arr);addPoints(5);
     }
@@ -1847,16 +2082,16 @@ function KickTrackerScreen({ goBack }) {
   const pct = Math.min(100, count / 10 * 100);
 
   return (
-    <div className="screen s-enter kick-screen" style={{ position: 'relative', backgroundImage: 'url(uploads/mama-patadas.png)', backgroundSize: 'cover', backgroundPosition: 'center top' }}>
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(20,6,6,.22) 0%, rgba(20,8,8,.38) 60%, rgba(10,4,4,.52) 100%)', zIndex: 0, pointerEvents: 'none' }}></div>
+    <div className="screen s-enter kick-screen" style={{ position: 'relative', backgroundImage: 'url("uploads/Ajustar el pie (menos evidente).png")', backgroundSize: 'cover', backgroundPosition: 'center top' }}>
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(20,6,6,.18) 0%, rgba(20,8,8,.32) 60%, rgba(10,4,4,.5) 100%)', zIndex: 0, pointerEvents: 'none' }}></div>
       <div style={{ position: 'relative', zIndex: 1 }}>
       <div style={{ padding: '54px 16px 10px', display: 'flex', flexDirection: 'column', gap: 12 }}>
         <button onClick={goBack} style={{ width: 42, height: 42, borderRadius: '50%', border: '1px solid rgba(255,255,255,.3)', background: 'rgba(255,255,255,.15)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', alignSelf: 'flex-start', boxShadow: '0 6px 18px rgba(0,0,0,.25)' }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
         <div style={{ padding: '16px 18px', borderRadius: 20, background: 'linear-gradient(160deg, rgba(255,255,255,.18), rgba(255,255,255,.08) 60%)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,.3)', boxShadow: '0 12px 32px rgba(0,0,0,.22), 0 1px 0 rgba(255,255,255,.25) inset' }}>
-          <h2 style={{ margin: '0 0 6px', fontSize: 24, fontWeight: 800, color: '#fff', letterSpacing: '-.4px', textShadow: '0 2px 12px rgba(0,0,0,.3)' }}>Patadas y movimientos</h2>
-          <p style={{ margin: 0, fontSize: 13, color: 'rgba(255,255,255,.78)', lineHeight: 1.55 }}>Toca el botón con cada movimiento que sientas. Meta médica: <strong style={{color:'rgba(255,255,255,.95)'}}>10 patadas en 2 horas</strong>.</p>
+          <h2 style={{ margin: '0 0 6px', fontSize: 24, fontWeight: 800, color: '#fff', letterSpacing: '-.4px', textShadow: '0 2px 12px rgba(0,0,0,.3)' }}>{KT.title}</h2>
+          <p style={{ margin: 0, fontSize: 13, color: 'rgba(255,255,255,.78)', lineHeight: 1.55 }}>{KT.sub1}<strong style={{color:'rgba(255,255,255,.95)'}}>{KT.sub2}</strong>.</p>
         </div>
       </div>
       <div className="kick-center" style={{ margin: "10px 0px 0px" }}>
@@ -1864,26 +2099,26 @@ function KickTrackerScreen({ goBack }) {
           <svg viewBox="0 0 48 48" width={52} height={52} fill="none">
             <path d="M24 42s-16-10-16-22a10 10 0 0 1 16-8 10 10 0 0 1 16 8c0 12-16 22-16 22Z" fill="rgba(255,255,255,.9)"/>
           </svg>
-          <div className="kick-hint">{done ? "¡Meta lograda!" : count === 0 ? "Toca aquí" : `${count}/10`}</div>
+          <div className="kick-hint">{done ? KT.goalMet : count === 0 ? KT.tapHere : `${count}/10`}</div>
         </button>
         <div className="kick-count">
           <span className="kick-num">{count}</span>
           <span className="kick-sep">/</span>
           <span className="kick-goal">10</span>
-          <span className="kick-lbl">patadas</span>
+          <span className="kick-lbl">{KT.kicksWord}</span>
         </div>
-        {startTime && !done && <div className="kick-timer"><AppIcon name="clock" size={13}/> {fmt(elapsed)} transcurridos</div>}
+        {startTime && !done && <div className="kick-timer"><AppIcon name="clock" size={13}/> {fmt(elapsed)}{KT.elapsed}</div>}
         <div className="kick-bar-wrap"><div className="kick-bar" style={{ width: pct + "%" }}></div></div>
-        {done && <div className="kick-done"><AppIcon name="check" size={20}/><div>¡10 movimientos en {fmt(elapsed)}!</div><div style={{ fontSize: 12, opacity: .8, marginTop: 3 }}>Perfecto Sofía · +5 puntos registrados</div></div>}
-        {count > 0 && <button className="btn" style={{ marginTop: 14, justifyContent: "center", background: "var(--surface-2)", color: "var(--ink)" }} onClick={reset}>Nueva sesión</button>}
+        {done && <div className="kick-done"><AppIcon name="check" size={20}/><div>{KT.doneMsg(fmt(elapsed))}</div><div style={{ fontSize: 12, opacity: .8, marginTop: 3 }}>{KT.perfectMsg}</div></div>}
+        {count > 0 && <button className="btn" style={{ marginTop: 14, justifyContent: "center", background: "var(--surface-2)", color: "var(--ink)" }} onClick={reset}>{KT.newSession}</button>}
       </div>
       {sessions.length > 0 && <>
-        <div className="sec-label">Historial de sesiones</div>
+        <div className="sec-label">{KT.history}</div>
         <div className="c" style={{ padding: "6px 0" }}>
           {sessions.map((s, i) =>
             <div key={s.id} className="kick-hist-item" style={{ borderBottom: i < sessions.length - 1 ? "1px solid var(--line)" : "none" }}>
               <div className={"kick-dot" + (s.kicks >= 10 ? " ok" : " warn")}></div>
-              <div style={{ flex: 1 }}><div style={{ fontWeight: 600, fontSize: 14 }}>{s.kicks} movimientos</div><div style={{ fontSize: 12, color: "var(--muted)" }}>{s.date} · {s.time}</div></div>
+              <div style={{ flex: 1 }}><div style={{ fontWeight: 600, fontSize: 14 }}>{s.kicks} {KT.movements}</div><div style={{ fontSize: 12, color: "var(--muted)" }}>{s.date} · {s.time}</div></div>
               <div style={{ fontSize: 13, color: "var(--muted)" }}>{fmt(s.elapsed)}</div>
             </div>
           )}
@@ -1894,7 +2129,7 @@ function KickTrackerScreen({ goBack }) {
           <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'rgba(255,220,100,.2)', border: '1.5px solid rgba(255,220,100,.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,220,100,.95)" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
           </div>
-          <p style={{ margin: 0, fontSize: 13.5, color: "rgba(255,255,255,.88)", lineHeight: 1.6 }}>Si sientes <strong style={{color:'#fff'}}>menos de 10 movimientos</strong> en 2 horas con frecuencia, consulta a tu médico.</p>
+          <p style={{ margin: 0, fontSize: 13.5, color: "rgba(255,255,255,.88)", lineHeight: 1.6 }}>{KT.warning}<strong style={{color:'#fff'}}>{KT.warningBold}</strong>{KT.warningRest}</p>
         </div>
       </div>
       </div>
@@ -1903,11 +2138,35 @@ function KickTrackerScreen({ goBack }) {
 }
 
 /* ── GALERÍA DE FOTOS ─── */
-function FotosScreen({ goBack }) {
+function FotosScreen({ goBack, goToTab }) {
+  const isPremium = React.useMemo(()=>{try{return !!localStorage.getItem("lume_premium");}catch{return false;}}, []);
+  const fLang = getAppLang2();
+  const FT = fLang==="en" ? {
+    eyebrow:"Visual diary", title:"My memories", sub:"Tap a frame to add your photo",
+    tris:[
+      { label: "First Trimester",  sub: "Weeks 1 – 13" },
+      { label: "Second Trimester", sub: "Weeks 14 – 26" },
+      { label: "Third Trimester",  sub: "Weeks 27 – 40" },
+    ],
+    wellness:"Wellness", yourPhoto:"Your photo",
+    infoPremium:"Your photos are saved only on your device and never shared.",
+    infoFree:(n)=>`Free plan: up to ${n} photos. Activate Wellness for an unlimited album.`,
+  } : {
+    eyebrow:"Diario visual", title:"Mis recuerdos", sub:"Toca un marco para añadir tu foto",
+    tris:[
+      { label: "Primer Trimestre",  sub: "Semanas 1 – 13" },
+      { label: "Segundo Trimestre", sub: "Semanas 14 – 26" },
+      { label: "Tercer Trimestre",  sub: "Semanas 27 – 40" },
+    ],
+    wellness:"Bienestar", yourPhoto:"Tu foto",
+    infoPremium:"Tus fotos se guardan solo en tu dispositivo y nunca se comparten.",
+    infoFree:(n)=>`Plan gratis: hasta ${n} fotos. Activa Bienestar para álbum ilimitado.`,
+  };
+  const FREE_LIMIT = 6;
   const TRIS = [
-    { label: "Primer Trimestre",  sub: "Semanas 1 – 13",  weeks: "1–13",  slots: ["ft1a", "ft1b", "ft1c", "ft1d"], color: "#C9849E" },
-    { label: "Segundo Trimestre", sub: "Semanas 14 – 26", weeks: "14–26", slots: ["ft2a", "ft2b", "ft2c", "ft2d"], color: "#C4693A" },
-    { label: "Tercer Trimestre",  sub: "Semanas 27 – 40", weeks: "27–40", slots: ["ft3a", "ft3b", "ft3c", "ft3d"], color: "#6B2410" }
+    { label: FT.tris[0].label,  sub: FT.tris[0].sub,  weeks: "1–13",  slots: ["ft1a", "ft1b", "ft1c", "ft1d"], color: "#C9849E" },
+    { label: FT.tris[1].label, sub: FT.tris[1].sub, weeks: "14–26", slots: ["ft2a", "ft2b", "ft2c", "ft2d"], color: "#C4693A" },
+    { label: FT.tris[2].label,  sub: FT.tris[2].sub, weeks: "27–40", slots: ["ft3a", "ft3b", "ft3c", "ft3d"], color: "#6B2410" }
   ];
   const glassCard = {
     background: "rgba(255,255,255,.52)", backdropFilter: "blur(28px) saturate(165%)",
@@ -1921,9 +2180,9 @@ function FotosScreen({ goBack }) {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .65, marginBottom: 5 }}>Diario visual</div>
-          <h2 style={{ margin: 0, fontSize: 23, fontWeight: 800, color: "#3d1a0e", letterSpacing: "-.3px" }}>Mis recuerdos</h2>
-          <p style={{ margin: 0, fontSize: 11.5, color: "#a08070" }}>Toca un marco para añadir tu foto</p>
+          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .65, marginBottom: 5 }}>{FT.eyebrow}</div>
+          <h2 style={{ margin: 0, fontSize: 23, fontWeight: 800, color: "#3d1a0e", letterSpacing: "-.3px" }}>{FT.title}</h2>
+          <p style={{ margin: 0, fontSize: 11.5, color: "#a08070" }}>{FT.sub}</p>
         </div>
       </div>
       <div style={{ padding: "20px 16px 56px", display: "flex", flexDirection: "column", gap: 18 }}>
@@ -1939,17 +2198,27 @@ function FotosScreen({ goBack }) {
               </div>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", rowGap: 34, columnGap: 10 }}>
-              {tri.slots.map((id) => (
+              {tri.slots.map((id, si) => {
+                const globalIdx = ti * 4 + si;
+                const locked = !isPremium && globalIdx >= FREE_LIMIT;
+                return (
                 <div key={id} style={{ ...glassCard, borderRadius: 18, padding: 6, position: "relative", boxShadow: `0 14px 30px -6px ${tri.color}, 0 4px 12px -2px ${tri.color}cc, 0 2px 0 rgba(255,255,255,.9) inset` }}>
-                  <image-slot id={id} shape="rounded" radius="13" placeholder="Tu foto" style={{ width: "100%", height: "130px", display: "block" }}></image-slot>
+                  {locked ? (
+                    <div onClick={() => goToTab && goToTab("premium")} style={{ width: "100%", height: "130px", borderRadius: 13, background: "rgba(168,73,42,.06)", border: "1.5px dashed rgba(168,73,42,.28)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer" }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A8492A" strokeWidth="1.8" strokeLinecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                      <span style={{ fontSize: 10, fontWeight: 700, color: "#A8492A" }}>{FT.wellness}</span>
+                    </div>
+                  ) : (
+                    <image-slot id={id} shape="rounded" radius="13" placeholder={FT.yourPhoto} style={{ width: "100%", height: "130px", display: "block" }}></image-slot>
+                  )}
                 </div>
-              ))}
+              );})}
             </div>
           </div>
         ))}
         <div style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "14px 16px", borderRadius: 16, background: "rgba(168,73,42,.05)", border: "1px solid rgba(168,73,42,.1)" }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A8492A" strokeWidth="2" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 1, opacity: .6 }}><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <p style={{ margin: 0, fontSize: 12.5, color: "#7a5a4a", lineHeight: 1.55 }}>Tus fotos se guardan solo en tu dispositivo y nunca se comparten.</p>
+          <p style={{ margin: 0, fontSize: 12.5, color: "#7a5a4a", lineHeight: 1.55 }}>{isPremium ? FT.infoPremium : FT.infoFree(FREE_LIMIT)}</p>
         </div>
       </div>
     </div>
@@ -1979,6 +2248,29 @@ const SOUND_TRACKS = [
   { id:"ocean",  label:"Olas"     },
   { id:"forest", label:"Bosque"   },
   { id:"fire",   label:"Hogar"    },
+];
+
+const MEDITATIONS_DATA_EN = [
+  { id:1,  title:"Breathe with calm",       sub:"4-7-8 breathing",          duration:10, tag:"Whole pregnancy",  colors:["#B8872A","#E4BC7E"], phase:[4,7,8] },
+  { id:2,  title:"Bonding with your baby",  sub:"Bonding meditation",       duration:15, tag:"Weeks 16+",        colors:["#8B5A9E","#C4A0D8"], phase:[4,2,6] },
+  { id:3,  title:"Grounding the body",       sub:"Progressive relaxation",   duration:12, tag:"2nd trimester",    colors:["#3A8070","#72C4B0"], phase:[5,3,7] },
+  { id:4,  title:"Deep sleep",              sub:"Before bedtime",           duration:20, tag:"Whole pregnancy",  colors:["#3A4E80","#7890C0"], phase:[4,7,8] },
+  { id:5,  title:"Birth preparation",       sub:"Positive visualization",   duration:18, tag:"3rd trimester",    colors:["#A8492A","#D08060"], phase:[4,4,8] },
+  { id:6,  title:"Stress management",       sub:"4-4-4 technique",          duration:8,  tag:"Whole pregnancy",  colors:["#7A6040","#C8A870"], phase:[4,4,4] },
+  { id:7,  title:"Self-love",               sub:"Positive affirmations",    duration:10, tag:"Whole pregnancy",  colors:["#C4506A","#E8A0B0"], phase:[4,2,6] },
+  { id:8,  title:"Body scan",               sub:"Prenatal body scan",       duration:16, tag:"1st & 2nd trim.",  colors:["#2A7A5A","#70C09A"], phase:[5,5,7] },
+  { id:9,  title:"Pregnancy gratitude",     sub:"Gratitude meditation",     duration:12, tag:"Whole pregnancy",  colors:["#6A4A9E","#B090D8"], phase:[4,4,6] },
+  { id:10, title:"Calm before birth",       sub:"Grounding technique",      duration:15, tag:"3rd trimester",    colors:["#1A6A8A","#50A0C8"], phase:[5,3,8] },
+  { id:11, title:"Morning energy",          sub:"Mindful waking",           duration:8,  tag:"Whole pregnancy",  colors:["#C87820","#E8B060"], phase:[4,2,4] },
+  { id:12, title:"Heartbeat to heartbeat",  sub:"In sync with your baby",   duration:14, tag:"Weeks 20+",        colors:["#8A3A6A","#C880A8"], phase:[4,4,6] },
+];
+
+const SOUND_TRACKS_EN = [
+  { id:"none",   label:"Silence" },
+  { id:"rain",   label:"Rain"    },
+  { id:"ocean",  label:"Waves"   },
+  { id:"forest", label:"Forest"  },
+  { id:"fire",   label:"Fireplace" },
 ];
 
 /* ── SVG icons ── */
@@ -2123,8 +2415,32 @@ function MeditacionesScreen({ goBack, goToTab }) {
   const [sound, setSound] = React.useState("rain");
   const ctxRef = React.useRef(null);
   const nodeRef = React.useRef(null);
-  const med = sel !== null ? MEDITATIONS_DATA[sel] : null;
-  const LABELS = ["Inhala","Sostén","Exhala"];
+  const medLang = getAppLang2();
+  const MDATA = medLang==="en" ? MEDITATIONS_DATA_EN : MEDITATIONS_DATA;
+  const STRACKS = medLang==="en" ? SOUND_TRACKS_EN : SOUND_TRACKS;
+  const MT = medLang==="en" ? {
+    title:"Meditations", premiumBadge:"✦ Wellness Premium", heroTitle:"Prenatal meditations",
+    heroDesc:"12 guided sessions with relaxing sounds and a breathing visualizer.",
+    availableIn:"Available in Wellness", availableSub:"12 sessions · relaxing sounds · visualizer",
+    activateCta:"✦ Activate Wellness — 7 days free", noCard:"No card required · cancel anytime",
+    listSub:"12 sessions · relaxing sounds · breathing visualizer",
+    headphones:"Use headphones for the full experience. Pick the sound that relaxes you most before you start.",
+    sessionActive:"✦ Active session", ready:"✦ Ready",
+    chooseSound:"Choose a sound · tap ▶ to begin",
+    labels:["Inhale","Hold","Exhale"],
+  } : {
+    title:"Meditaciones", premiumBadge:"✦ Bienestar Premium", heroTitle:"Meditaciones prenatales",
+    heroDesc:"12 sesiones guiadas con sonidos relajantes y visualizador de respiración.",
+    availableIn:"Disponible en Bienestar", availableSub:"12 sesiones · sonidos relajantes · visualizador",
+    activateCta:"✦ Activar Bienestar — 7 días gratis", noCard:"Sin tarjeta · cancela cuando quieras",
+    listSub:"12 sesiones · sonidos relajantes · visualizador de respiración",
+    headphones:"Usa auriculares para una experiencia completa. Elige el sonido que más te relaje antes de comenzar.",
+    sessionActive:"✦ Sesión activa", ready:"✦ Listo",
+    chooseSound:"Elige sonido · toca ▶ para comenzar",
+    labels:["Inhala","Sostén","Exhala"],
+  };
+  const med = sel !== null ? MDATA[sel] : null;
+  const LABELS = MT.labels;
 
   const getCtx = () => {
     if(!ctxRef.current) ctxRef.current = createAudioCtx();
@@ -2152,15 +2468,15 @@ function MeditacionesScreen({ goBack, goToTab }) {
   if(!isPremium){
     return (
       <div className="screen s-enter">
-        <ScreenHeader title="Meditaciones" goBack={goBack}/>
+        <ScreenHeader title={MT.title} goBack={goBack}/>
         <div style={{textAlign:"center",padding:"20px 0 16px"}}>
-          <span style={{fontSize:11,fontWeight:800,letterSpacing:".12em",color:"#C8952A",textTransform:"uppercase"}}>✦ Bienestar Premium</span>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:30,fontWeight:600,color:"#3d1a0e",margin:"8px 0 6px",lineHeight:1.2}}>Meditaciones prenatales</h2>
-          <p style={{fontSize:13,color:"#8a6a5a",lineHeight:1.6,margin:0}}>12 sesiones guiadas con sonidos relajantes y visualizador de respiración.</p>
+          <span style={{fontSize:11,fontWeight:800,letterSpacing:".12em",color:"#C8952A",textTransform:"uppercase"}}>{MT.premiumBadge}</span>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:30,fontWeight:600,color:"#3d1a0e",margin:"8px 0 6px",lineHeight:1.2}}>{MT.heroTitle}</h2>
+          <p style={{fontSize:13,color:"#8a6a5a",lineHeight:1.6,margin:0}}>{MT.heroDesc}</p>
         </div>
         <div style={{position:"relative",borderRadius:24,overflow:"hidden",marginBottom:20}}>
           <div style={{filter:"blur(3px)",pointerEvents:"none",opacity:.5}}>
-            {MEDITATIONS_DATA.slice(0,3).map((m,i)=>(
+            {MDATA.slice(0,3).map((m,i)=>(
               <div key={i} style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px",marginBottom:10,background:"rgba(255,255,255,.65)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderRadius:18,border:"1px solid "+m.colors[0]+"20",boxShadow:"0 8px 28px -6px "+m.colors[0]+"38"}}>
                 <div style={{width:48,height:48,borderRadius:14,background:"linear-gradient(135deg,"+m.colors[0]+","+m.colors[1]+")",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                   <SND_ICON_FIRE/>
@@ -2173,14 +2489,14 @@ function MeditacionesScreen({ goBack, goToTab }) {
             <div style={{width:56,height:56,borderRadius:"50%",background:"linear-gradient(135deg,#C8952A,#E4BC7E)",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 8px 24px rgba(200,149,42,.4)",marginBottom:10}}>
               <svg viewBox="0 0 24 24" width={24} height={24} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
             </div>
-            <div style={{fontSize:15,fontWeight:700,color:"#3d1a0e",marginBottom:3}}>Disponible en Bienestar</div>
-            <div style={{fontSize:12.5,color:"#8a6a5a"}}>12 sesiones · sonidos relajantes · visualizador</div>
+            <div style={{fontSize:15,fontWeight:700,color:"#3d1a0e",marginBottom:3}}>{MT.availableIn}</div>
+            <div style={{fontSize:12.5,color:"#8a6a5a"}}>{MT.availableSub}</div>
           </div>
         </div>
         <button onClick={()=>goToTab&&goToTab("premium")} style={{width:"100%",padding:"16px",borderRadius:99,border:"none",cursor:"pointer",background:"linear-gradient(90deg,#C8952A,#E4BC7E,#C8952A)",fontFamily:"inherit",fontSize:15,fontWeight:800,color:"#2A1400",boxShadow:"0 10px 32px rgba(200,149,42,.4)"}}>
-          ✦ Activar Bienestar — 7 días gratis
+          {MT.activateCta}
         </button>
-        <p style={{textAlign:"center",fontSize:12,color:"#a08070",marginTop:10}}>Sin tarjeta · cancela cuando quieras</p>
+        <p style={{textAlign:"center",fontSize:12,color:"#a08070",marginTop:10}}>{MT.noCard}</p>
       </div>
     );
   }
@@ -2198,7 +2514,7 @@ function MeditacionesScreen({ goBack, goToTab }) {
             <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="rgba(255,255,255,.88)" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
           </button>
           <div style={{textAlign:"center"}}>
-            <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",color:c1,textTransform:"uppercase",marginBottom:2}}>✦ Sesión activa</div>
+            <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",color:c1,textTransform:"uppercase",marginBottom:2}}>{MT.sessionActive}</div>
             <div style={{fontSize:15,fontWeight:600,color:"rgba(255,255,255,.9)"}}>{med.title}</div>
           </div>
           <div style={{fontSize:13,fontWeight:700,color:"rgba(255,255,255,.55)",fontVariantNumeric:"tabular-nums",background:"rgba(255,255,255,.08)",padding:"6px 12px",borderRadius:99,border:"1px solid rgba(255,255,255,.12)"}}>{fmt(rem)}</div>
@@ -2209,7 +2525,7 @@ function MeditacionesScreen({ goBack, goToTab }) {
             <div key={i} style={{position:"absolute",width:220*r,height:220*r,borderRadius:"50%",background:"radial-gradient(circle,"+c0+["1C","0E","05"][i]+" 0%,transparent 68%)",transform:"scale("+sc+")",transition:"transform 1.1s cubic-bezier(.37,0,.63,1)",pointerEvents:"none"}}/>
           ))}
           <div style={{width:220,height:220,borderRadius:"50%",background:"radial-gradient(circle at 30% 28%,"+c1+","+c0+" 60%,rgba(0,0,0,.2))",boxShadow:"0 0 90px "+c0+"60,0 0 180px "+c0+"18,inset 0 2px 0 rgba(255,255,255,.3)",transform:"scale("+sc+")",transition:"transform 1.1s cubic-bezier(.37,0,.63,1)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8}}>
-            <div style={{fontSize:24,fontWeight:700,color:"rgba(255,255,255,.96)",letterSpacing:"0.04em",textShadow:"0 2px 12px rgba(0,0,0,.3)"}}>{playing?LABELS[phase]:"✦ Listo"}</div>
+            <div style={{fontSize:24,fontWeight:700,color:"rgba(255,255,255,.96)",letterSpacing:"0.04em",textShadow:"0 2px 12px rgba(0,0,0,.3)"}}>{playing?LABELS[phase]:MT.ready}</div>
             {playing
               ? <div style={{fontSize:56,fontWeight:200,color:"rgba(255,255,255,.92)",lineHeight:1,fontVariantNumeric:"tabular-nums",textShadow:"0 4px 20px rgba(0,0,0,.25)"}}>{med.phase[phase]-tick}</div>
               : <div style={{fontSize:13,color:"rgba(255,255,255,.55)",fontWeight:500}}>{med.sub}</div>}
@@ -2219,7 +2535,7 @@ function MeditacionesScreen({ goBack, goToTab }) {
         <div style={{position:"absolute",bottom:0,left:0,right:0,background:"linear-gradient(to top,rgba(8,4,2,.9) 55%,transparent)",padding:"0 22px",paddingBottom:110,paddingTop:28,display:"flex",flexDirection:"column",alignItems:"center",gap:16}}>
           {/* Sound selector */}
           <div style={{display:"flex",gap:8,alignItems:"center",justifyContent:"center",width:"100%"}}>
-            {SOUND_TRACKS.map(s=>(
+            {STRACKS.map(s=>(
               <button key={s.id} onClick={()=>{setSound(s.id);if(playing)startSnd(s.id);}}
                 style={{display:"flex",flexDirection:"column",alignItems:"center",gap:5,padding:"10px 0",flex:1,
                   background:sound===s.id?"linear-gradient(135deg,"+c0+"55,"+c1+"38)":"rgba(255,255,255,.06)",
@@ -2255,7 +2571,7 @@ function MeditacionesScreen({ goBack, goToTab }) {
               ? <svg viewBox="0 0 24 24" width={32} height={32} fill="#1A0900"><rect x="6" y="4" width="4" height="16" rx="1.5"/><rect x="14" y="4" width="4" height="16" rx="1.5"/></svg>
               : <svg viewBox="0 0 24 24" width={32} height={32} fill="#1A0900" style={{marginLeft:3}}><path d="M8 5l12 7-12 7Z"/></svg>}
           </button>
-          <div style={{fontSize:12,color:"rgba(255,255,255,.32)",letterSpacing:".03em"}}>{playing?fmt(elapsed)+" · "+SOUND_TRACKS.find(s=>s.id===sound)?.label:"Elige sonido · toca ▶ para comenzar"}</div>
+          <div style={{fontSize:12,color:"rgba(255,255,255,.32)",letterSpacing:".03em"}}>{playing?fmt(elapsed)+" · "+STRACKS.find(s=>s.id===sound)?.label:MT.chooseSound}</div>
         </div>
       </div>
     );
@@ -2264,13 +2580,13 @@ function MeditacionesScreen({ goBack, goToTab }) {
   /* LIST */
   return (
     <div className="screen s-enter">
-      <ScreenHeader title="Meditaciones" goBack={goBack}/>
+      <ScreenHeader title={MT.title} goBack={goBack}/>
       <div style={{textAlign:"center",marginBottom:18}}>
-        <span style={{fontSize:11,fontWeight:800,letterSpacing:".1em",color:"#C8952A",textTransform:"uppercase"}}>✦ Bienestar Premium</span>
-        <p style={{fontSize:13,color:"#8a6a5a",margin:"4px 0 0"}}>12 sesiones · sonidos relajantes · visualizador de respiración</p>
+        <span style={{fontSize:11,fontWeight:800,letterSpacing:".1em",color:"#C8952A",textTransform:"uppercase"}}>{MT.premiumBadge}</span>
+        <p style={{fontSize:13,color:"#8a6a5a",margin:"4px 0 0"}}>{MT.listSub}</p>
       </div>
       <div style={{display:"flex",flexDirection:"column",gap:10}}>
-        {MEDITATIONS_DATA.map((m,i)=>(
+        {MDATA.map((m,i)=>(
           <button key={m.id} onClick={()=>{setSel(i);setPlaying(false);setPhase(0);setTick(0);setElapsed(0);}}
             style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px",textAlign:"left",background:"linear-gradient(135deg,rgba(255,255,255,.72) 0%,rgba(255,255,255,.48) 100%)",backdropFilter:"blur(20px) saturate(165%)",WebkitBackdropFilter:"blur(20px) saturate(165%)",borderRadius:20,border:"1px solid "+m.colors[0]+"22",cursor:"pointer",fontFamily:"inherit",width:"100%",boxShadow:"0 10px 32px -8px "+m.colors[0]+"42,0 2px 6px rgba(80,30,10,.06),inset 0 1px 0 rgba(255,255,255,.9)",transition:"transform .18s cubic-bezier(.34,1.56,.64,1)"}}
             onPointerDown={e=>e.currentTarget.style.transform="scale(.97)"}
@@ -2293,7 +2609,7 @@ function MeditacionesScreen({ goBack, goToTab }) {
       </div>
       <div style={{marginTop:14,marginBottom:8,padding:"13px 14px",borderRadius:16,background:"linear-gradient(135deg,rgba(200,149,42,.09),rgba(228,188,126,.13))",border:"1px solid rgba(200,149,42,.18)",display:"flex",gap:10,alignItems:"flex-start"}}>
         <span style={{fontSize:15}}>✦</span>
-        <p style={{margin:0,fontSize:12.5,color:"#7a5a30",lineHeight:1.6}}>Usa auriculares para una experiencia completa. Elige el sonido que más te relaje antes de comenzar.</p>
+        <p style={{margin:0,fontSize:12.5,color:"#7a5a30",lineHeight:1.6}}>{MT.headphones}</p>
       </div>
     </div>
   );
@@ -2322,6 +2638,27 @@ const EJERCICIOS_DATA = {
     { id:10, title:"Caminata en cuclillas", muscle:"Piernas / Pelvis", dur:"10 min", level:"Suave", desc:"Desciende al bebé y abre el canal de parto de manera natural y activa.", steps:["Párate con pies bien separados y puntas hacia afuera","Desciende a una posición de cuclillas cómoda","Camina lateralmente 5 pasos en cada dirección","Usa una silla o pared de apoyo si lo necesitas","5 minutos de movimiento continuo"] },
     { id:11, title:"Balanceo en pelota de parto", muscle:"Pelvis / Espalda", dur:"20 min", level:"Suave", desc:"Balancea suavemente la pelvis sobre la pelota para aliviar presión lumbar y acomodar al bebé.", steps:["Siéntate al centro de la pelota, pies bien apoyados","Haz círculos lentos con la pelvis (adelante, lado, atrás, lado)","Luego balancea adelante-atrás suavemente","Mantén una mano en la pelota para equilibrio","20 minutos con música relajante"] },
     { id:12, title:"Respiración para el parto", muscle:"Respiratorio", dur:"12 min", level:"Suave", desc:"Técnica de respiración en oleadas para manejar las contracciones durante el parto.", steps:["Posición cómoda sentada o de lado","Al inicio de cada 'ola': inhala lento 4 seg por la nariz","Exhala 6-8 seg por la boca con labios fruncidos","Visualiza que la ola llega y se va con tu respiración","Practica diariamente para que sea automático"] },
+  ],
+};
+
+const EJERCICIOS_DATA_EN = {
+  1: [
+    { id:1, title:"Diaphragmatic breathing", muscle:"Respiratory", dur:"10 min", level:"Gentle", desc:"Learn to breathe deeply to calm your nervous system and oxygenate your baby.", steps:["Sit comfortably with a straight back","Place one hand on your chest and the other on your belly","Inhale for 4 sec through your nose, feeling your belly expand","Exhale slowly for 6 sec through your mouth","Repeat 8 times"] },
+    { id:2, title:"Mindful walking", muscle:"Cardio", dur:"20 min", level:"Gentle", desc:"Walking at a moderate pace improves circulation and reduces first-trimester fatigue.", steps:["Wear comfortable, supportive shoes","Walk at a pace where you can talk without gasping","Keep your shoulders relaxed and eyes forward","Hydrate before and after","Rest if you feel dizzy or nauseous"] },
+    { id:3, title:"Prenatal yoga: Cat-Cow", muscle:"Lower back", dur:"8 min", level:"Gentle", desc:"Relieves lower-back tension and improves spinal mobility during the first trimester.", steps:["Kneel on all fours, wrists under shoulders","Inhale: drop your belly, lift head and tailbone (cow)","Exhale: arch your back toward the ceiling, tuck your chin (cat)","Move slowly and smoothly with your breath","10 repetitions"] },
+    { id:4, title:"Hip stretch", muscle:"Hips / Glutes", dur:"12 min", level:"Gentle", desc:"Opens and relaxes the pelvis, preparing your body for pregnancy's postural changes.", steps:["Sit on the edge of a sturdy chair","Cross your right ankle over your left knee","Keep your back straight and lean gently forward","Hold 30 seconds, feel the stretch in your hip","Switch sides and repeat 3 times"] },
+  ],
+  2: [
+    { id:5, title:"Gentle squats", muscle:"Legs / Glutes", dur:"15 min", level:"Moderate", desc:"Strengthens legs and glutes, improves posture and prepares the pelvic floor for birth.", steps:["Stand with feet shoulder-width apart, toes out","Lower slowly as if sitting into a chair","Keep knees aligned with your toes","Don't go lower than comfortable — 90° max","Rise slowly, squeeze glutes. 3 sets of 10"] },
+    { id:6, title:"Prenatal swimming", muscle:"Full body", dur:"30 min", level:"Moderate", desc:"Water supports your body and relieves joint pressure. Ideal for the second trimester.", steps:["Swim at a comfortable pace: breaststroke or backstroke are ideal","Avoid freestyle if you feel abdominal discomfort","Alternate: 2 min swimming, 1 min floating","Water at a moderate temperature (not hot)","Max 30 min, hydrate after getting out"] },
+    { id:7, title:"Pelvic floor strengthening", muscle:"Pelvic floor", dur:"10 min", level:"Moderate", desc:"Kegel exercises strengthen the perineum, reduce incontinence and ease postpartum recovery.", steps:["Find the muscle: as if stopping your urine flow","Contract that muscle for 5 seconds","Relax completely for 5 seconds","Repeat 10 times, 3 sets a day","You can do these sitting, standing or lying down"] },
+    { id:8, title:"Prenatal Pilates: Bird-Dog", muscle:"Core / Back", dur:"12 min", level:"Moderate", desc:"Stabilizes the core without pressing on the belly, improving balance and posture.", steps:["On all fours, neutral spine","Extend your right arm and left leg at the same time","Hold 3 seconds without arching your back","Return and switch sides","3 sets of 8 reps per side"] },
+  ],
+  3: [
+    { id:9, title:"Pelvic-opening meditation", muscle:"Pelvis / Mind", dur:"15 min", level:"Gentle", desc:"Combines breath and visualization to relax the pelvis and prepare you mentally for birth.", steps:["Lie on your side with a pillow between your knees","Close your eyes and breathe deep and slow","Visualize your pelvis gently opening with each exhale","Repeat the affirmation: 'My body knows what to do'","Practice 15 min before sleep"] },
+    { id:10, title:"Squat walk", muscle:"Legs / Pelvis", dur:"10 min", level:"Gentle", desc:"Helps the baby descend and opens the birth canal naturally and actively.", steps:["Stand with feet wide apart, toes out","Lower into a comfortable squat","Walk sideways 5 steps in each direction","Use a chair or wall for support if needed","5 minutes of continuous movement"] },
+    { id:11, title:"Birthing ball rocking", muscle:"Pelvis / Back", dur:"20 min", level:"Gentle", desc:"Gently rocks the pelvis on the ball to relieve lower-back pressure and help position the baby.", steps:["Sit centered on the ball, feet firmly planted","Make slow circles with your pelvis (front, side, back, side)","Then rock gently forward and back","Keep one hand on the ball for balance","20 minutes with relaxing music"] },
+    { id:12, title:"Labor breathing", muscle:"Respiratory", dur:"12 min", level:"Gentle", desc:"A wave-breathing technique to manage contractions during labor.", steps:["Comfortable position, sitting or on your side","At the start of each 'wave': inhale slowly for 4 sec through your nose","Exhale for 6-8 sec through pursed lips","Visualize the wave arriving and leaving with your breath","Practice daily so it becomes automatic"] },
   ],
 };
 
@@ -2690,10 +3027,27 @@ function EjerciciosScreen({ goBack, goToTab }) {
   const [tri, setTri] = React.useState(defaultTri);
   const [selEx, setSelEx] = React.useState(null);
   const hexRgb = h => { const x=h.replace('#',''); return `${parseInt(x.slice(0,2),16)},${parseInt(x.slice(2,4),16)},${parseInt(x.slice(4,6),16)}`; };
+  const exLang = getAppLang2();
+  const EX_T = exLang==="en" ? {
+    eyebrow:"Wellness · Movement", title:"Prenatal", titleBr:"exercises", sub:"12 safe routines · tailored to your stage",
+    unlockTitle:"Unlock your routine", unlockDesc:"12 video exercises · step-by-step guide · tailored to each trimester",
+    availableIn:"Available in Wellness", availableSub:"12 exercises · step-by-step guide · video",
+    activateCta:"✦ Activate Wellness — 7 days free", noCard:"No card required · cancel anytime",
+    tri:["First","Second","Third"], trimester:"Trimester",
+    disclaimer:"Check with your doctor before starting any routine. All exercises are safe for uncomplicated pregnancies.",
+  } : {
+    eyebrow:"Bienestar · Movimiento", title:"Ejercicios", titleBr:"prenatales", sub:"12 rutinas seguras · adaptadas a tu etapa",
+    unlockTitle:"Desbloquea tu rutina", unlockDesc:"12 ejercicios con video · guía paso a paso · adaptados a cada trimestre",
+    availableIn:"Disponible en Bienestar", availableSub:"12 ejercicios · guía paso a paso · video",
+    activateCta:"✦ Activar Bienestar — 7 días gratis", noCard:"Sin tarjeta · cancela cuando quieras",
+    tri:["Primer","Segundo","Tercer"], trimester:"Trimestre",
+    disclaimer:"Consulta a tu médico antes de comenzar cualquier rutina. Todos los ejercicios son seguros para embarazo sin complicaciones.",
+  };
 
-  const exercises = EJERCICIOS_DATA[tri]||[];
+  const exercises = (exLang==="en" ? EJERCICIOS_DATA_EN : EJERCICIOS_DATA)[tri]||[];
 
-  const MUSCLE_COLORS = { "Respiratorio":"#3A8070","Cardio":"#3A4E80","Espalda baja":"#8B5A9E","Caderas / Glúteos":"#A8492A","Piernas / Glúteos":"#B8872A","Cuerpo completo":"#1A6A8A","Suelo pélvico":"#C4506A","Core / Espalda":"#7A6040","Pelvis / Mente":"#6A4A9E","Piernas / Pelvis":"#3A8070","Pelvis / Espalda":"#8B5A9E" };
+  const MUSCLE_COLORS = { "Respiratorio":"#3A8070","Cardio":"#3A4E80","Espalda baja":"#8B5A9E","Caderas / Glúteos":"#A8492A","Piernas / Glúteos":"#B8872A","Cuerpo completo":"#1A6A8A","Suelo pélvico":"#C4506A","Core / Espalda":"#7A6040","Pelvis / Mente":"#6A4A9E","Piernas / Pelvis":"#3A8070","Pelvis / Espalda":"#8B5A9E",
+    "Respiratory":"#3A8070","Lower back":"#8B5A9E","Hips / Glutes":"#A8492A","Legs / Glutes":"#B8872A","Full body":"#1A6A8A","Pelvic floor":"#C4506A","Core / Back":"#7A6040","Pelvis / Mind":"#6A4A9E","Legs / Pelvis":"#3A8070","Pelvis / Back":"#8B5A9E" };
 
   if(selEx!==null) return <AnatomicPlayer exercise={exercises[selEx]} onClose={()=>setSelEx(null)}/>;
 
@@ -2708,12 +3062,12 @@ function EjerciciosScreen({ goBack, goToTab }) {
       </button>
       <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>✦ PREMIUM</div>
       <div>
-        <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(255,224,170,.8)",textTransform:"uppercase",marginBottom:7}}>Bienestar · Movimiento</div>
-        <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1,textShadow:"0 2px 18px rgba(0,0,0,.18)"}}>Ejercicios<br/>prenatales</h2>
-        <p style={{fontSize:12,color:"rgba(255,224,170,.72)",margin:0,lineHeight:1.5}}>12 rutinas seguras · adaptadas a tu etapa</p>
+        <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(255,224,170,.8)",textTransform:"uppercase",marginBottom:7}}>{EX_T.eyebrow}</div>
+        <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1,textShadow:"0 2px 18px rgba(0,0,0,.18)"}}>{EX_T.title}<br/>{EX_T.titleBr}</h2>
+        <p style={{fontSize:12,color:"rgba(255,224,170,.72)",margin:0,lineHeight:1.5}}>{EX_T.sub}</p>
       </div>
       {locked && (
-        <div style={{position:"absolute",inset:0,background:"rgba(60,10,4,.22)",backdropFilter:"blur(1px)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+        <div style={{position:"absolute",inset:0,background:"rgba(60,10,4,.22)",backdropFilter:"blur(1px)",display:"flex",alignItems:"center",justifyContent:"center",pointerEvents:"none"}}>
           <div style={{width:48,height:48,borderRadius:"50%",background:"rgba(255,255,255,.22)",backdropFilter:"blur(12px)",border:"1px solid rgba(255,255,255,.3)",display:"flex",alignItems:"center",justifyContent:"center"}}>
             <svg viewBox="0 0 24 24" width={22} height={22} fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
           </div>
@@ -2728,8 +3082,8 @@ function EjerciciosScreen({ goBack, goToTab }) {
         <ExHero locked={true}/>
         <div style={{padding:"20px 16px 100px"}}>
           <div style={{textAlign:"center",marginBottom:22}}>
-            <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:600,color:"#3d1a0e",margin:"0 0 6px"}}>Desbloquea tu rutina</h3>
-            <p style={{fontSize:13,color:"#8a6a5a",lineHeight:1.6,margin:0}}>12 ejercicios con video · guía paso a paso · adaptados a cada trimestre</p>
+            <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:600,color:"#3d1a0e",margin:"0 0 6px"}}>{EX_T.unlockTitle}</h3>
+            <p style={{fontSize:13,color:"#8a6a5a",lineHeight:1.6,margin:0}}>{EX_T.unlockDesc}</p>
           </div>
           <div style={{position:"relative",borderRadius:20,overflow:"hidden",marginBottom:20}}>
             <div style={{filter:"blur(3px)",pointerEvents:"none",opacity:.55}}>
@@ -2747,14 +3101,14 @@ function EjerciciosScreen({ goBack, goToTab }) {
               })}
             </div>
             <div style={{position:"absolute",inset:0,background:"linear-gradient(to bottom,rgba(249,241,235,0) 0%,rgba(249,241,235,.95) 55%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",paddingBottom:20}}>
-              <div style={{fontSize:14,fontWeight:700,color:"#3d1a0e",marginBottom:4}}>Disponible en Bienestar</div>
-              <div style={{fontSize:12,color:"#8a6a5a"}}>12 ejercicios · guía paso a paso · video</div>
+              <div style={{fontSize:14,fontWeight:700,color:"#3d1a0e",marginBottom:4}}>{EX_T.availableIn}</div>
+              <div style={{fontSize:12,color:"#8a6a5a"}}>{EX_T.availableSub}</div>
             </div>
           </div>
           <button onClick={()=>goToTab&&goToTab("premium")} style={{width:"100%",padding:"16px",borderRadius:99,border:"none",cursor:"pointer",background:"linear-gradient(90deg,#A8492A,#C8952A,#E4BC7E)",fontFamily:"inherit",fontSize:15,fontWeight:800,color:"#fff",boxShadow:"0 12px 32px rgba(168,73,42,.45)"}}>
-            ✦ Activar Bienestar — 7 días gratis
+            {EX_T.activateCta}
           </button>
-          <p style={{textAlign:"center",fontSize:12,color:"#a08070",marginTop:10}}>Sin tarjeta · cancela cuando quieras</p>
+          <p style={{textAlign:"center",fontSize:12,color:"#a08070",marginTop:10}}>{EX_T.noCard}</p>
         </div>
       </div>
     );
@@ -2784,8 +3138,8 @@ function EjerciciosScreen({ goBack, goToTab }) {
               lineHeight:1.4
             }}>
               {t===defaultTri ? <span style={{fontSize:8}}>✦ </span> : null}
-              {t===1?"Primer":t===2?"Segundo":"Tercer"}<br/>
-              <span style={{fontSize:10,fontWeight:600,opacity:.85}}>Trimestre</span>
+              {EX_T.tri[t-1]}<br/>
+              <span style={{fontSize:10,fontWeight:600,opacity:.85}}>{EX_T.trimester}</span>
             </button>
           ))}
         </div>
@@ -2837,7 +3191,7 @@ function EjerciciosScreen({ goBack, goToTab }) {
         {/* Disclaimer */}
         <div style={{marginTop:20,padding:"12px 14px",borderRadius:16,background:"rgba(255,255,255,.55)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(200,149,42,.13)",display:"flex",gap:10,alignItems:"flex-start",boxShadow:"0 4px 16px rgba(200,149,42,.08)"}}>
           <span style={{fontSize:13,flexShrink:0,color:"#C8952A"}}>✦</span>
-          <p style={{margin:0,fontSize:11.5,color:"#7a5a30",lineHeight:1.6}}>Consulta a tu médico antes de comenzar cualquier rutina. Todos los ejercicios son seguros para embarazo sin complicaciones.</p>
+          <p style={{margin:0,fontSize:11.5,color:"#7a5a30",lineHeight:1.6}}>{EX_T.disclaimer}</p>
         </div>
       </div>
     </div>
@@ -2862,53 +3216,88 @@ const WEEKLY_CONTENT = {
   40: { bebe:"¡Término! Tu bebé mide unos 50 cm y pesa entre 3-3.5 kg. Está completamente desarrollado y listo para nacer.", cuerpo:"Puedes sentir más presión pélvica, pérdida del tapón mucoso, o que las contracciones se vuelven más regulares.", esperar:"Si no hay señales de parto, el médico puede hablar de inducción después de semana 41.", consejo:"Descansa todo lo que puedas. Pronto conocerás a esa personita que ha crecido dentro de ti. ¡Ya casi!" },
 };
 
-function getWeekContent(w) {
-  const keys=Object.keys(WEEKLY_CONTENT).map(Number).sort((a,b)=>a-b);
+const WEEKLY_CONTENT_EN = {
+  4:  { bebe:"Your baby is barely 2 mm, the size of a poppy seed. The embryo is forming the cell layers that will become its organs.", cuerpo:"You probably don't know yet that you're pregnant. The uterus begins preparing a warm environment for the embryo.", esperar:"Possible implantation with light pink spotting ('implantation bleeding'). Start taking folic acid if you haven't already.", consejo:"Start a pregnancy journal. Writing down how you feel in these early weeks is something you'll treasure forever." },
+  5:  { bebe:"Your baby's heart starts beating — even though it's as small as a grain of rice! Nerve cells are multiplying rapidly.", cuerpo:"The first morning sickness may appear (though it can happen at any time). Your breasts may feel tender.", esperar:"Confirm the pregnancy with a urine or blood test. Schedule your first prenatal appointment.", consejo:"Saltine crackers before getting up can ease nausea. Never let your stomach go completely empty." },
+  8:  { bebe:"Your baby measures 1.6 cm and already has all major organs forming. Fingers and toes are appearing.", cuerpo:"The uterus has already doubled in size. You may feel more tired than usual — it's your body working hard.", esperar:"First ultrasound to confirm the heartbeat and due date. A very exciting moment.", consejo:"Sleep whenever you can. First-trimester fatigue is real and your body needs it." },
+  12: { bebe:"Your baby measures 5.4 cm, the size of a plum. They can already move their fingers, yawn, and have a sucking reflex.", cuerpo:"Nausea usually improves by the end of the first trimester. You may start feeling your energy return.", esperar:"Triple screen or week-12 ultrasound for chromosomal screening.", consejo:"Start planning how to share the news. Many families wait until the first trimester ends to announce the pregnancy." },
+  16: { bebe:"They measure about 11.6 cm and weigh 100g. Their movements are more coordinated, though you can't feel them yet. They can already tell light from dark.", cuerpo:"The uterus rises above the pubic bone and may become visible. The belly starts to show.", esperar:"Quad screen maternal test between weeks 15-20. Anatomy scan coming up soon.", consejo:"A good time to start prenatal yoga or gentle pelvic-floor exercises." },
+  20: { bebe:"Halfway there! They measure 25 cm and weigh 300g. You'll soon feel their movements like little bubbles or flutters.", cuerpo:"The belly is now clearly visible. The first stretch marks may appear — use rosehip oil or shea butter.", esperar:"The week-20 anatomy scan — the most important one to check organ development.", consejo:"Start talking to your baby. They can hear you from this week on and will recognize your voice at birth." },
+  24: { bebe:"They measure 30 cm and weigh 600g. Their lungs are developing the surfactant they'll need to breathe at birth.", cuerpo:"Swelling (edema) may appear in feet and ankles. Rest with your feet elevated when you can.", esperar:"O'Sullivan (glucose) test between weeks 24-28 to rule out gestational diabetes.", consejo:"Look into childbirth prep classes. Knowledge reduces fear and builds confidence." },
+  28: { bebe:"They measure 37 cm and weigh almost 1 kg. Their eyes are open and can distinguish light. The brain is developing rapidly.", cuerpo:"Third trimester begins. You may find it harder to breathe as the uterus pushes against the diaphragm.", esperar:"Whooping cough (Tdap) vaccine between weeks 27-36 to protect the newborn.", consejo:"Start your birth plan. Write down your preferences on delivery type, pain relief, and the first moments with your baby." },
+  32: { bebe:"They measure 42 cm and weigh 1.7 kg. They're head-down most of the time now. Their bones are hardening.", cuerpo:"Braxton Hicks contractions become more frequent. These are uterine rehearsals — irregular and painless.", esperar:"Growth-check ultrasound. Your doctor will check the baby's position and wellbeing.", consejo:"Pack your hospital bag. Have everything ready from week 36 in case the baby arrives early." },
+  36: { bebe:"They measure 47 cm and weigh almost 2.6 kg. Their lungs are nearly mature. They now fill the entire uterus.", cuerpo:"The baby may 'engage' in the pelvis, easing pressure on the diaphragm but increasing pelvic pressure.", esperar:"Weekly check-ups with your doctor. Monitoring of fetal position and wellbeing.", consejo:"Practice labor breathing techniques every day. Your body is ready — trust it." },
+  40: { bebe:"Full term! Your baby measures about 50 cm and weighs 3-3.5 kg. Fully developed and ready to be born.", cuerpo:"You may feel more pelvic pressure, loss of the mucus plug, or contractions becoming more regular.", esperar:"If there are no signs of labor, your doctor may discuss induction after week 41.", consejo:"Rest as much as you can. Soon you'll meet the little person who's been growing inside you. Almost there!" },
+};
+
+function getWeekContent(w, lang) {
+  const SRC = lang==="en" ? WEEKLY_CONTENT_EN : WEEKLY_CONTENT;
+  const keys=Object.keys(SRC).map(Number).sort((a,b)=>a-b);
   let best=keys[0];
   for(const k of keys){ if(w>=k) best=k; }
-  return WEEKLY_CONTENT[best];
+  return SRC[best];
 }
 
 function ContenidoSemanalScreen({ goBack, goToTab }) {
   const isPremium = React.useMemo(()=>{try{return !!localStorage.getItem("lume_premium");}catch{return false;}}, []);
   const baseWeek = parseInt(localStorage.getItem("lume_weeks")||15);
   const [week, setWeek] = React.useState(baseWeek);
-  const data = getWeekContent(week);
+  const csLang = getAppLang2();
+  const data = getWeekContent(week, csLang);
+  const CS_T = csLang==="en" ? {
+    title:"Weekly Guide", premiumBadge:"✦ Wellness Premium", heroQ:"What to expect this week?",
+    heroDesc:"Week-by-week guides on your baby's development and the changes in your body.",
+    weekLabel:"Week", babyLabel:"Your baby", availableIn:"Available in Wellness", availableSub:"Complete guides from week 4 to 40",
+    activateCta:"✦ Activate Wellness — 7 days free", noCard:"No card required · cancel anytime",
+    weekToWeek:"Week by week", heroTitle:"Weekly pregnancy", heroTitleBr:"guide", heroSub:"Your baby · Your body · What to expect",
+    currentWeek:"Your current week",
+    disclaimer:"Remember every pregnancy is unique. These guides are for reference — always check with your doctor.",
+    tip:"Tip ✦",
+  } : {
+    title:"Guía Semanal", premiumBadge:"✦ Bienestar Premium", heroQ:"¿Qué esperar esta semana?",
+    heroDesc:"Guías semana a semana sobre el desarrollo de tu bebé y los cambios en tu cuerpo.",
+    weekLabel:"Semana", babyLabel:"Tu bebé", availableIn:"Disponible en Bienestar", availableSub:"Guías completas semana 4 a 40",
+    activateCta:"✦ Activar Bienestar — 7 días gratis", noCard:"Sin tarjeta · cancela cuando quieras",
+    weekToWeek:"Semana a semana", heroTitle:"Guía semanal", heroTitleBr:"del embarazo", heroSub:"Tu bebé · Tu cuerpo · Qué esperar",
+    currentWeek:"Tu semana actual",
+    disclaimer:"Recuerda que cada embarazo es único. Estas guías son orientativas — siempre consulta con tu médico.",
+    tip:"Consejo ✦",
+  };
 
   const SECTIONS = [
-    { key:"bebe",    icon:<svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>, label:"Tu bebé",     color:"#8B5A9E" },
-    { key:"cuerpo",  icon:<svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>, label:"Tu cuerpo",  color:"#A8492A" },
-    { key:"esperar", icon:<svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, label:"Qué esperar", color:"#3A8070" },
-    { key:"consejo", icon:<svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, label:"Consejo ✦",  color:"#C8952A" },
+    { key:"bebe",    icon:<svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>, label:CS_T.babyLabel,     color:"#8B5A9E" },
+    { key:"cuerpo",  icon:<svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>, label:csLang==="en"?"Your body":"Tu cuerpo",  color:"#A8492A" },
+    { key:"esperar", icon:<svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, label:csLang==="en"?"What to expect":"Qué esperar", color:"#3A8070" },
+    { key:"consejo", icon:<svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, label:CS_T.tip,  color:"#C8952A" },
   ];
   const [openSec, setOpenSec] = React.useState("bebe");
 
   if(!isPremium){
     return (
       <div className="screen s-enter">
-        <ScreenHeader title="Guía Semanal" goBack={goBack}/>
+        <ScreenHeader title={CS_T.title} goBack={goBack}/>
         <div style={{textAlign:"center",padding:"20px 0 16px"}}>
-          <span style={{fontSize:11,fontWeight:800,letterSpacing:".12em",color:"#C8952A",textTransform:"uppercase"}}>✦ Bienestar Premium</span>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:28,fontWeight:600,color:"#3d1a0e",margin:"8px 0 6px",lineHeight:1.2}}>¿Qué esperar esta semana?</h2>
-          <p style={{fontSize:13,color:"#8a6a5a",lineHeight:1.6,margin:0}}>Guías semana a semana sobre el desarrollo de tu bebé y los cambios en tu cuerpo.</p>
+          <span style={{fontSize:11,fontWeight:800,letterSpacing:".12em",color:"#C8952A",textTransform:"uppercase"}}>{CS_T.premiumBadge}</span>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:28,fontWeight:600,color:"#3d1a0e",margin:"8px 0 6px",lineHeight:1.2}}>{CS_T.heroQ}</h2>
+          <p style={{fontSize:13,color:"#8a6a5a",lineHeight:1.6,margin:0}}>{CS_T.heroDesc}</p>
         </div>
         <div style={{position:"relative",borderRadius:24,overflow:"hidden",marginBottom:20,background:"rgba(255,255,255,.6)",backdropFilter:"blur(20px)",border:"1px solid rgba(200,149,42,.15)",padding:20,filter:"blur(2px)",pointerEvents:"none",opacity:.5}}>
-          <div style={{fontSize:11,fontWeight:800,color:"#C8952A",letterSpacing:".1em",textTransform:"uppercase",marginBottom:6}}>Semana {baseWeek}</div>
-          <div style={{fontSize:22,fontFamily:"'Cormorant Garamond',serif",fontWeight:600,color:"#3d1a0e",marginBottom:8}}>Tu bebé</div>
+          <div style={{fontSize:11,fontWeight:800,color:"#C8952A",letterSpacing:".1em",textTransform:"uppercase",marginBottom:6}}>{CS_T.weekLabel} {baseWeek}</div>
+          <div style={{fontSize:22,fontFamily:"'Cormorant Garamond',serif",fontWeight:600,color:"#3d1a0e",marginBottom:8}}>{CS_T.babyLabel}</div>
           <p style={{fontSize:13,color:"#5a3a2a",lineHeight:1.65,margin:0}}>{data.bebe.slice(0,80)}...</p>
         </div>
         <div style={{position:"absolute",left:"5%",right:"5%",top:"42%",display:"flex",flexDirection:"column",alignItems:"center"}}>
           <div style={{width:56,height:56,borderRadius:"50%",background:"linear-gradient(135deg,#C8952A,#E4BC7E)",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 8px 24px rgba(200,149,42,.4)",marginBottom:10}}>
             <svg viewBox="0 0 24 24" width={24} height={24} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
           </div>
-          <div style={{fontSize:15,fontWeight:700,color:"#3d1a0e",marginBottom:3}}>Disponible en Bienestar</div>
-          <div style={{fontSize:12.5,color:"#8a6a5a"}}>Guías completas semana 4 a 40</div>
+          <div style={{fontSize:15,fontWeight:700,color:"#3d1a0e",marginBottom:3}}>{CS_T.availableIn}</div>
+          <div style={{fontSize:12.5,color:"#8a6a5a"}}>{CS_T.availableSub}</div>
         </div>
         <div style={{marginTop:120}}>
           <button onClick={()=>goToTab&&goToTab("premium")} style={{width:"100%",padding:"16px",borderRadius:99,border:"none",cursor:"pointer",background:"linear-gradient(90deg,#C8952A,#E4BC7E,#C8952A)",fontFamily:"inherit",fontSize:15,fontWeight:800,color:"#2A1400",boxShadow:"0 10px 32px rgba(200,149,42,.4)"}}>
-            ✦ Activar Bienestar — 7 días gratis
+            {CS_T.activateCta}
           </button>
-          <p style={{textAlign:"center",fontSize:12,color:"#a08070",marginTop:10}}>Sin tarjeta · cancela cuando quieras</p>
+          <p style={{textAlign:"center",fontSize:12,color:"#a08070",marginTop:10}}>{CS_T.noCard}</p>
         </div>
       </div>
     );
@@ -2924,11 +3313,11 @@ function ContenidoSemanalScreen({ goBack, goToTab }) {
         <button onClick={goBack} style={{position:"absolute",top:54,left:16,width:38,height:38,borderRadius:"50%",background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",color:"#fff"}}>
           <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
-        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>✦ BIENESTAR</div>
+        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>{csLang==="en"?"✦ WELLNESS":"✦ BIENESTAR"}</div>
         <div>
-          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(255,224,170,.8)",textTransform:"uppercase",marginBottom:7}}>Semana a semana</div>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>Guía semanal<br/>del embarazo</h2>
-          <p style={{fontSize:12,color:"rgba(255,224,170,.72)",margin:0,lineHeight:1.5}}>Tu bebé · Tu cuerpo · Qué esperar</p>
+          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(255,224,170,.8)",textTransform:"uppercase",marginBottom:7}}>{CS_T.weekToWeek}</div>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>{CS_T.heroTitle}<br/>{CS_T.heroTitleBr}</h2>
+          <p style={{fontSize:12,color:"rgba(255,224,170,.72)",margin:0,lineHeight:1.5}}>{CS_T.heroSub}</p>
         </div>
       </div>
 
@@ -2940,9 +3329,9 @@ function ContenidoSemanalScreen({ goBack, goToTab }) {
             <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="#A8492A" strokeWidth="2.2" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/></svg>
           </button>
           <div style={{textAlign:"center"}}>
-            <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".12em",color:"#C8952A",textTransform:"uppercase",marginBottom:2}}>✦ Semana</div>
+            <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".12em",color:"#C8952A",textTransform:"uppercase",marginBottom:2}}>✦ {CS_T.weekLabel}</div>
             <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:42,fontWeight:600,color:"#3d1a0e",lineHeight:1}}>{week}</div>
-            {week===baseWeek && <div style={{fontSize:10,color:"#A8492A",fontWeight:700,marginTop:2}}>Tu semana actual</div>}
+            {week===baseWeek && <div style={{fontSize:10,color:"#A8492A",fontWeight:700,marginTop:2}}>{CS_T.currentWeek}</div>}
           </div>
           <button onClick={()=>setWeek(w=>Math.min(40,w+1))} style={{width:36,height:36,borderRadius:"50%",border:"1px solid rgba(168,73,42,.15)",background:"rgba(168,73,42,.06)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0}}>
             <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="#A8492A" strokeWidth="2.2" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
@@ -2980,7 +3369,7 @@ function ContenidoSemanalScreen({ goBack, goToTab }) {
                 </div>
                 <div>
                   <div style={{fontSize:12,fontWeight:800,color:active?"#fff":s.color,lineHeight:1.2}}>{s.label.replace(" ✦","")}</div>
-                  {active && <div style={{fontSize:9.5,color:"rgba(255,255,255,.75)",fontWeight:600,marginTop:1}}>Semana {week}</div>}
+                  {active && <div style={{fontSize:9.5,color:"rgba(255,255,255,.75)",fontWeight:600,marginTop:1}}>{CS_T.weekLabel} {week}</div>}
                 </div>
               </button>
             );
@@ -3005,11 +3394,11 @@ function ContenidoSemanalScreen({ goBack, goToTab }) {
                 </div>
                 <div>
                   <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:s.color,textTransform:"uppercase"}}>{s.label.replace(" ✦","")}</div>
-                  <div style={{fontSize:11,color:"#a08070",fontWeight:600}}>Semana {week}</div>
+                  <div style={{fontSize:11,color:"#a08070",fontWeight:600}}>{CS_T.weekLabel} {week}</div>
                 </div>
               </div>
               {s.label.includes("✦") && (
-                <span style={{fontSize:9.5,fontWeight:800,padding:"3px 9px",borderRadius:99,background:`${s.color}18`,border:`1px solid ${s.color}28`,color:s.color}}>Consejo ✦</span>
+                <span style={{fontSize:9.5,fontWeight:800,padding:"3px 9px",borderRadius:99,background:`${s.color}18`,border:`1px solid ${s.color}28`,color:s.color}}>{CS_T.tip}</span>
               )}
             </div>
             {/* Card body */}
@@ -3022,7 +3411,7 @@ function ContenidoSemanalScreen({ goBack, goToTab }) {
         {/* Disclaimer */}
         <div style={{padding:"12px 14px",borderRadius:16,background:"rgba(255,255,255,.55)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(200,149,42,.13)",display:"flex",gap:10,alignItems:"flex-start",boxShadow:"0 4px 16px rgba(200,149,42,.08)"}}>
           <span style={{fontSize:13,flexShrink:0,color:"#C8952A"}}>✦</span>
-          <p style={{margin:0,fontSize:11.5,color:"#7a5a30",lineHeight:1.6}}>Recuerda que cada embarazo es único. Estas guías son orientativas — siempre consulta con tu médico.</p>
+          <p style={{margin:0,fontSize:11.5,color:"#7a5a30",lineHeight:1.6}}>{CS_T.disclaimer}</p>
         </div>
       </div>
     </div>
@@ -3041,6 +3430,7 @@ const MOODS = [
   { id:"ansiosa",    path:"M13 2L3 14h9l-1 8 10-12h-9l1-8z",                                                              label:"Ansiosa",    color:"#4080D0" },
   { id:"emocionada", path:"M12 7c.6 3.4 1.6 4.4 5 5-3.4.6-4.4 1.6-5 5-.6-3.4-1.6-4.4-5-5 3.4-.6 4.4-1.6 5-5z",          label:"Emocionada", color:"#C8952A" },
 ];
+const MOOD_LABEL_EN = { feliz:"Happy", tranquila:"Calm", cansada:"Tired", ansiosa:"Anxious", emocionada:"Excited" };
 
 const MoodIcon = ({m, size=18, active=false}) => (
   <div style={{width:size,height:size,borderRadius:Math.round(size*.32),background:active?`linear-gradient(135deg,${m.color},${m.color}BB)`:`${m.color}16`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:active?`0 4px 10px ${m.color}45`:"none",transition:"all .2s"}}>
@@ -3055,11 +3445,30 @@ function DiarioScreen({ goBack, goToTab }) {
   const [texto, setTexto]       = React.useState("");
   const [mood, setMood]         = React.useState(null);
   const [expandedId, setExpandedId] = React.useState(null);
+  const dLang = getAppLang2();
+  const MOODS_L = MOODS.map(m=>({...m, label: dLang==="en" ? MOOD_LABEL_EN[m.id] : m.label}));
+  const D_T = dLang==="en" ? {
+    title:"Pregnancy", titleBr:"diary", eyebrow:"Wellness · Memories", sub:"Write every moment · keep the memories",
+    heroQ:"Your story, in your own words", heroDesc:"Save entries with your mood, thoughts and feelings, week by week.",
+    activateCta:"✦ Activate Wellness", noCard:"No card required · cancel anytime",
+    week:"Week", entriesSaved:e=>`${e} ${e===1?"entry":"entries"} saved`,
+    newEntry:"New entry · Week", placeholder:"How are you feeling today? Write down what you'd like to remember from this week...",
+    saveEntry:"Save entry", savedEntries:"Saved entries", emptyTitle:"Your diary is empty",
+    emptyDesc:"Write your first entry and keep this moment forever.",
+  } : {
+    title:"Diario del", titleBr:"embarazo", eyebrow:"Bienestar · Memoria", sub:"Escribe cada momento · guarda recuerdos",
+    heroQ:"Tu historia, en tus palabras", heroDesc:"Guarda entradas con tu estado de ánimo, pensamientos y emociones semana a semana.",
+    activateCta:"✦ Activar Bienestar", noCard:"Sin tarjeta · cancela cuando quieras",
+    week:"Semana", entriesSaved:e=>`${e} ${e===1?"entrada":"entradas"} guardadas`,
+    newEntry:"Nueva entrada · Semana", placeholder:"¿Cómo te sientes hoy? Escribe lo que quieras recordar de esta semana...",
+    saveEntry:"Guardar entrada", savedEntries:"Entradas guardadas", emptyTitle:"Tu diario está vacío",
+    emptyDesc:"Escribe tu primera entrada y guarda este momento para siempre.",
+  };
 
   const guardar = () => {
     if (!texto.trim()) return;
     const e = { id:Date.now(), texto, mood, semana:weeks,
-      fecha: new Date().toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"}) };
+      fecha: new Date().toLocaleDateString(dLang==="en"?"en-US":"es-ES",{day:"numeric",month:"long",year:"numeric"}) };
     const nueva = [e, ...entradas];
     setEntradas(nueva); LS.set("lume_diario", nueva);
     setTexto(""); setMood(null);
@@ -3078,22 +3487,22 @@ function DiarioScreen({ goBack, goToTab }) {
         <button onClick={goBack} style={{position:"absolute",top:54,left:16,width:38,height:38,borderRadius:"50%",background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",color:"#fff"}}>
           <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
-        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>✦ PROFESIONAL</div>
+        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>{dLang==="en"?"✦ WELLNESS":"✦ BIENESTAR"}</div>
         <div style={{marginTop:6}}>
-          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(255,224,200,.8)",textTransform:"uppercase",marginBottom:7}}>Bienestar · Memoria</div>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>Diario del<br/>embarazo</h2>
-          <p style={{fontSize:12,color:"rgba(255,224,200,.72)",margin:0,lineHeight:1.5}}>Escribe cada momento · guarda recuerdos</p>
+          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(255,224,200,.8)",textTransform:"uppercase",marginBottom:7}}>{D_T.eyebrow}</div>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>{D_T.title}<br/>{D_T.titleBr}</h2>
+          <p style={{fontSize:12,color:"rgba(255,224,200,.72)",margin:0,lineHeight:1.5}}>{D_T.sub}</p>
         </div>
       </div>
       <div style={{padding:"22px 16px 100px"}}>
         <div style={{textAlign:"center",marginBottom:22}}>
-          <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:600,color:"#3d1a0e",margin:"0 0 6px"}}>Tu historia, en tus palabras</h3>
-          <p style={{fontSize:13,color:"#8a6a5a",lineHeight:1.6,margin:0}}>Guarda entradas con tu estado de ánimo, pensamientos y emociones semana a semana.</p>
+          <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:600,color:"#3d1a0e",margin:"0 0 6px"}}>{D_T.heroQ}</h3>
+          <p style={{fontSize:13,color:"#8a6a5a",lineHeight:1.6,margin:0}}>{D_T.heroDesc}</p>
         </div>
-        {[{mood:"feliz",t:"Semana 8",d:"Hoy vi el latido por primera vez en el ultrasonido. Se me llenaron los ojos de lágrimas..."},
-          {mood:"tranquila",t:"Semana 12",d:"Las náuseas mejoraron. Por fin puedo comer algo sin que se me revuelva el estómago."},
-          {mood:"emocionada",t:"Semana 16",d:"Sentí los primeros movimientos, como burbujas pequeñitas. ¡Es real!"}].map((e,i)=>{
-            const m = MOODS.find(x=>x.id===e.mood);
+        {[{mood:"feliz",t:dLang==="en"?"Week 8":"Semana 8",d:dLang==="en"?"Today I saw the heartbeat for the first time on the ultrasound. My eyes filled with tears...":"Hoy vi el latido por primera vez en el ultrasonido. Se me llenaron los ojos de lágrimas..."},
+          {mood:"tranquila",t:dLang==="en"?"Week 12":"Semana 12",d:dLang==="en"?"The nausea got better. I can finally eat something without my stomach turning.":"Las náuseas mejoraron. Por fin puedo comer algo sin que se me revuelva el estómago."},
+          {mood:"emocionada",t:dLang==="en"?"Week 16":"Semana 16",d:dLang==="en"?"I felt the first movements, like tiny bubbles. It's real!":"Sentí los primeros movimientos, como burbujas pequeñitas. ¡Es real!"}].map((e,i)=>{
+            const m = MOODS_L.find(x=>x.id===e.mood);
             return (
           <div key={i} style={{marginBottom:10,padding:"14px 16px",borderRadius:18,background:"rgba(255,255,255,.65)",backdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,.85)",boxShadow:"0 6px 18px rgba(139,90,158,.1)",filter:i===0?"none":"blur(2px)",opacity:i===0?1:.55}}>
             <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:6}}>
@@ -3105,9 +3514,9 @@ function DiarioScreen({ goBack, goToTab }) {
             );
           })}
         <button onClick={()=>goToTab&&goToTab("premium")} style={{width:"100%",padding:"16px",borderRadius:99,border:"none",cursor:"pointer",background:"linear-gradient(90deg,#8B5A9E,#C8952A)",fontFamily:"inherit",fontSize:15,fontWeight:800,color:"#fff",boxShadow:"0 12px 32px rgba(139,90,158,.45)",marginTop:8}}>
-          ✦ Activar Profesional
+          {D_T.activateCta}
         </button>
-        <p style={{textAlign:"center",fontSize:12,color:"#a08070",marginTop:10}}>Sin tarjeta · cancela cuando quieras</p>
+        <p style={{textAlign:"center",fontSize:12,color:"#a08070",marginTop:10}}>{D_T.noCard}</p>
       </div>
     </div>
   );
@@ -3120,11 +3529,11 @@ function DiarioScreen({ goBack, goToTab }) {
         <button onClick={goBack} style={{position:"absolute",top:54,left:16,width:38,height:38,borderRadius:"50%",background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",color:"#fff"}}>
           <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
-        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>✦ PROFESIONAL</div>
+        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>{dLang==="en"?"✦ WELLNESS":"✦ BIENESTAR"}</div>
         <div style={{marginTop:6}}>
-          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(255,224,200,.8)",textTransform:"uppercase",marginBottom:7}}>Semana {weeks}</div>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>Diario del<br/>embarazo</h2>
-          <p style={{fontSize:12,color:"rgba(255,224,200,.72)",margin:0,lineHeight:1.5}}>{entradas.length} {entradas.length===1?"entrada":"entradas"} guardadas</p>
+          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(255,224,200,.8)",textTransform:"uppercase",marginBottom:7}}>{D_T.week} {weeks}</div>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>{D_T.title}<br/>{D_T.titleBr}</h2>
+          <p style={{fontSize:12,color:"rgba(255,224,200,.72)",margin:0,lineHeight:1.5}}>{D_T.entriesSaved(entradas.length)}</p>
         </div>
       </div>
 
@@ -3135,11 +3544,11 @@ function DiarioScreen({ goBack, goToTab }) {
             <div style={{width:28,height:28,borderRadius:9,background:"linear-gradient(135deg,#8B5A9E,#C8952A)",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 10px rgba(139,90,158,.45)"}}>
               <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
             </div>
-            <span style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:"#8B5A9E",textTransform:"uppercase"}}>Nueva entrada · Semana {weeks}</span>
+            <span style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:"#8B5A9E",textTransform:"uppercase"}}>{D_T.newEntry} {weeks}</span>
           </div>
           {/* Mood selector */}
           <div style={{padding:"12px 16px 0",display:"flex",gap:8,flexWrap:"wrap"}}>
-            {MOODS.map(m=>(
+            {MOODS_L.map(m=>(
               <button key={m.id} onClick={()=>setMood(mood===m.id?null:m.id)}
                 style={{display:"flex",alignItems:"center",gap:5,padding:"6px 12px",borderRadius:99,border:mood===m.id?`1.5px solid ${m.color}`:"1.5px solid rgba(139,90,158,.15)",background:mood===m.id?`${m.color}18`:"rgba(255,255,255,.6)",cursor:"pointer",fontFamily:"inherit",fontSize:11.5,fontWeight:700,color:mood===m.id?m.color:"#8a6a5a",transition:"all .2s"}}>
                 <MoodIcon m={m} size={20} active={mood===m.id}/>
@@ -3150,11 +3559,11 @@ function DiarioScreen({ goBack, goToTab }) {
           {/* Text area */}
           <div style={{padding:"10px 16px"}}>
             <textarea value={texto} onChange={e=>setTexto(e.target.value)}
-              placeholder="¿Cómo te sientes hoy? Escribe lo que quieras recordar de esta semana..."
+              placeholder={D_T.placeholder}
               style={{width:"100%",minHeight:100,borderRadius:14,border:"1.5px solid rgba(139,90,158,.18)",background:"rgba(255,255,255,.6)",padding:"12px 14px",fontFamily:"inherit",fontSize:13,color:"#3d1a0e",lineHeight:1.65,resize:"none",outline:"none",boxSizing:"border-box"}}/>
             <button onClick={guardar} disabled={!texto.trim()}
               style={{width:"100%",padding:"13px",borderRadius:99,border:"none",cursor:texto.trim()?"pointer":"not-allowed",marginTop:8,background:texto.trim()?"linear-gradient(135deg,#8B5A9E,#C8952A)":"rgba(139,90,158,.2)",color:"#fff",fontFamily:"inherit",fontSize:13,fontWeight:800,boxShadow:texto.trim()?"0 8px 22px rgba(139,90,158,.4)":"none",transition:"all .25s"}}>
-              Guardar entrada
+              {D_T.saveEntry}
             </button>
           </div>
         </div>
@@ -3162,17 +3571,17 @@ function DiarioScreen({ goBack, goToTab }) {
         {/* Entradas guardadas */}
         {entradas.length > 0 && (
           <div>
-            <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:"#8a6a5a",textTransform:"uppercase",marginBottom:10,padding:"0 2px"}}>Entradas guardadas</div>
+            <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:"#8a6a5a",textTransform:"uppercase",marginBottom:10,padding:"0 2px"}}>{D_T.savedEntries}</div>
             <div style={{display:"flex",flexDirection:"column",gap:10}}>
               {entradas.map(e=>{
-                const m = MOODS.find(x=>x.id===e.mood);
+                const m = MOODS_L.find(x=>x.id===e.mood);
                 return (
                   <div key={e.id} style={{background:"rgba(255,255,255,.72)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",borderRadius:20,border:`1px solid ${m?m.color+"22":"rgba(139,90,158,.1)"}`,overflow:"hidden",boxShadow:`0 6px 20px ${m?m.color+"18":"rgba(139,90,158,.08)"}, inset 0 1px 0 rgba(255,255,255,.9)`}}>
                     <div style={{padding:"12px 14px",display:"flex",gap:10,alignItems:"flex-start",cursor:"pointer"}} onClick={()=>setExpandedId(expandedId===e.id?null:e.id)}>
                       {m && <MoodIcon m={m} size={34} active={true}/>}
                       <div style={{flex:1,minWidth:0}}>
                         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,marginBottom:4}}>
-                          <span style={{fontSize:11,fontWeight:800,color:m?m.color:"#8B5A9E"}}>Semana {e.semana} {m?`· ${m.label}`:""}</span>
+                          <span style={{fontSize:11,fontWeight:800,color:m?m.color:"#8B5A9E"}}>{D_T.week} {e.semana} {m?`· ${m.label}`:""}</span>
                           <span style={{fontSize:10,color:"#a08070",flexShrink:0}}>{e.fecha}</span>
                         </div>
                         <p style={{margin:0,fontSize:13,color:"#5a3a2a",lineHeight:1.6,overflow:"hidden",display:"-webkit-box",WebkitLineClamp:expandedId===e.id?100:2,WebkitBoxOrient:"vertical"}}>{e.texto}</p>
@@ -3193,8 +3602,8 @@ function DiarioScreen({ goBack, goToTab }) {
             <div style={{width:56,height:56,borderRadius:18,background:"linear-gradient(135deg,rgba(139,90,158,.15),rgba(200,149,42,.1))",border:"1.5px solid rgba(139,90,158,.2)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 12px",color:"#8B5A9E"}}>
               <AppIcon name="diary" size={26}/>
             </div>
-            <div style={{fontSize:14,fontWeight:600,color:"#8a6a5a",marginBottom:4}}>Tu diario está vacío</div>
-            <div style={{fontSize:12,lineHeight:1.6}}>Escribe tu primera entrada y guarda este momento para siempre.</div>
+            <div style={{fontSize:14,fontWeight:600,color:"#8a6a5a",marginBottom:4}}>{D_T.emptyTitle}</div>
+            <div style={{fontSize:12,lineHeight:1.6}}>{D_T.emptyDesc}</div>
           </div>
         )}
       </div>
@@ -3212,12 +3621,26 @@ const EXPERTOS_DATA = [
   { id:4, nombre:"Fisio. Ana Ruiz",    esp:"Fisioterapia obstétrica",        rating:4.7, reviews:141, avail:"Jue · 11:00",      color:"#B8872A", badge:null,              bio:"Suelo pélvico, dolor lumbar y posturas seguras durante el embarazo. Online y presencial.",                cat:"fisio",      calendly:"https://calendly.com/lume-fisio/consulta-15min" },
   { id:5, nombre:"Dr. Andrés García",  esp:"Ginecólogo · Alto riesgo",       rating:5.0, reviews:87,  avail:"Vie · 09:00",      color:"#4A6A9E", badge:"✦ Top rated",     bio:"Embarazos de alto riesgo, gemelar y tras pérdida gestacional. Segunda opinión y seguimiento especializado.", cat:"matrona",    calendly:"https://calendly.com/lume-ginecologia/consulta-15min" },
 ];
+const EXPERTOS_DATA_EN = [
+  { ...EXPERTOS_DATA[0], esp:"Midwife · Natural birth", avail:"Today · 4:00 PM", badge:"Most requested", bio:"12 years supporting pregnancies at every stage. Specialized in birth prep and breastfeeding." },
+  { ...EXPERTOS_DATA[1], esp:"Perinatal nutritionist", avail:"Tomorrow · 10:30 AM", badge:null, bio:"Personalized menus based on your trimester, symptoms and preferences. Anti-nausea plan included." },
+  { ...EXPERTOS_DATA[2], esp:"Perinatal psychology", avail:"Today · 6:00 PM", badge:"High demand", bio:"Prenatal anxiety, fear of birth, bonding and adjustment. Free first session, no commitment." },
+  { ...EXPERTOS_DATA[3], esp:"Obstetric physiotherapy", avail:"Thu · 11:00 AM", badge:null, bio:"Pelvic floor, lower-back pain and safe postures during pregnancy. Online and in person." },
+  { ...EXPERTOS_DATA[4], esp:"OB-GYN · High risk", avail:"Fri · 9:00 AM", badge:"✦ Top rated", bio:"High-risk, twin and post-loss pregnancies. Second opinions and specialized follow-up." },
+];
 const EXP_CATS = [
   {id:"todas", label:"Todas"},
   {id:"matrona", label:"Matrona"},
   {id:"nutricion", label:"Nutrición"},
   {id:"psicologia", label:"Psicología"},
   {id:"fisio", label:"Fisio"},
+];
+const EXP_CATS_EN = [
+  {id:"todas", label:"All"},
+  {id:"matrona", label:"Midwife"},
+  {id:"nutricion", label:"Nutrition"},
+  {id:"psicologia", label:"Psychology"},
+  {id:"fisio", label:"Physio"},
 ];
 
 function ExpertosScreen({ goBack, goToTab }) {
@@ -3230,6 +3653,34 @@ function ExpertosScreen({ goBack, goToTab }) {
   const [selDay, setSelDay]   = React.useState(0);
   const [selSlot, setSelSlot] = React.useState(null);
   const [confirmed, setConfirmed] = React.useState(null);
+  const expLang = getAppLang2();
+  const EXPERTOS_L = expLang==="en" ? EXPERTOS_DATA_EN : EXPERTOS_DATA;
+  const EXP_CATS_L = expLang==="en" ? EXP_CATS_EN : EXP_CATS;
+  const XP_T = expLang==="en" ? {
+    badge:"✦ PROFESSIONAL", eyebrow:"Professional · Experts", title:"Consult with", titleBr:"experts",
+    subtitle:"Midwives · Nutritionists · Psychologists · Physio",
+    availableSub:n=>`First consult free · ${n} specialists available`,
+    activateCta:"✦ Activate Professional", noCard:"No card required · cancel anytime",
+    reviews:"reviews", bookSession:"Book session", cancel:"Cancel",
+    firstFree:"First 15-min consult free", chooseDay:"Choose a day", availableTimes:"Available times",
+    confirmSlot:(l,s)=>`Confirm · ${l} ${s}`, chooseTime:"Choose a time",
+    emailNote:"You'll get email confirmation · free cancellation up to 24h before",
+    poweredBy:"Real-time scheduling · Powered by Calendly",
+    bookingConfirmed:"✦ Booking confirmed", disclaimer:"First 15-min consult is free. Full sessions have an additional cost depending on the specialist.",
+    today:"Today", tomorrow:"Tomorrow",
+  } : {
+    badge:"✦ PROFESIONAL", eyebrow:"Profesional · Expertos", title:"Consultas con", titleBr:"expertos",
+    subtitle:"Matronas · Nutricionistas · Psicólogas · Fisio",
+    availableSub:n=>`Primera consulta gratis · ${n} especialistas disponibles`,
+    activateCta:"✦ Activar Profesional", noCard:"Sin tarjeta · cancela cuando quieras",
+    reviews:"reseñas", bookSession:"Reservar sesión", cancel:"Cancelar",
+    firstFree:"Primera consulta 15 min gratis", chooseDay:"Selecciona día", availableTimes:"Horarios disponibles",
+    confirmSlot:(l,s)=>`Confirmar · ${l} ${s}`, chooseTime:"Selecciona un horario",
+    emailNote:"Recibirás confirmación por email · cancelación gratis 24h antes",
+    poweredBy:"Agenda en tiempo real · Powered by Calendly",
+    bookingConfirmed:"✦ Reserva confirmada", disclaimer:"Primera consulta de 15 min gratuita. Las sesiones completas tienen un costo adicional según el especialista.",
+    today:"Hoy", tomorrow:"Mañana",
+  };
 
   const getSlots = (expId) => {
     const days = []; const now = new Date();
@@ -3238,7 +3689,8 @@ function ExpertosScreen({ goBack, goToTab }) {
       const d = new Date(now); d.setDate(d.getDate()+i);
       const seed = (expId*7 + i*3) % 4;
       const slots = ALL.filter((_,idx)=>(idx+seed)%3!==0).slice(0,5);
-      days.push({ label:i===0?"Hoy":i===1?"Mañana":d.toLocaleDateString("es-ES",{weekday:"short",day:"numeric"}), date:d.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"}), slots });
+      const locale = expLang==="en" ? "en-US" : "es-ES";
+      days.push({ label:i===0?XP_T.today:i===1?XP_T.tomorrow:d.toLocaleDateString(locale,{weekday:"short",day:"numeric"}), date:d.toLocaleDateString(locale,{weekday:"long",day:"numeric",month:"long"}), slots });
     }
     return days;
   };
@@ -3247,7 +3699,7 @@ function ExpertosScreen({ goBack, goToTab }) {
   const confirmBooking = () => {
     const days = getSlots(bookingModal.exp.id);
     const day = days[selDay];
-    const entry = {id:bookingModal.exp.id,nombre:bookingModal.exp.nombre,date:day.date,slot:selSlot,fecha:new Date().toLocaleDateString("es-ES")};
+    const entry = {id:bookingModal.exp.id,nombre:bookingModal.exp.nombre,date:day.date,slot:selSlot,fecha:new Date().toLocaleDateString(expLang==="en"?"en-US":"es-ES")};
     const b = [...booked.filter(x=>x.id!==bookingModal.exp.id), entry];
     setBooked(b); LS.set("lume_bookings",b);
     setConfirmed({exp:bookingModal.exp,day,slot:selSlot});
@@ -3257,7 +3709,7 @@ function ExpertosScreen({ goBack, goToTab }) {
     setTimeout(()=>setConfirmed(null),4000);
   };
 
-  const filtered = cat==="todas" ? EXPERTOS_DATA : EXPERTOS_DATA.filter(e=>e.cat===cat);
+  const filtered = cat==="todas" ? EXPERTOS_L : EXPERTOS_L.filter(e=>e.cat===cat);
 
   if (!isPremium) return (
     <div className="screen s-enter" style={{padding:0}}>
@@ -3266,15 +3718,15 @@ function ExpertosScreen({ goBack, goToTab }) {
         <button onClick={goBack} style={{position:"absolute",top:54,left:16,width:38,height:38,borderRadius:"50%",background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",color:"#fff"}}>
           <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
-        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>✦ PROFESIONAL</div>
+        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>{XP_T.badge}</div>
         <div style={{marginTop:6}}>
-          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(200,255,230,.8)",textTransform:"uppercase",marginBottom:7}}>Bienestar · Expertos</div>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>Consultas con<br/>expertos</h2>
-          <p style={{fontSize:12,color:"rgba(200,255,230,.72)",margin:0,lineHeight:1.5}}>Matronas · Nutricionistas · Psicólogas · Fisio</p>
+          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(200,255,230,.8)",textTransform:"uppercase",marginBottom:7}}>{XP_T.eyebrow}</div>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>{XP_T.title}<br/>{XP_T.titleBr}</h2>
+          <p style={{fontSize:12,color:"rgba(200,255,230,.72)",margin:0,lineHeight:1.5}}>{XP_T.subtitle}</p>
         </div>
       </div>
       <div style={{padding:"22px 16px 100px"}}>
-        {EXPERTOS_DATA.slice(0,3).map((e,i)=>(
+        {EXPERTOS_L.slice(0,3).map((e,i)=>(
           <div key={i} style={{marginBottom:10,display:"flex",gap:12,alignItems:"center",padding:"14px 16px",borderRadius:18,background:"rgba(255,255,255,.65)",backdropFilter:"blur(20px)",border:`1px solid ${e.color}18`,boxShadow:`0 6px 18px ${e.color}15`,filter:i>0?"blur(2px)":"none",opacity:i>0?.55:1}}>
             <div style={{width:48,height:48,borderRadius:14,background:`linear-gradient(135deg,${e.color},${e.color}88)`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
               <svg viewBox="0 0 24 24" width={22} height={22} fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -3287,9 +3739,9 @@ function ExpertosScreen({ goBack, goToTab }) {
           </div>
         ))}
         <button onClick={()=>goToTab&&goToTab("premium")} style={{width:"100%",padding:"16px",borderRadius:99,border:"none",cursor:"pointer",background:"linear-gradient(90deg,#3A8070,#C8952A)",fontFamily:"inherit",fontSize:15,fontWeight:800,color:"#fff",boxShadow:"0 12px 32px rgba(58,128,112,.45)",marginTop:8}}>
-          ✦ Activar Profesional
+          {XP_T.activateCta}
         </button>
-        <p style={{textAlign:"center",fontSize:12,color:"#a08070",marginTop:10}}>Sin tarjeta · cancela cuando quieras</p>
+        <p style={{textAlign:"center",fontSize:12,color:"#a08070",marginTop:10}}>{XP_T.noCard}</p>
       </div>
     </div>
   );
@@ -3299,7 +3751,7 @@ function ExpertosScreen({ goBack, goToTab }) {
       {/* ── Booking confirmation toast ── */}
       {confirmed && (
         <div style={{position:"fixed",top:80,left:"50%",transform:"translateX(-50%)",zIndex:999,background:"linear-gradient(135deg,#0a3040,#3A8070)",padding:"12px 20px",borderRadius:16,boxShadow:"0 12px 32px rgba(58,128,112,.5)",color:"#fff",fontSize:12,fontWeight:700,whiteSpace:"nowrap",textAlign:"center"}}>
-          <div style={{fontSize:13,marginBottom:2}}>✓ Reserva confirmada</div>
+          <div style={{fontSize:13,marginBottom:2}}>{XP_T.bookingConfirmed}</div>
           <div style={{opacity:.8,fontWeight:500}}>{confirmed.exp.nombre} · {confirmed.day.label} a las {confirmed.slot}</div>
         </div>
       )}
@@ -3315,11 +3767,11 @@ function ExpertosScreen({ goBack, goToTab }) {
               <div>
                 <div style={{fontSize:14,fontWeight:800,color:"#3d1a0e"}}>{bookingModal.exp.nombre}</div>
                 <div style={{fontSize:11.5,color:"#8a6a5a"}}>{bookingModal.exp.esp}</div>
-                <div style={{fontSize:11,fontWeight:700,color:"#3A8070",marginTop:2}}>Primera consulta 15 min gratis</div>
+                <div style={{fontSize:11,fontWeight:700,color:"#3A8070",marginTop:2}}>{XP_T.firstFree}</div>
               </div>
             </div>
             <div style={{padding:"14px 18px 10px"}}>
-              <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:"#8a6a5a",textTransform:"uppercase",marginBottom:10}}>Selecciona día</div>
+              <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:"#8a6a5a",textTransform:"uppercase",marginBottom:10}}>{XP_T.chooseDay}</div>
               <div style={{display:"flex",gap:8,overflowX:"auto",paddingBottom:4}}>
                 {getSlots(bookingModal.exp.id).map((d,i)=>(
                   <button key={i} onClick={()=>{setSelDay(i);setSelSlot(null);}}
@@ -3333,7 +3785,7 @@ function ExpertosScreen({ goBack, goToTab }) {
               </div>
             </div>
             <div style={{padding:"4px 18px 16px"}}>
-              <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:"#8a6a5a",textTransform:"uppercase",marginBottom:10}}>Horarios disponibles</div>
+              <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:"#8a6a5a",textTransform:"uppercase",marginBottom:10}}>{XP_T.availableTimes}</div>
               <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
                 {getSlots(bookingModal.exp.id)[selDay].slots.map((s,i)=>(
                   <button key={i} onClick={()=>setSelSlot(s)}
@@ -3351,20 +3803,20 @@ function ExpertosScreen({ goBack, goToTab }) {
               <div style={{display:"flex",gap:10,marginBottom:6}}>
                 <button onClick={()=>setBookingModal(null)}
                   style={{flex:1,padding:"14px",borderRadius:99,border:"1px solid rgba(168,73,42,.15)",cursor:"pointer",background:"rgba(255,255,255,.7)",backdropFilter:"blur(16px)",fontFamily:"inherit",fontSize:13,fontWeight:700,color:"#8a6a5a"}}>
-                  Cancelar
+                  {XP_T.cancel}
                 </button>
                 <button onClick={confirmBooking} disabled={!selSlot}
                   style={{flex:2,padding:"14px",borderRadius:99,border:"none",cursor:selSlot?"pointer":"not-allowed",fontFamily:"inherit",fontSize:13,fontWeight:800,transition:"all .25s",
                     background:selSlot?`linear-gradient(135deg,${bookingModal.exp.color},${bookingModal.exp.color}CC)`:"rgba(168,73,42,.15)",
                     color:selSlot?"#fff":"#b09080",
                     boxShadow:selSlot?`0 10px 28px ${bookingModal.exp.color}50`:"none"}}>
-                  {selSlot?`Confirmar · ${getSlots(bookingModal.exp.id)[selDay].label} ${selSlot}`:"Selecciona un horario"}
+                  {selSlot?XP_T.confirmSlot(getSlots(bookingModal.exp.id)[selDay].label,selSlot):XP_T.chooseTime}
                 </button>
               </div>
-              <p style={{textAlign:"center",fontSize:11,color:"#a08070",marginTop:8}}>Recibirás confirmación por email · cancelación gratis 24h antes</p>
+              <p style={{textAlign:"center",fontSize:11,color:"#a08070",marginTop:8}}>{XP_T.emailNote}</p>
               <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginTop:6}}>
                 <svg viewBox="0 0 24 24" width={12} height={12} fill="none" stroke="#3A8070" strokeWidth="2"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l3 3"/></svg>
-                <span style={{fontSize:10,color:"#3A8070",fontWeight:700}}>Agenda en tiempo real · Powered by Calendly</span>
+                <span style={{fontSize:10,color:"#3A8070",fontWeight:700}}>{XP_T.poweredBy}</span>
               </div>
             </div>
           </div>
@@ -3376,18 +3828,18 @@ function ExpertosScreen({ goBack, goToTab }) {
         <button onClick={goBack} style={{position:"absolute",top:54,left:16,width:38,height:38,borderRadius:"50%",background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",color:"#fff"}}>
           <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
-        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>✦ PROFESIONAL</div>
+        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>{XP_T.badge}</div>
         <div>
-          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(200,255,230,.8)",textTransform:"uppercase",marginBottom:7}}>Bienestar · Expertos</div>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>Consultas con<br/>expertos</h2>
-          <p style={{fontSize:12,color:"rgba(200,255,230,.72)",margin:0,lineHeight:1.5}}>Primera consulta gratis · {EXPERTOS_DATA.length} especialistas disponibles</p>
+          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(200,255,230,.8)",textTransform:"uppercase",marginBottom:7}}>{XP_T.eyebrow}</div>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>{XP_T.title}<br/>{XP_T.titleBr}</h2>
+          <p style={{fontSize:12,color:"rgba(200,255,230,.72)",margin:0,lineHeight:1.5}}>{XP_T.availableSub(EXPERTOS_L.length)}</p>
         </div>
       </div>
 
       <div style={{padding:"16px 16px 100px"}}>
         {/* Category filter — 2-row wrap grid */}
         <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,padding:"16px 0 18px"}}>
-          {EXP_CATS.map(c=>(
+          {EXP_CATS_L.map(c=>(
             <button key={c.id} onClick={()=>setCat(c.id)} className="tri-btn-ex" style={{
               padding:"10px 6px",borderRadius:14,border:"none",cursor:"pointer",fontFamily:"inherit",
               fontSize:11.5,fontWeight:700,
@@ -3427,7 +3879,7 @@ function ExpertosScreen({ goBack, goToTab }) {
                       <div style={{fontSize:11,color:"#8a6a5a",marginBottom:4}}>{e.esp}</div>
                       <div style={{display:"flex",gap:8,alignItems:"center"}}>
                         <span style={{fontSize:11,fontWeight:700,color:e.color}}>★ {e.rating}</span>
-                        <span style={{fontSize:10,color:"#a08070"}}>{e.reviews} reseñas</span>
+                        <span style={{fontSize:10,color:"#a08070"}}>{e.reviews} {XP_T.reviews}</span>
                       </div>
                     </div>
                   </div>
@@ -3442,7 +3894,7 @@ function ExpertosScreen({ goBack, goToTab }) {
                       onPointerDown={ev=>ev.currentTarget.style.transform="scale(.95)"}
                       onPointerUp={ev=>ev.currentTarget.style.transform="scale(1)"}
                       onPointerLeave={ev=>ev.currentTarget.style.transform="scale(1)"}>
-                      Reservar sesión
+                      {XP_T.bookSession}
                     </button>
                   </div>
                 </div>
@@ -3456,7 +3908,7 @@ function ExpertosScreen({ goBack, goToTab }) {
                   <button onClick={()=>{const nb=booked.filter(b=>b.id!==e.id);setBooked(nb);LS.set("lume_bookings",nb);}}
                     style={{display:"flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:99,border:`1px solid ${e.color}25`,background:"rgba(255,255,255,.6)",cursor:"pointer",fontFamily:"inherit",fontSize:10.5,fontWeight:700,color:"#a08070"}}>
                     <svg viewBox="0 0 24 24" width={11} height={11} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
-                    Cancelar
+                    {XP_T.cancel}
                   </button>
                 </div>
               )}
@@ -3466,7 +3918,7 @@ function ExpertosScreen({ goBack, goToTab }) {
 
         <div style={{marginTop:18,padding:"12px 14px",borderRadius:16,background:"rgba(255,255,255,.55)",backdropFilter:"blur(20px)",border:"1px solid rgba(58,128,112,.13)",display:"flex",gap:10,alignItems:"flex-start",boxShadow:"0 4px 16px rgba(58,128,112,.08)"}}>
           <span style={{fontSize:13,flexShrink:0,color:"#3A8070"}}>✦</span>
-          <p style={{margin:0,fontSize:11.5,color:"#3a5a4a",lineHeight:1.6}}>Primera consulta de 15 min gratuita. Las sesiones completas tienen un costo adicional según el especialista.</p>
+          <p style={{margin:0,fontSize:11.5,color:"#3a5a4a",lineHeight:1.6}}>{XP_T.disclaimer}</p>
         </div>
       </div>
     </div>
@@ -3483,19 +3935,49 @@ function ParejaScreen({ goBack, goToTab }) {
   const [partnerName, setPartnerName] = React.useState(()=>LS.get("lume_pareja_nombre")||"");
   const [inputName, setInputName] = React.useState("");
   const [showLink, setShowLink] = React.useState(false);
+  const pjLang = getAppLang2();
   const code = React.useMemo(()=>{
     let c = LS.get("lume_pareja_code");
     if (!c) { c = Math.random().toString(36).substr(2,6).toUpperCase(); LS.set("lume_pareja_code", c); }
     return c;
   }, []);
 
-  const BENEFITS = [
+  const BENEFITS = pjLang==="en" ? [
+    { icon:"chat",     col:"#A8492A", t:"Real-time chat",   d:"Share moments and messages directly in the app." },
+    { icon:"calendar", col:"#3A8070", t:"See appointments together", d:"Your partner sees upcoming medical appointments and gets reminders." },
+    { icon:"diary",    col:"#8B5A9E", t:"Access to the diary",      d:"Share diary entries with whoever you want, whenever you want." },
+    { icon:"photo",    col:"#B8872A", t:"Shared album",      d:"Photos and ultrasounds sync across both devices." },
+    { icon:"leaf",     col:"#4A8040", t:"Pregnancy guide",     d:"Your partner also gets the weekly baby guide." },
+  ] : [
     { icon:"chat",     col:"#A8492A", t:"Chat en tiempo real",   d:"Comparte momentos y mensajes directamente en la app." },
     { icon:"calendar", col:"#3A8070", t:"Ver citas juntos",      d:"Tu pareja ve las próximas citas médicas y recibe recordatorios." },
     { icon:"diary",    col:"#8B5A9E", t:"Acceso al diario",      d:"Comparte entradas del diario con quien quieras, cuando quieras." },
     { icon:"photo",    col:"#B8872A", t:"Álbum compartido",      d:"Las fotos y ultrasonidos se sincronizan en ambos dispositivos." },
     { icon:"leaf",     col:"#4A8040", t:"Guía del embarazo",     d:"Tu pareja también recibe la guía semanal del bebé." },
   ];
+  const PJ_T = pjLang==="en" ? {
+    badge:"✦ WELLNESS", eyebrow:"Wellness · Family", title:"Access for", titleBr:"your partner",
+    subtitle:"Live it together, from the same place", heroTitle:"Pregnancy is a two-person journey",
+    heroDesc:"Invite your partner to share this journey with you: appointments, photos, diary and weekly guide, together.",
+    activateCta:"✦ Activate Wellness", noCard:"No card required · cancel anytime",
+    linkedWith:(n)=>`Linked with ${n||"your partner"}`, inviteNow:"Invite your partner now",
+    linkedTitle:"Linked ✓", hasAccess:(n)=>`${n||"Your partner"} has access to the app`, unlink:"Unlink partner",
+    inviteHeader:"Invite your partner", inviteBody:"Share this code with your partner so they can download Lumé and link with you:",
+    inviteCode:"Invitation code", validFor:"Valid for 48 hours", orScan:"or scan the QR",
+    namePlaceholder:"Your partner's name (optional)", sendInvite:"Send invitation",
+    whatTheySee:"What your partner can see",
+  } : {
+    badge:"✦ BIENESTAR", eyebrow:"Bienestar · Familia", title:"Acceso para", titleBr:"tu pareja",
+    subtitle:"Vivirlo juntos, desde el mismo lugar", heroTitle:"El embarazo es de dos",
+    heroDesc:"Invita a tu pareja para que viva este viaje contigo: citas, fotos, diario y guía semanal compartidos.",
+    activateCta:"✦ Activar Bienestar", noCard:"Sin tarjeta · cancela cuando quieras",
+    linkedWith:(n)=>`Vinculado con ${n||"tu pareja"}`, inviteNow:"Invita a tu pareja ahora",
+    linkedTitle:"Vinculados ✓", hasAccess:(n)=>`${n||"Tu pareja"} tiene acceso al app`, unlink:"Desvincular pareja",
+    inviteHeader:"Invitar a tu pareja", inviteBody:"Comparte este código con tu pareja para que descargue Lumé y se vincule contigo:",
+    inviteCode:"Código de invitación", validFor:"Válido 48 horas", orScan:"o escanea el QR",
+    namePlaceholder:"Nombre de tu pareja (opcional)", sendInvite:"Enviar invitación",
+    whatTheySee:"Qué puede ver tu pareja",
+  };
 
   if (!isPremium) return (
     <div className="screen s-enter" style={{padding:0}}>
@@ -3504,11 +3986,11 @@ function ParejaScreen({ goBack, goToTab }) {
         <button onClick={goBack} style={{position:"absolute",top:54,left:16,width:38,height:38,borderRadius:"50%",background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",color:"#fff"}}>
           <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
-        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>✦ PROFESIONAL</div>
+        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>{PJ_T.badge}</div>
         <div>
-          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(255,224,170,.8)",textTransform:"uppercase",marginBottom:7}}>Bienestar · Familia</div>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>Acceso para<br/>tu pareja</h2>
-          <p style={{fontSize:12,color:"rgba(255,224,170,.72)",margin:0,lineHeight:1.5}}>Vivirlo juntos, desde el mismo lugar</p>
+          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(255,224,170,.8)",textTransform:"uppercase",marginBottom:7}}>{PJ_T.eyebrow}</div>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>{PJ_T.title}<br/>{PJ_T.titleBr}</h2>
+          <p style={{fontSize:12,color:"rgba(255,224,170,.72)",margin:0,lineHeight:1.5}}>{PJ_T.subtitle}</p>
         </div>
       </div>
       <div style={{padding:"22px 16px 100px"}}>
@@ -3516,8 +3998,8 @@ function ParejaScreen({ goBack, goToTab }) {
           <div style={{width:64,height:64,borderRadius:20,background:"linear-gradient(135deg,#A8492A,#E4BC7E)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 14px",boxShadow:"0 10px 28px rgba(168,73,42,.4)",color:"#fff"}}>
             <svg viewBox="0 0 24 24" width={30} height={30} fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
           </div>
-          <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:600,color:"#3d1a0e",margin:"0 0 6px"}}>El embarazo es de dos</h3>
-          <p style={{fontSize:13,color:"#8a6a5a",lineHeight:1.6,margin:0}}>Invita a tu pareja para que viva este viaje contigo: citas, fotos, diario y guía semanal compartidos.</p>
+          <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:600,color:"#3d1a0e",margin:"0 0 6px"}}>{PJ_T.heroTitle}</h3>
+          <p style={{fontSize:13,color:"#8a6a5a",lineHeight:1.6,margin:0}}>{PJ_T.heroDesc}</p>
         </div>
         {BENEFITS.map((b,i)=>(
           <div key={i} className="benefit-card" style={{"--ben-col-rgb":hexRgbP(b.col),display:"flex",alignItems:"stretch",marginBottom:10,borderRadius:20,overflow:"hidden",background:"rgba(255,255,255,.75)",backdropFilter:"blur(24px) saturate(170%)",WebkitBackdropFilter:"blur(24px) saturate(170%)",border:`1px solid ${b.col}22`,boxShadow:`0 8px 24px -4px ${b.col}30, inset 0 1px 0 rgba(255,255,255,.95)`}}>
@@ -3529,9 +4011,9 @@ function ParejaScreen({ goBack, goToTab }) {
           </div>
         ))}
         <button onClick={()=>goToTab&&goToTab("premium")} style={{width:"100%",padding:"16px",borderRadius:99,border:"none",cursor:"pointer",background:"linear-gradient(90deg,#A8492A,#E4BC7E)",fontFamily:"inherit",fontSize:15,fontWeight:800,color:"#fff",boxShadow:"0 12px 32px rgba(168,73,42,.45)",marginTop:8}}>
-          ✦ Activar Profesional
+          {PJ_T.activateCta}
         </button>
-        <p style={{textAlign:"center",fontSize:12,color:"#a08070",marginTop:10}}>Sin tarjeta · cancela cuando quieras</p>
+        <p style={{textAlign:"center",fontSize:12,color:"#a08070",marginTop:10}}>{PJ_T.noCard}</p>
       </div>
     </div>
   );
@@ -3544,11 +4026,11 @@ function ParejaScreen({ goBack, goToTab }) {
         <button onClick={goBack} style={{position:"absolute",top:54,left:16,width:38,height:38,borderRadius:"50%",background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",color:"#fff"}}>
           <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
-        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>✦ PROFESIONAL</div>
+        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>{PJ_T.badge}</div>
         <div>
-          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(255,224,170,.8)",textTransform:"uppercase",marginBottom:7}}>Bienestar · Familia</div>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>Acceso para<br/>tu pareja</h2>
-          <p style={{fontSize:12,color:"rgba(255,224,170,.72)",margin:0,lineHeight:1.5}}>{linked?`Vinculado con ${partnerName||"tu pareja"}`:"Invita a tu pareja ahora"}</p>
+          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(255,224,170,.8)",textTransform:"uppercase",marginBottom:7}}>{PJ_T.eyebrow}</div>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>{PJ_T.title}<br/>{PJ_T.titleBr}</h2>
+          <p style={{fontSize:12,color:"rgba(255,224,170,.72)",margin:0,lineHeight:1.5}}>{linked?PJ_T.linkedWith(partnerName):PJ_T.inviteNow}</p>
         </div>
       </div>
 
@@ -3560,12 +4042,12 @@ function ParejaScreen({ goBack, goToTab }) {
               <div style={{width:64,height:64,borderRadius:20,background:"linear-gradient(135deg,#A8492A,#E4BC7E)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 12px",boxShadow:"0 8px 22px rgba(168,73,42,.4)",color:"#fff"}}>
                 <svg viewBox="0 0 24 24" width={30} height={30} fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
               </div>
-              <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:24,fontWeight:600,color:"#3d1a0e",marginBottom:4}}>Vinculados ✓</div>
-              <div style={{fontSize:13,color:"#8a6a5a"}}>{partnerName || "Tu pareja"} tiene acceso al app</div>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:24,fontWeight:600,color:"#3d1a0e",marginBottom:4}}>{PJ_T.linkedTitle}</div>
+              <div style={{fontSize:13,color:"#8a6a5a"}}>{PJ_T.hasAccess(partnerName)}</div>
             </div>
             <div style={{padding:"16px 18px"}}>
               <button onClick={()=>{setLinked(false);LS.set("lume_pareja_linked",false);}} style={{padding:"10px 22px",borderRadius:99,border:"1px solid rgba(168,73,42,.2)",cursor:"pointer",background:"rgba(255,255,255,.7)",fontFamily:"inherit",fontSize:12,fontWeight:700,color:"#a08070"}}>
-                Desvincular pareja
+                {PJ_T.unlink}
               </button>
             </div>
           </div>
@@ -3576,15 +4058,15 @@ function ParejaScreen({ goBack, goToTab }) {
               <div style={{width:28,height:28,borderRadius:9,background:"linear-gradient(135deg,#A8492A,#E4BC7E)",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 10px rgba(168,73,42,.45)"}}>
                 <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
               </div>
-              <span style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:"#A8492A",textTransform:"uppercase"}}>Invitar a tu pareja</span>
+              <span style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:"#A8492A",textTransform:"uppercase"}}>{PJ_T.inviteHeader}</span>
             </div>
             <div style={{padding:"16px"}}>
-              <p style={{margin:"0 0 14px",fontSize:13,color:"#7a5a45",lineHeight:1.6}}>Comparte este código con tu pareja para que descargue Lumé y se vincule contigo:</p>
+              <p style={{margin:"0 0 14px",fontSize:13,color:"#7a5a45",lineHeight:1.6}}>{PJ_T.inviteBody}</p>
               {/* Code display */}
               <div style={{textAlign:"center",padding:"18px",borderRadius:16,background:"linear-gradient(135deg,rgba(168,73,42,.06),rgba(228,188,126,.12))",border:"1.5px dashed rgba(168,73,42,.3)",marginBottom:14}}>
-                <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",color:"#a08070",textTransform:"uppercase",marginBottom:6}}>Código de invitación</div>
+                <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",color:"#a08070",textTransform:"uppercase",marginBottom:6}}>{PJ_T.inviteCode}</div>
                 <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:38,fontWeight:700,color:"#A8492A",letterSpacing:"6px"}}>{code}</div>
-                <div style={{fontSize:11,color:"#a08070",marginTop:4}}>Válido 48 horas</div>
+                <div style={{fontSize:11,color:"#a08070",marginTop:4}}>{PJ_T.validFor}</div>
               </div>
               {/* Fake QR */}
               <div style={{textAlign:"center",marginBottom:14}}>
@@ -3594,10 +4076,10 @@ function ParejaScreen({ goBack, goToTab }) {
                     return <div key={i} style={{borderRadius:1,background:corners.includes(i)||Math.random()>.5?"#A8492A":"transparent"}}/>;
                   })}
                 </div>
-                <div style={{fontSize:10.5,color:"#a08070",marginTop:6}}>o escanea el QR</div>
+                <div style={{fontSize:10.5,color:"#a08070",marginTop:6}}>{PJ_T.orScan}</div>
               </div>
               {/* Partner name input */}
-              <input value={inputName} onChange={e=>setInputName(e.target.value)} placeholder="Nombre de tu pareja (opcional)"
+              <input value={inputName} onChange={e=>setInputName(e.target.value)} placeholder={PJ_T.namePlaceholder}
                 style={{width:"100%",padding:"12px 14px",borderRadius:14,border:"1.5px solid rgba(168,73,42,.18)",background:"rgba(255,255,255,.6)",fontFamily:"inherit",fontSize:13,color:"#3d1a0e",outline:"none",marginBottom:10,boxSizing:"border-box"}}/>
               <button onClick={()=>{
                   const n = inputName.trim();
@@ -3605,14 +4087,14 @@ function ParejaScreen({ goBack, goToTab }) {
                   LS.set("lume_pareja_linked", true); LS.set("lume_pareja_nombre", n);
                 }}
                 style={{width:"100%",padding:"14px",borderRadius:99,border:"none",cursor:"pointer",background:"linear-gradient(135deg,#A8492A,#E4BC7E)",color:"#fff",fontFamily:"inherit",fontSize:14,fontWeight:800,boxShadow:"0 10px 28px rgba(168,73,42,.45)"}}>
-                Enviar invitación
+                {PJ_T.sendInvite}
               </button>
             </div>
           </div>
         )}
 
         <div>
-          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:"#8a6a5a",textTransform:"uppercase",marginBottom:10,padding:"0 2px"}}>Qué puede ver tu pareja</div>
+          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:"#8a6a5a",textTransform:"uppercase",marginBottom:10,padding:"0 2px"}}>{PJ_T.whatTheySee}</div>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
             {BENEFITS.map((b,i)=>(
               <div key={i} className="benefit-card" style={{"--ben-col-rgb":hexRgbP(b.col),display:"flex",alignItems:"stretch",borderRadius:20,overflow:"hidden",background:"rgba(255,255,255,.75)",backdropFilter:"blur(24px) saturate(170%)",WebkitBackdropFilter:"blur(24px) saturate(170%)",border:`1px solid ${b.col}22`,boxShadow:`0 8px 24px -4px ${b.col}30, inset 0 1px 0 rgba(255,255,255,.95)`}}>
@@ -3635,8 +4117,30 @@ Object.assign(window, { CitasScreen, SintomasScreen, RecompensasScreen, Ultrason
 /* ══════════════════════════════════════════════
    HISTORIAL MÉDICO EXPORTABLE
 ══════════════════════════════════════════════ */
-function HistorialScreen({ goBack }) {
+function HistorialScreen({ goBack, goToTab }) {
   const isPremium = React.useMemo(()=>{try{return !!localStorage.getItem("lume_premium");}catch{return false;}}, []);
+  const hLang = getAppLang2();
+  const HT = hLang==="en" ? {
+    healthLog:"Health · Log", medHistory:"Medical", history:"history", allInOne:"Your whole pregnancy in one document",
+    apptsLbl:"Citas médicas", apptsEn:"Medical appointments", weightLbl:"Control de peso", weightEn:"Weight tracking",
+    sxLbl:"Síntomas registrados", sxEn:"Logged symptoms", ultrasLbl:"Ultrasonidos", ultrasEn:"Ultrasounds",
+    kicksLbl:"Registro de patadas", kicksEn:"Kick logs", noDetail:"No detail", week:"Wk.",
+    proBadge:"✦ PROFESSIONAL", topEyebrow:"Health · Log", dueEst:(d)=>`Estimated due date: ${d} · `, exportablePdf:"Exportable as PDF",
+    unlockTitle:"Appointments · Weight · Symptoms · Ultrasounds", unlockBody:"Your complete pregnancy history, exportable as a PDF to share with your doctor.", activatePro:"✦ Activate Professional",
+    stats:["Appointments","Weight logs","Symptoms","Ultrasounds","Kick sessions","Weeks"],
+    record:"record", records:"records", noRecords:"No records yet",
+    exporting:"Preparing PDF...", exportBtn:"Export history as PDF", printNote:"The system print dialog will open",
+  } : {
+    healthLog:"Salud · Registro", medHistory:"Historial", history:"médico", allInOne:"Todo tu embarazo en un solo documento",
+    apptsLbl:"Citas médicas", apptsEn:"Citas médicas", weightLbl:"Control de peso", weightEn:"Control de peso",
+    sxLbl:"Síntomas registrados", sxEn:"Síntomas registrados", ultrasLbl:"Ultrasonidos", ultrasEn:"Ultrasonidos",
+    kicksLbl:"Registro de patadas", kicksEn:"Registro de patadas", noDetail:"Sin detalle", week:"Sem.",
+    proBadge:"✦ PROFESIONAL", topEyebrow:"Salud · Registro", dueEst:(d)=>`Parto estimado: ${d} · `, exportablePdf:"Exportable como PDF",
+    unlockTitle:"Citas · Peso · Síntomas · Ultrasonidos", unlockBody:"Tu historial completo del embarazo, exportable como PDF para compartir con tu médico.", activatePro:"✦ Activar Profesional",
+    stats:["Citas","Registros peso","Síntomas","Ultrasonidos","Ses. patadas","Semanas"],
+    record:"registro", records:"registros", noRecords:"Sin registros aún",
+    exporting:"Preparando PDF...", exportBtn:"Exportar historial como PDF", printNote:"Se abrirá el diálogo de impresión del sistema",
+  };
   const weeks   = parseInt(localStorage.getItem("lume_weeks")||15);
   const nombre  = localStorage.getItem("lume_nombre")||"Sofía";
   const due     = localStorage.getItem("lume_due")||"";
@@ -3653,16 +4157,16 @@ function HistorialScreen({ goBack }) {
   };
 
   const SECTIONS = [
-    { key:"appts",   color:"#A8492A", icon:<svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>, label:"Citas médicas", count:appts.length,
+    { key:"appts",   color:"#A8492A", icon:<svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>, label:hLang==="en"?"Medical appointments":"Citas médicas", count:appts.length,
       rows: appts.slice(0,5).map(a=>({ main:`${a.title}`, sub:`${a.date} ${a.time||""}`, note:a.notes||"" })) },
-    { key:"weight",  color:"#3A8070", icon:<svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><rect x="3" y="8" width="18" height="12" rx="3"/><path d="M9 8a3 3 0 016 0"/></svg>, label:"Control de peso", count:weights.length,
-      rows: weights.slice(-5).reverse().map(w=>({ main:`${w.weight} kg`, sub:`Semana ${w.week}`, note:w.note||"" })) },
-    { key:"sx",      color:"#8B5A9E", icon:<svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>, label:"Síntomas registrados", count:sxHist.length,
-      rows: sxHist.slice(0,5).map(s=>({ main:(s.symptoms||[]).join(", ")||"Sin detalle", sub:`Sem. ${s.week||"?"} · ${s.sev||""}`, note:s.notes||"" })) },
-    { key:"ultras",  color:"#B8872A", icon:<svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 12s1-3 4-3 4 3 4 3-1 3-4 3-4-3-4-3z"/></svg>, label:"Ultrasonidos", count:ultras.length,
-      rows: ultras.slice(0,5).map(u=>({ main:`Ecografía semana ${u.semana||"?"}`, sub:u.fecha||"", note:u.notas||"" })) },
-    { key:"kicks",   color:"#4A6A9E", icon:<svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>, label:"Registro de patadas", count:kicks.length,
-      rows: kicks.slice(-5).reverse().map(k=>({ main:`${k.count||0} movimientos`, sub:k.duration?`${Math.round(k.duration/60)} min`:"", note:k.date||"" })) },
+    { key:"weight",  color:"#3A8070", icon:<svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><rect x="3" y="8" width="18" height="12" rx="3"/><path d="M9 8a3 3 0 016 0"/></svg>, label:hLang==="en"?"Weight tracking":"Control de peso", count:weights.length,
+      rows: weights.slice(-5).reverse().map(w=>({ main:`${w.weight} kg`, sub:`${HT.week} ${w.week}`, note:w.note||"" })) },
+    { key:"sx",      color:"#8B5A9E", icon:<svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>, label:hLang==="en"?"Logged symptoms":"Síntomas registrados", count:sxHist.length,
+      rows: sxHist.slice(0,5).map(s=>({ main:(s.symptoms||[]).join(", ")||HT.noDetail, sub:`${HT.week} ${s.week||"?"} · ${s.sev||""}`, note:s.notes||"" })) },
+    { key:"ultras",  color:"#B8872A", icon:<svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 12s1-3 4-3 4 3 4 3-1 3-4 3-4-3-4-3z"/></svg>, label:hLang==="en"?"Ultrasounds":"Ultrasonidos", count:ultras.length,
+      rows: ultras.slice(0,5).map(u=>({ main:`${hLang==="en"?"Ultrasound week":"Ecografía semana"} ${u.semana||"?"}`, sub:u.fecha||"", note:u.notas||"" })) },
+    { key:"kicks",   color:"#4A6A9E", icon:<svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>, label:hLang==="en"?"Kick logs":"Registro de patadas", count:kicks.length,
+      rows: kicks.slice(-5).reverse().map(k=>({ main:`${k.count||0} ${hLang==="en"?"movements":"movimientos"}`, sub:k.duration?`${Math.round(k.duration/60)} min`:"", note:k.date||"" })) },
   ];
 
   if (!isPremium) return (
@@ -3672,18 +4176,18 @@ function HistorialScreen({ goBack }) {
         <button onClick={goBack} style={{position:"absolute",top:54,left:16,width:38,height:38,borderRadius:"50%",background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",color:"#fff"}}>
           <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
-        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>✦ PROFESIONAL</div>
+        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>{HT.proBadge}</div>
         <div>
-          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(200,220,255,.8)",textTransform:"uppercase",marginBottom:7}}>Salud · Registro</div>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>Historial<br/>médico</h2>
-          <p style={{fontSize:12,color:"rgba(200,220,255,.72)",margin:0,lineHeight:1.5}}>Todo tu embarazo en un solo documento</p>
+          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(200,220,255,.8)",textTransform:"uppercase",marginBottom:7}}>{HT.healthLog}</div>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>{HT.medHistory}<br/>{HT.history}</h2>
+          <p style={{fontSize:12,color:"rgba(200,220,255,.72)",margin:0,lineHeight:1.5}}>{HT.allInOne}</p>
         </div>
       </div>
       <div style={{padding:"22px 16px 100px",textAlign:"center"}}>
-        <div style={{fontSize:14,fontWeight:600,color:"#3d1a0e",marginBottom:8}}>Citas · Peso · Síntomas · Ultrasonidos</div>
-        <p style={{fontSize:13,color:"#8a6a5a",lineHeight:1.6,margin:"0 0 22px"}}>Tu historial completo del embarazo, exportable como PDF para compartir con tu médico.</p>
-        <button onClick={()=>{}} style={{width:"100%",padding:"16px",borderRadius:99,border:"none",cursor:"pointer",background:"linear-gradient(90deg,#4A6A9E,#C8952A)",fontFamily:"inherit",fontSize:15,fontWeight:800,color:"#fff",boxShadow:"0 12px 32px rgba(74,106,158,.45)"}}>
-          ✦ Activar Profesional
+        <div style={{fontSize:14,fontWeight:600,color:"#3d1a0e",marginBottom:8}}>{HT.unlockTitle}</div>
+        <p style={{fontSize:13,color:"#8a6a5a",lineHeight:1.6,margin:"0 0 22px"}}>{HT.unlockBody}</p>
+        <button onClick={()=>goToTab&&goToTab("premium")} style={{width:"100%",padding:"16px",borderRadius:99,border:"none",cursor:"pointer",background:"linear-gradient(90deg,#4A6A9E,#C8952A)",fontFamily:"inherit",fontSize:15,fontWeight:800,color:"#fff",boxShadow:"0 12px 32px rgba(74,106,158,.45)"}}>
+          {HT.activatePro}
         </button>
       </div>
     </div>
@@ -3697,18 +4201,18 @@ function HistorialScreen({ goBack }) {
         <button onClick={goBack} style={{position:"absolute",top:54,left:16,width:38,height:38,borderRadius:"50%",background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",color:"#fff"}}>
           <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
-        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>✦ PROFESIONAL</div>
+        <div style={{position:"absolute",top:58,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>{HT.proBadge}</div>
         <div>
-          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(200,220,255,.8)",textTransform:"uppercase",marginBottom:7}}>{nombre} · Semana {weeks}</div>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>Historial<br/>médico</h2>
-          <p style={{fontSize:12,color:"rgba(200,220,255,.72)",margin:0,lineHeight:1.5}}>{due?`Parto estimado: ${due} · `:""}Exportable como PDF</p>
+          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(200,220,255,.8)",textTransform:"uppercase",marginBottom:7}}>{nombre} · {HT.week} {weeks}</div>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>{HT.medHistory}<br/>{HT.history}</h2>
+          <p style={{fontSize:12,color:"rgba(200,220,255,.72)",margin:0,lineHeight:1.5}}>{due?HT.dueEst(due):""}{HT.exportablePdf}</p>
         </div>
       </div>
 
       <div style={{padding:"16px 16px 100px",display:"flex",flexDirection:"column",gap:12}}>
         {/* Resumen */}
         <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
-          {[{n:appts.length,l:"Citas",c:"#A8492A"},{n:weights.length,l:"Registros peso",c:"#3A8070"},{n:sxHist.length,l:"Síntomas",c:"#8B5A9E"},{n:ultras.length,l:"Ultrasonidos",c:"#B8872A"},{n:kicks.length,l:"Ses. patadas",c:"#4A6A9E"},{n:weeks,l:"Semanas",c:"#C8952A"}].map((s,i)=>(
+          {[{n:appts.length,l:HT.stats[0],c:"#A8492A"},{n:weights.length,l:HT.stats[1],c:"#3A8070"},{n:sxHist.length,l:HT.stats[2],c:"#8B5A9E"},{n:ultras.length,l:HT.stats[3],c:"#B8872A"},{n:kicks.length,l:HT.stats[4],c:"#4A6A9E"},{n:weeks,l:HT.stats[5],c:"#C8952A"}].map((s,i)=>(
             <div key={i} style={{background:"rgba(255,255,255,.75)",backdropFilter:"blur(20px)",borderRadius:16,padding:"12px 10px",textAlign:"center",border:`1px solid ${s.c}18`,boxShadow:`0 4px 14px ${s.c}18`}}>
               <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:26,fontWeight:700,color:s.c,lineHeight:1}}>{s.n}</div>
               <div style={{fontSize:9.5,fontWeight:700,color:"#a08070",marginTop:3,lineHeight:1.3}}>{s.l}</div>
@@ -3731,12 +4235,12 @@ function HistorialScreen({ goBack }) {
                   <div style={{width:34,height:34,borderRadius:11,background:`linear-gradient(135deg,${s.color},${s.color}99)`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 5px 14px ${s.color}45`}}>{s.icon}</div>
                   <div style={{flex:1}}>
                     <div style={{fontSize:13,fontWeight:800,color:"#3d1a0e"}}>{s.label}</div>
-                    <div style={{fontSize:10.5,color:"#a08070",marginTop:1}}>{s.count} {s.count===1?"registro":"registros"}</div>
+                    <div style={{fontSize:10.5,color:"#a08070",marginTop:1}}>{s.count} {s.count===1?HT.record:HT.records}</div>
                   </div>
                   <div style={{fontSize:11,fontWeight:800,padding:"3px 10px",borderRadius:99,background:`${s.color}14`,border:`1px solid ${s.color}22`,color:s.color}}>{s.count}</div>
                 </div>
                 {s.rows.length===0 ? (
-                  <div style={{padding:"12px 14px",fontSize:12,color:"#b09080",fontStyle:"italic"}}>Sin registros aún</div>
+                  <div style={{padding:"12px 14px",fontSize:12,color:"#b09080",fontStyle:"italic"}}>{HT.noRecords}</div>
                 ) : (
                   <div style={{padding:"4px 0 2px"}}>
                     {s.rows.map((r,i)=>(
@@ -3760,9 +4264,9 @@ function HistorialScreen({ goBack }) {
         <button onClick={exportar}
           style={{width:"100%",padding:"16px",borderRadius:99,border:"none",cursor:"pointer",background:printed?"rgba(74,106,158,.3)":"linear-gradient(135deg,#4A6A9E,#C8952A)",fontFamily:"inherit",fontSize:14,fontWeight:800,color:"#fff",boxShadow:printed?"none":"0 12px 32px rgba(74,106,158,.45)",transition:"all .3s",display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
           <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-          {printed?"Preparando PDF...":"Exportar historial como PDF"}
+          {printed?HT.exporting:HT.exportBtn}
         </button>
-        <p style={{textAlign:"center",fontSize:11,color:"#a08070",marginTop:-4}}>Se abrirá el diálogo de impresión del sistema</p>
+        <p style={{textAlign:"center",fontSize:11,color:"#a08070",marginTop:-4}}>{HT.printNote}</p>
       </div>
     </div>
   );
@@ -3776,6 +4280,40 @@ Object.assign(window, { CitasScreen, SintomasScreen, RecompensasScreen, Ultrason
 function NutricionPersonalizadaScreen({ goBack, goToTab }) {
   const isPremium = React.useMemo(()=>{try{return !!localStorage.getItem("lume_premium");}catch{return false;}}, []);
   const nombre = localStorage.getItem("lume_nombre") || "Sofía";
+  const npLang = getAppLang2();
+  const NP_T = npLang==="en" ? {
+    badge:"✦ WELLNESS", eyebrow:"Nutrition · AI", title:"Tailored nutrition", titleBr:"plan", sub:"AI-generated · adapted to you every day",
+    gateDesc:"Your personalized meal plan based on your week, trimester and current symptoms. AI-generated whenever you need it.",
+    gateBullets:["Adapted to your trimester and symptoms","Pregnancy-specific recipes","Updatable in real time"],
+    activateCta:"✦ Activate Wellness — 7 days free", noCard:"No card required · cancel anytime",
+    week:"Week", adaptedFor:(s)=>`Adapted for: ${s}`, adaptedTo:(t)=>`Adapted to your ${t.toLowerCase()}`,
+    aiContext:"AI Context", wk:"Wk.", noSymptoms:"No symptoms · edit", pregnancyWeek:"Pregnancy week",
+    activeSymptoms:"Active symptoms", saveContext:"Save context", contextUpdated:"Context updated",
+    generatePrompt:(w,s)=>`Generate your meal plan for today, tailored to week ${w}${s?` with ${s}`:""}.`,
+    generateBtn:"Generate my plan for today", generating:"Generating your plan...",
+    adapting:(w,s)=>`Adapting recipes to week ${w}${s?" and your symptoms":""}`,
+    planToday:"Your plan for today", regenerate:"Regenerate plan",
+    disclaimer:"This plan is a guide. Always check with your doctor or nutritionist for specific adjustments.",
+    triLabels:["First trimester","Second trimester","Third trimester"],
+    sxOptions:["Nausea","Heartburn","Fatigue","Bloating","Constipation","Insomnia","Back pain","Dizziness","Cravings"],
+    connError:"Couldn't connect", connErrorSub:"Check your connection and try again",
+  } : {
+    badge:"✦ BIENESTAR", eyebrow:"Nutrición · IA", title:"Plan nutricional", titleBr:"a medida", sub:"Generado por IA · adaptado a ti cada día",
+    gateDesc:"Tu plan de comidas personalizado según tu semana, trimestre y síntomas activos. Generado por IA cada vez que lo necesites.",
+    gateBullets:["Adaptado a tu trimestre y síntomas","Recetas específicas para embarazo","Actualizable en tiempo real"],
+    activateCta:"✦ Activar Bienestar — 7 días gratis", noCard:"Sin tarjeta · cancela cuando quieras",
+    week:"Semana", adaptedFor:(s)=>`Adaptado para: ${s}`, adaptedTo:(t)=>`Adaptado a tu ${t.toLowerCase()}`,
+    aiContext:"Contexto IA", wk:"Sem.", noSymptoms:"Sin síntomas · editar", pregnancyWeek:"Semana de embarazo",
+    activeSymptoms:"Síntomas activos", saveContext:"Guardar contexto", contextUpdated:"Contexto actualizado",
+    generatePrompt:(w,s)=>`Genera tu plan de comidas para hoy, pensado para la semana ${w}${s?` con ${s}`:""}.`,
+    generateBtn:"Generar mi plan de hoy", generating:"Generando tu plan...",
+    adapting:(w,s)=>`Adaptando recetas a la semana ${w}${s?" y tus síntomas":""}`,
+    planToday:"Tu plan para hoy", regenerate:"Regenerar plan",
+    disclaimer:"El plan es orientativo. Consulta siempre con tu médico o nutricionista para ajustes específicos.",
+    triLabels:["Primer trimestre","Segundo trimestre","Tercer trimestre"],
+    sxOptions:["Náuseas","Acidez","Cansancio","Hinchazón","Estreñimiento","Insomnio","Dolor de espalda","Mareos","Antojos"],
+    connError:"No se pudo conectar", connErrorSub:"Verifica tu conexión e inténtalo de nuevo",
+  };
 
   /* ── Contexto editable ── */
   const [editWeeks, setEditWeeks] = React.useState(() => parseInt(localStorage.getItem("lume_weeks")||"15")||15);
@@ -3788,8 +4326,8 @@ function NutricionPersonalizadaScreen({ goBack, goToTab }) {
   const [ctxOpen, setCtxOpen] = React.useState(false);
   const [ctxSaved, setCtxSaved] = React.useState(false);
   const tri = editWeeks<=13?1:editWeeks<=26?2:3;
-  const triLabel = ["Primer trimestre","Segundo trimestre","Tercer trimestre"][tri-1];
-  const SX_OPTIONS = ["Náuseas","Acidez","Cansancio","Hinchazón","Estreñimiento","Insomnio","Dolor de espalda","Mareos","Antojos"];
+  const triLabel = NP_T.triLabels[tri-1];
+  const SX_OPTIONS = NP_T.sxOptions;
   const toggleSx = (s) => setSelSx(prev => prev.includes(s) ? prev.filter(x=>x!==s) : [...prev,s].slice(0,4));
   const pct = Math.round(((editWeeks-4)/38)*100);
 
@@ -3803,13 +4341,30 @@ function NutricionPersonalizadaScreen({ goBack, goToTab }) {
   const [plan, setPlan] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [loggedMeals, setLoggedMeals] = React.useState([]);
-  const LABEL_COLORS = {DESAYUNO:"#C8952A",ALMUERZO:"#3A8070",CENA:"#8B5A9E",SNACK:"#A8492A",MERIENDA:"#4A6A9E"};
+  const LABEL_COLORS = npLang==="en"
+    ? {BREAKFAST:"#C8952A",LUNCH:"#3A8070",DINNER:"#8B5A9E",SNACK:"#A8492A","AFTERNOON SNACK":"#4A6A9E"}
+    : {DESAYUNO:"#C8952A",ALMUERZO:"#3A8070",CENA:"#8B5A9E",SNACK:"#A8492A",MERIENDA:"#4A6A9E"};
+  const KCAL_MAP = npLang==="en"
+    ? {BREAKFAST:320,LUNCH:480,"AFTERNOON SNACK":180,DINNER:400,SNACK:150}
+    : {DESAYUNO:320,ALMUERZO:480,MERIENDA:180,CENA:400,SNACK:150};
 
   const generar = async () => {
     setLoading(true); setPlan(null); setLoggedMeals([]);
-    const sxText = selSx.length>0 ? `Síntomas actuales: ${selSx.join(", ")}.` : "Sin síntomas registrados.";
+    const sxText = npLang==="en"
+      ? (selSx.length>0 ? `Current symptoms: ${selSx.join(", ")}.` : "No symptoms logged.")
+      : (selSx.length>0 ? `Síntomas actuales: ${selSx.join(", ")}.` : "Sin síntomas registrados.");
     try {
-      const resp = await lumeAI(`Eres nutricionista prenatal experta. Genera un plan de comidas para el día en este formato EXACTO (sin markdown, sin asteriscos, sin guiones):
+      const prompt = npLang==="en" ? `You are an expert prenatal nutritionist. Generate a meal plan for the day in this EXACT format (no markdown, no asterisks, no dashes):
+
+BREAKFAST: [dish name] | [benefit in 6-8 words]
+LUNCH: [dish name] | [benefit in 6-8 words]
+AFTERNOON SNACK: [dish name] | [benefit in 6-8 words]
+DINNER: [dish name] | [benefit in 6-8 words]
+SNACK: [dish name] | [benefit in 6-8 words]
+
+Dish names: max 6 words. Benefits: max 8 words. Only the plan, nothing else.
+
+I'm ${nombre}, week ${editWeeks} of pregnancy, ${triLabel}. ${sxText} Generate my personalized plan for today.` : `Eres nutricionista prenatal experta. Genera un plan de comidas para el día en este formato EXACTO (sin markdown, sin asteriscos, sin guiones):
 
 DESAYUNO: [nombre del plato] | [beneficio en 6-8 palabras]
 ALMUERZO: [nombre del plato] | [beneficio en 6-8 palabras]
@@ -3819,7 +4374,8 @@ SNACK: [nombre del plato] | [beneficio en 6-8 palabras]
 
 Nombres de platos: máximo 6 palabras. Beneficios: máximo 8 palabras. Solo el plan, nada más.
 
-Soy ${nombre}, semana ${editWeeks} de embarazo, ${triLabel}. ${sxText} Genera mi plan personalizado de hoy.`);
+Soy ${nombre}, semana ${editWeeks} de embarazo, ${triLabel}. ${sxText} Genera mi plan personalizado de hoy.`;
+      const resp = await lumeAI(prompt);
       const lines = resp.split("\n").filter(l=>l.trim()&&l.includes(":"));
       const parsed = lines.map(l=>{
         const [part,why=""] = l.split("|").map(x=>x.trim());
@@ -3827,12 +4383,12 @@ Soy ${nombre}, semana ${editWeeks} de embarazo, ${triLabel}. ${sxText} Genera mi
         const label = part.slice(0,ci).trim().toUpperCase();
         const name  = part.slice(ci+1).trim();
         const col   = LABEL_COLORS[label]||"#A8492A";
-        const kcal  = {DESAYUNO:320,ALMUERZO:480,MERIENDA:180,CENA:400,SNACK:150}[label]||300;
+        const kcal  = KCAL_MAP[label]||300;
         return {label,name,why,col,kcal};
       }).filter(x=>x.name&&x.label);
       setPlan(parsed);
     } catch(e) {
-      setPlan([{label:"ERROR",name:"No se pudo conectar",why:"Verifica tu conexión e inténtalo de nuevo",col:"#a08070",kcal:0}]);
+      setPlan([{label:"ERROR",name:NP_T.connError,why:NP_T.connErrorSub,col:"#a08070",kcal:0}]);
     }
     setLoading(false);
   };
@@ -3840,7 +4396,7 @@ Soy ${nombre}, semana ${editWeeks} de embarazo, ${triLabel}. ${sxText} Genera mi
   const logMeal = (p) => {
     setLoggedMeals(l=>[...l,p.label]);
     try {
-      const today = new Date().toLocaleDateString("es-ES",{day:"numeric",month:"short"});
+      const today = new Date().toLocaleDateString(npLang==="en"?"en-US":"es-ES",{day:"numeric",month:"short"});
       const log = JSON.parse(localStorage.getItem("lume_nutri_log")||"[]");
       log.unshift({id:Date.now(),name:p.name,tag:"nutriente",label:p.label,kcal:p.kcal,date:today});
       localStorage.setItem("lume_nutri_log",JSON.stringify(log.slice(0,30)));
@@ -3870,15 +4426,15 @@ Soy ${nombre}, semana ${editWeeks} de embarazo, ${triLabel}. ${sxText} Genera mi
         <button onClick={goBack} style={{position:"absolute",top:52,left:16,width:38,height:38,borderRadius:"50%",background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",color:"#fff"}}>
           <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
-        <div style={{position:"absolute",top:56,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>✦ BIENESTAR</div>
-        <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(200,255,220,.8)",textTransform:"uppercase",marginBottom:7}}>Nutrición · IA</div>
-        <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>Plan nutricional<br/>a medida</h2>
-        <p style={{fontSize:12,color:"rgba(200,255,220,.72)",margin:0,lineHeight:1.5}}>Generado por IA · adaptado a ti cada día</p>
+        <div style={{position:"absolute",top:56,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>{NP_T.badge}</div>
+        <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(200,255,220,.8)",textTransform:"uppercase",marginBottom:7}}>{NP_T.eyebrow}</div>
+        <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 7px",lineHeight:1.1}}>{NP_T.title}<br/>{NP_T.titleBr}</h2>
+        <p style={{fontSize:12,color:"rgba(200,255,220,.72)",margin:0,lineHeight:1.5}}>{NP_T.sub}</p>
       </div>
       <div style={{padding:"24px 16px 100px",display:"flex",flexDirection:"column",gap:14}}>
         <div style={{...glassCard,borderRadius:22,padding:"20px 18px"}}>
-          <div style={{fontSize:13,color:"#5a3a2a",lineHeight:1.7,marginBottom:16}}>Tu plan de comidas personalizado según tu semana, trimestre y síntomas activos. Generado por IA cada vez que lo necesites.</div>
-          {["Adaptado a tu trimestre y síntomas","Recetas específicas para embarazo","Actualizable en tiempo real"].map((b,i)=>(
+          <div style={{fontSize:13,color:"#5a3a2a",lineHeight:1.7,marginBottom:16}}>{NP_T.gateDesc}</div>
+          {NP_T.gateBullets.map((b,i)=>(
             <div key={i} style={{display:"flex",alignItems:"center",gap:10,marginBottom:i<2?10:0}}>
               <div style={{width:22,height:22,borderRadius:"50%",background:"rgba(58,128,112,.12)",border:"1px solid rgba(58,128,112,.2)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                 <svg viewBox="0 0 24 24" width={11} height={11} fill="none" stroke="#3A8070" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12l5 5L19 7"/></svg>
@@ -3888,9 +4444,9 @@ Soy ${nombre}, semana ${editWeeks} de embarazo, ${triLabel}. ${sxText} Genera mi
           ))}
         </div>
         <button onClick={()=>goToTab&&goToTab("premium")} style={{width:"100%",padding:"16px",borderRadius:99,border:"none",cursor:"pointer",background:"linear-gradient(90deg,#3A8070,#C8952A)",fontFamily:"inherit",fontSize:15,fontWeight:800,color:"#fff",boxShadow:"0 12px 32px rgba(58,128,112,.45)"}}>
-          ✦ Activar Bienestar — 7 días gratis
+          {NP_T.activateCta}
         </button>
-        <p style={{textAlign:"center",fontSize:12,color:"#a08070",margin:0}}>Sin tarjeta · cancela cuando quieras</p>
+        <p style={{textAlign:"center",fontSize:12,color:"#a08070",margin:0}}>{NP_T.noCard}</p>
       </div>
     </div>
   );
@@ -3919,10 +4475,10 @@ Soy ${nombre}, semana ${editWeeks} de embarazo, ${triLabel}. ${sxText} Genera mi
         <button onClick={goBack} style={{position:"absolute",top:52,left:16,width:38,height:38,borderRadius:"50%",background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",color:"#fff"}}>
           <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
-        <div style={{position:"absolute",top:56,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>✦ BIENESTAR</div>
-        <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(200,255,220,.8)",textTransform:"uppercase",marginBottom:6}}>{nombre} · Semana {editWeeks} · T{tri}</div>
-        <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 6px",lineHeight:1.1}}>Plan nutricional<br/>a medida</h2>
-        <p style={{fontSize:12,color:"rgba(200,255,220,.7)",margin:0,lineHeight:1.5}}>{selSx.length>0?`Adaptado para: ${selSx.slice(0,3).join(" · ")}`:`Adaptado a tu ${triLabel.toLowerCase()}`}</p>
+        <div style={{position:"absolute",top:56,right:16,background:"rgba(255,255,255,.18)",backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,.28)",padding:"4px 11px",borderRadius:99,fontSize:10,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>{NP_T.badge}</div>
+        <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(200,255,220,.8)",textTransform:"uppercase",marginBottom:6}}>{nombre} · {NP_T.week} {editWeeks} · T{tri}</div>
+        <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",margin:"0 0 6px",lineHeight:1.1}}>{NP_T.title}<br/>{NP_T.titleBr}</h2>
+        <p style={{fontSize:12,color:"rgba(200,255,220,.7)",margin:0,lineHeight:1.5}}>{selSx.length>0?NP_T.adaptedFor(selSx.slice(0,3).join(" · ")):NP_T.adaptedTo(triLabel)}</p>
       </div>
 
       <div style={{padding:"14px 14px 100px",display:"flex",flexDirection:"column",gap:12}}>
@@ -3934,12 +4490,12 @@ Soy ${nombre}, semana ${editWeeks} de embarazo, ${triLabel}. ${sxText} Genera mi
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3A8070" strokeWidth="2.2" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 12v5"/></svg>
             </div>
             <div style={{flex:1,display:"flex",flexWrap:"wrap",gap:5,alignItems:"center"}}>
-              <span style={{fontSize:10,fontWeight:800,letterSpacing:".13em",textTransform:"uppercase",color:"#3A8070",opacity:.75,marginRight:2}}>Contexto IA</span>
-              <span style={{fontSize:11.5,fontWeight:700,color:"#2a5a45",background:"rgba(58,128,112,.12)",border:"1px solid rgba(58,128,112,.22)",borderRadius:20,padding:"2px 10px"}}>Sem. {editWeeks}</span>
+              <span style={{fontSize:10,fontWeight:800,letterSpacing:".13em",textTransform:"uppercase",color:"#3A8070",opacity:.75,marginRight:2}}>{NP_T.aiContext}</span>
+              <span style={{fontSize:11.5,fontWeight:700,color:"#2a5a45",background:"rgba(58,128,112,.12)",border:"1px solid rgba(58,128,112,.22)",borderRadius:20,padding:"2px 10px"}}>{NP_T.wk} {editWeeks}</span>
               <span style={{fontSize:11.5,fontWeight:700,color:"#2a5a45",background:"rgba(58,128,112,.12)",border:"1px solid rgba(58,128,112,.22)",borderRadius:20,padding:"2px 10px"}}>T{tri}</span>
               {selSx.length>0 ? selSx.slice(0,3).map(s=>(
                 <span key={s} style={{fontSize:11,fontWeight:600,color:"#4a7060",background:"rgba(58,128,112,.08)",border:"1px solid rgba(58,128,112,.16)",borderRadius:20,padding:"2px 9px"}}>{s}</span>
-              )) : <span style={{fontSize:11,color:"#90a898",fontStyle:"italic"}}>Sin síntomas · editar</span>}
+              )) : <span style={{fontSize:11,color:"#90a898",fontStyle:"italic"}}>{NP_T.noSymptoms}</span>}
             </div>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3A8070" strokeWidth="2.2" strokeLinecap="round" style={{flexShrink:0,opacity:.55,transition:"transform .28s cubic-bezier(.23,1,.32,1)",transform:ctxOpen?"rotate(180deg)":"none"}}><path d="M6 9l6 6 6-6"/></svg>
           </button>
@@ -3947,7 +4503,7 @@ Soy ${nombre}, semana ${editWeeks} de embarazo, ${triLabel}. ${sxText} Genera mi
           {ctxOpen && (
             <div style={{borderTop:"1px solid rgba(58,128,112,.18)",padding:"16px 16px 18px",animation:"ctxReveal .24s cubic-bezier(.23,1,.32,1) forwards"}}>
               <div style={{marginBottom:16}}>
-                <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#3A8070",opacity:.75,marginBottom:10}}>Semana de embarazo</div>
+                <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#3A8070",opacity:.75,marginBottom:10}}>{NP_T.pregnancyWeek}</div>
                 <div style={{display:"flex",alignItems:"center",gap:14}}>
                   <button className="wk-g-btn" onClick={()=>setEditWeeks(w=>Math.max(4,w-1))} style={{width:38,height:38,borderRadius:"50%",border:"1.5px solid rgba(58,128,112,.25)",background:"rgba(255,255,255,.78)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",color:"#3A8070",fontSize:20,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,boxShadow:"0 4px 14px rgba(58,128,112,.12)"}}>−</button>
                   <div style={{flex:1,textAlign:"center"}}>
@@ -3960,13 +4516,13 @@ Soy ${nombre}, semana ${editWeeks} de embarazo, ${triLabel}. ${sxText} Genera mi
                   <div style={{height:"100%",width:`${pct}%`,background:"linear-gradient(90deg,#3A8070,#C8952A)",borderRadius:5,transition:"width .22s ease"}}></div>
                 </div>
                 <div style={{display:"flex",justifyContent:"space-between",marginTop:4}}>
-                  <span style={{fontSize:10,color:"#90a898"}}>Sem. 4</span>
-                  <span style={{fontSize:10,color:"#90a898"}}>Sem. 42</span>
+                  <span style={{fontSize:10,color:"#90a898"}}>{NP_T.wk} 4</span>
+                  <span style={{fontSize:10,color:"#90a898"}}>{NP_T.wk} 42</span>
                 </div>
               </div>
               <div style={{marginBottom:16}}>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
-                  <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#3A8070",opacity:.75}}>Síntomas activos</div>
+                  <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#3A8070",opacity:.75}}>{NP_T.activeSymptoms}</div>
                   <div style={{fontSize:10,color:"#90a898"}}>{selSx.length}/4</div>
                 </div>
                 <div style={{display:"flex",flexWrap:"wrap",gap:7}}>
@@ -3994,8 +4550,8 @@ Soy ${nombre}, semana ${editWeeks} de embarazo, ${triLabel}. ${sxText} Genera mi
                 boxShadow:ctxSaved?"0 8px 24px rgba(60,160,90,.3)":"0 8px 24px rgba(58,128,112,.35)",
               }}>
                 {ctxSaved?(
-                  <><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12l5 5L19 7"/></svg>Contexto actualizado</>
-                ):"Guardar contexto"}
+                  <><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12l5 5L19 7"/></svg>{NP_T.contextUpdated}</>
+                ):NP_T.saveContext}
               </button>
             </div>
           )}
@@ -4005,11 +4561,11 @@ Soy ${nombre}, semana ${editWeeks} de embarazo, ${triLabel}. ${sxText} Genera mi
         {!plan && !loading && (
           <div style={{...glassCard,borderRadius:22,padding:"20px 18px",textAlign:"center"}}>
             <p style={{fontSize:13,color:"#5a7a60",lineHeight:1.7,margin:"0 0 18px"}}>
-              Genera tu plan de comidas para hoy, pensado para la semana {editWeeks}{selSx.length>0?` con ${selSx[0].toLowerCase()}${selSx.length>1?" y más":""}`:""}.
+              {NP_T.generatePrompt(editWeeks, selSx.length>0?`${selSx[0].toLowerCase()}${selSx.length>1?(npLang==="en"?" and more":" y más"):""}`:"")}
             </p>
             <button onClick={generar} style={{width:"100%",padding:"15px",borderRadius:99,border:"none",cursor:"pointer",background:"linear-gradient(135deg,#1a3a20,#3A8070 50%,#C8952A)",color:"#fff",fontFamily:"inherit",fontSize:15,fontWeight:800,boxShadow:"0 12px 32px rgba(58,128,112,.45)",display:"flex",alignItems:"center",justifyContent:"center",gap:9}}>
               <svg viewBox="0 0 24 24" width={17} height={17} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M12 7c.6 3.4 1.6 4.4 5 5-3.4.6-4.4 1.6-5 5-.6-3.4-1.6-4.4-5-5 3.4-.6 4.4-1.6 5-5z"/></svg>
-              Generar mi plan de hoy
+              {NP_T.generateBtn}
             </button>
           </div>
         )}
@@ -4017,14 +4573,14 @@ Soy ${nombre}, semana ${editWeeks} de embarazo, ${triLabel}. ${sxText} Genera mi
         {loading && (
           <div style={{...glassCard,borderRadius:22,padding:"36px 20px",textAlign:"center"}}>
             <div style={{width:40,height:40,borderRadius:"50%",border:"3px solid rgba(58,128,112,.18)",borderTopColor:"#3A8070",animation:"spinGreen 1s linear infinite",margin:"0 auto 16px"}}/>
-            <div style={{fontSize:14.5,fontWeight:700,color:"#3A8070",marginBottom:5}}>Generando tu plan...</div>
-            <div style={{fontSize:12,color:"#6a9a80"}}>Adaptando recetas a la semana {editWeeks}{selSx.length>0?" y tus síntomas":""}</div>
+            <div style={{fontSize:14.5,fontWeight:700,color:"#3A8070",marginBottom:5}}>{NP_T.generating}</div>
+            <div style={{fontSize:12,color:"#6a9a80"}}>{NP_T.adapting(editWeeks, selSx.length>0)}</div>
           </div>
         )}
 
         {plan && !loading && (
           <>
-            <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:"#6a8a70",textTransform:"uppercase",padding:"0 2px",marginBottom:2}}>Tu plan para hoy</div>
+            <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:"#6a8a70",textTransform:"uppercase",padding:"0 2px",marginBottom:2}}>{NP_T.planToday}</div>
             {plan.map((p,i)=>{
               const isLogged = loggedMeals.includes(p.label);
               return (
@@ -4063,14 +4619,14 @@ Soy ${nombre}, semana ${editWeeks} de embarazo, ${triLabel}. ${sxText} Genera mi
             })}
             <button onClick={generar} style={{padding:"13px",borderRadius:99,border:"1px solid rgba(58,128,112,.22)",cursor:"pointer",background:"rgba(255,255,255,.72)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",fontFamily:"inherit",fontSize:13,fontWeight:700,color:"#3A8070",display:"flex",alignItems:"center",justifyContent:"center",gap:6,boxShadow:"0 6px 20px rgba(58,128,112,.12)"}}>
               <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 013.51 15"/></svg>
-              Regenerar plan
+              {NP_T.regenerate}
             </button>
           </>
         )}
 
         <div style={{...glassGreen,borderRadius:16,padding:"12px 14px",display:"flex",gap:10,alignItems:"flex-start"}}>
           <span style={{fontSize:13,flexShrink:0,color:"#3A8070"}}>✦</span>
-          <p style={{margin:0,fontSize:11.5,color:"#3a5a4a",lineHeight:1.6}}>El plan es orientativo. Consulta siempre con tu médico o nutricionista para ajustes específicos.</p>
+          <p style={{margin:0,fontSize:11.5,color:"#3a5a4a",lineHeight:1.6}}>{NP_T.disclaimer}</p>
         </div>
       </div>
     </div>
@@ -4332,7 +4888,8 @@ function makeUteroSound(ctx) {
 function MusicaBebeScreen({ goBack, goToTab }) {
   const isPremium = React.useMemo(() => { try { return !!localStorage.getItem("lume_premium"); } catch { return false; } }, []);
 
-  const CATEGORIES = [
+  const mbLang = getAppLang2();
+  const CATEGORIES_ES = [
     { id:"lullaby",   label:"Nana de Brahms",    icon:"lullaby",    color:"#C84878", bg:"rgba(200,72,120,.12)",  desc:"Melodía clásica de Brahms. La nana más reconocida del mundo, suave y envolvente." },
     { id:"twinkle",   label:"Estrellita",        icon:"star",       color:"#8B5A9E", bg:"rgba(139,90,158,.12)", desc:"Twinkle Twinkle en tono dulce. Melodía familiar que estimula el oído de tu bebé." },
     { id:"musicbox",  label:"Caja de música",    icon:"musicbox",   color:"#3A8070", bg:"rgba(58,128,112,.12)", desc:"Melodía pentatónica delicada, como una caja de música de cristal. Suave y repetitiva." },
@@ -4340,15 +4897,46 @@ function MusicaBebeScreen({ goBack, goToTab }) {
     { id:"freq528",   label:"528 Hz · Amor",     icon:"freq528",    color:"#C8952A", bg:"rgba(200,149,42,.12)", desc:"La frecuencia del amor y la transformación. Bienestar celular y conexión profunda." },
     { id:"utero",     label:"Latido materno",    icon:"utero",      color:"#A8492A", bg:"rgba(168,73,42,.12)",  desc:"Sonidos del útero y latido cardíaco. El sonido más familiar y reconfortante para tu bebé." },
   ];
+  const CATEGORIES_EN = [
+    { id:"lullaby",   label:"Brahms' Lullaby",   icon:"lullaby",    color:"#C84878", bg:"rgba(200,72,120,.12)",  desc:"Brahms' classic lullaby. The most recognized lullaby in the world, soft and enveloping." },
+    { id:"twinkle",   label:"Twinkle Twinkle",   icon:"star",       color:"#8B5A9E", bg:"rgba(139,90,158,.12)", desc:"Twinkle Twinkle in a sweet tone. A familiar melody that stimulates your baby's hearing." },
+    { id:"musicbox",  label:"Music box",         icon:"musicbox",   color:"#3A8070", bg:"rgba(58,128,112,.12)", desc:"A delicate pentatonic melody, like a crystal music box. Soft and repetitive." },
+    { id:"freq432",   label:"432 Hz · Harmony",  icon:"freq432",    color:"#6B5A9E", bg:"rgba(107,90,158,.12)", desc:"Natural harmony frequency. Continuous tones that create an environment of peace and calm." },
+    { id:"freq528",   label:"528 Hz · Love",      icon:"freq528",    color:"#C8952A", bg:"rgba(200,149,42,.12)", desc:"The frequency of love and transformation. Cellular wellness and deep connection." },
+    { id:"utero",     label:"Mother's heartbeat", icon:"utero",      color:"#A8492A", bg:"rgba(168,73,42,.12)",  desc:"Womb sounds and heartbeat. The most familiar and comforting sound for your baby." },
+  ];
+  const CATEGORIES = mbLang==="en" ? CATEGORIES_EN : CATEGORIES_ES;
+  const MB_T = mbLang==="en" ? {
+    eyebrow:"Wellness · Music", title:"Music for your baby", headerSub:"Prenatal stimulation and calm",
+    lockedDesc:"Lullabies, 432Hz and 528Hz frequencies, and intrauterine sounds to stimulate and calm your baby.",
+    activateCta:"✦ Activate Wellness — 7 days free", noCard:"No card needed · cancel anytime",
+    remaining:"remaining", stop:"Stop", recommended:(w)=>`✦ Recommended · Week ${w}`, choose:"Choose",
+    sectionChoose:"Choose a frequency", duration:"Duration", pause:"Pause", play:"Play", playChoose:"Choose a frequency",
+    disclaimer:"Place the phone near your belly or use headphones. Moderate volume. Not a substitute for medical supervision.",
+    musicFallback:"Music",
+  } : {
+    eyebrow:"Bienestar · Música", title:"Música para tu bebé", headerSub:"Estimulación y calma prenatal",
+    lockedDesc:"Lullabies, frecuencias 432Hz y 528Hz, y sonidos intrauterinos para estimular y calmar a tu bebé.",
+    activateCta:"✦ Activar Bienestar — 7 días gratis", noCard:"Sin tarjeta · cancela cuando quieras",
+    remaining:"restantes", stop:"Detener", recommended:(w)=>`✦ Recomendada · Semana ${w}`, choose:"Elegir",
+    sectionChoose:"Elige una frecuencia", duration:"Duración", pause:"Pausar", play:"Reproducir", playChoose:"Elige una frecuencia",
+    disclaimer:"Coloca el móvil cerca del vientre o usa auriculares. Volumen moderado. No reemplaza supervisión médica.",
+    musicFallback:"Música",
+  };
 
   const weeks = React.useMemo(()=>parseInt(localStorage.getItem("lume_weeks")||"15")||15,[]);
   const recommended = weeks < 16 ? "lullaby" : weeks < 24 ? "freq432" : weeks < 32 ? "freq528" : weeks < 38 ? "utero" : "lullaby";
-  const recommendedReason = weeks < 16
+  const recommendedReason = mbLang==="en" ? (weeks < 16
+    ? "Your baby is developing their sense of hearing right now"
+    : weeks < 24 ? "Their nervous system is forming this week"
+    : weeks < 32 ? "The emotional connection deepens in this trimester"
+    : weeks < 38 ? "Your baby now hears with total clarity from the womb"
+    : "Familiar melodies to prepare for meeting them") : (weeks < 16
     ? "Tu bebé está desarrollando el sentido del oído ahora"
     : weeks < 24 ? "Su sistema nervioso se está formando esta semana"
     : weeks < 32 ? "La conexión emocional se intensifica en este trimestre"
     : weeks < 38 ? "Tu bebé ya escucha con total claridad desde el vientre"
-    : "Melodías familiares para preparar el encuentro";
+    : "Melodías familiares para preparar el encuentro");
 
   const DURATIONS = [10, 20, 30];
   const [selCat, setSelCat] = React.useState(null);
@@ -4400,7 +4988,7 @@ function MusicaBebeScreen({ goBack, goToTab }) {
       // Redirect master to volNode
       if (audio.master) { audio.master.disconnect(); audio.master.connect(volNode); }
       audioRef.current = audio;
-      LUME_AUDIO_MGR.register(stop, cat?.label || 'Música');
+      LUME_AUDIO_MGR.register(stop, cat?.label || MB_T.musicFallback);
 
       setElapsed(0); setPlaying(true);
       const totalSec = selDur * 60;
@@ -4436,16 +5024,16 @@ function MusicaBebeScreen({ goBack, goToTab }) {
           <div style={{width:72,height:72,borderRadius:"50%",background:"rgba(200,72,120,.18)",border:"1.5px solid rgba(200,72,120,.35)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px"}}>
             <WellnessIcon type="lullaby" color="#ffb0d0" size={34}/>
           </div>
-          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(220,180,255,.8)",textTransform:"uppercase",marginBottom:8}}>Bienestar · Música</div>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:30,fontWeight:600,color:"#fff",margin:"0 0 8px",lineHeight:1.2}}>Música para tu bebé</h2>
-          <p style={{fontSize:13,color:"rgba(220,180,255,.7)",margin:0,lineHeight:1.6}}>Lullabies, frecuencias 432Hz y 528Hz, y sonidos intrauterinos para estimular y calmar a tu bebé.</p>
+          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(220,180,255,.8)",textTransform:"uppercase",marginBottom:8}}>{MB_T.eyebrow}</div>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:30,fontWeight:600,color:"#fff",margin:"0 0 8px",lineHeight:1.2}}>{MB_T.title}</h2>
+          <p style={{fontSize:13,color:"rgba(220,180,255,.7)",margin:0,lineHeight:1.6}}>{MB_T.lockedDesc}</p>
         </div>
       </div>
       <div style={{padding:"0 16px 100px",display:"flex",flexDirection:"column",gap:12}}>
         <button onClick={()=>goToTab&&goToTab("premium")} style={{width:"100%",padding:"16px",borderRadius:99,border:"none",cursor:"pointer",background:"linear-gradient(90deg,#8B5A9E,#C84878)",fontFamily:"inherit",fontSize:15,fontWeight:800,color:"#fff",boxShadow:"0 12px 32px rgba(139,90,158,.5)"}}>
-          ✦ Activar Bienestar — 7 días gratis
+          {MB_T.activateCta}
         </button>
-        <p style={{textAlign:"center",fontSize:12,color:"rgba(220,180,255,.5)",margin:0}}>Sin tarjeta · cancela cuando quieras</p>
+        <p style={{textAlign:"center",fontSize:12,color:"rgba(220,180,255,.5)",margin:0}}>{MB_T.noCard}</p>
       </div>
     </div>
   );
@@ -4479,9 +5067,9 @@ function MusicaBebeScreen({ goBack, goToTab }) {
             <WellnessIcon type="lullaby" color="#fff" size={28}/>
           </div>
           <div>
-            <div style={{fontSize:10,fontWeight:800,letterSpacing:".12em",color:"rgba(139,90,158,.6)",textTransform:"uppercase",marginBottom:4}}>Bienestar · Música</div>
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:26,fontWeight:600,color:"#2d1040",lineHeight:1.1,marginBottom:3}}>Música para tu bebé</div>
-            <div style={{fontSize:12,color:"rgba(100,60,140,.5)"}}>Estimulación y calma prenatal</div>
+            <div style={{fontSize:10,fontWeight:800,letterSpacing:".12em",color:"rgba(139,90,158,.6)",textTransform:"uppercase",marginBottom:4}}>{MB_T.eyebrow}</div>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:26,fontWeight:600,color:"#2d1040",lineHeight:1.1,marginBottom:3}}>{MB_T.title}</div>
+            <div style={{fontSize:12,color:"rgba(100,60,140,.5)"}}>{MB_T.headerSub}</div>
           </div>
         </div>
       </div>
@@ -4496,7 +5084,7 @@ function MusicaBebeScreen({ goBack, goToTab }) {
             </div>
             <div style={{fontSize:16,fontWeight:700,color:"#2d1040",marginBottom:4}}>{cat.label}</div>
             <div style={{fontSize:12,color:"#a08070",marginBottom:6}}>{cat.desc}</div>
-            <div style={{fontSize:13,color:"#8a6a9a",marginBottom:14}}>{fmt(elapsed)} · {fmt(totalSec-elapsed)} restantes</div>
+            <div style={{fontSize:13,color:"#8a6a9a",marginBottom:14}}>{fmt(elapsed)} · {fmt(totalSec-elapsed)} {MB_T.remaining}</div>
             <div style={{display:"flex",gap:2,alignItems:"flex-end",justifyContent:"center",height:40,marginBottom:14}}>
               {[...Array(28)].map((_,i) => {
                 const t = elapsed * 0.15 + i * 0.38;
@@ -4513,7 +5101,7 @@ function MusicaBebeScreen({ goBack, goToTab }) {
               <input type="range" min={0} max={1} step={0.05} value={vol} onChange={e=>setVol(+e.target.value)} style={{flex:1,accentColor:cat.color,height:4}}/>
               <span style={{fontSize:11,color:"#8a6a9a",minWidth:28,textAlign:"right"}}>{Math.round(vol*100)}%</span>
             </div>
-            <button onClick={stop} style={{padding:"11px 32px",borderRadius:99,border:`1.5px solid ${cat.color}50`,background:"rgba(255,255,255,.7)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",color:cat.color,fontSize:13,fontWeight:700,cursor:"pointer",boxShadow:`0 4px 16px ${cat.color}20`}}>Detener</button>
+            <button onClick={stop} style={{padding:"11px 32px",borderRadius:99,border:`1.5px solid ${cat.color}50`,background:"rgba(255,255,255,.7)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",color:cat.color,fontSize:13,fontWeight:700,cursor:"pointer",boxShadow:`0 4px 16px ${cat.color}20`}}>{MB_T.stop}</button>
           </div>
         )}
 
@@ -4524,18 +5112,18 @@ function MusicaBebeScreen({ goBack, goToTab }) {
               <WellnessIcon type={rc.icon} color={rc.color} size={19}/>
             </div>
             <div style={{flex:1,minWidth:0}}>
-              <div style={{fontSize:9.5,fontWeight:800,letterSpacing:".08em",textTransform:"uppercase",color:rc.color,marginBottom:2}}>✦ Recomendada · Semana {weeks}</div>
+              <div style={{fontSize:9.5,fontWeight:800,letterSpacing:".08em",textTransform:"uppercase",color:rc.color,marginBottom:2}}>{MB_T.recommended(weeks)}</div>
               <div style={{fontSize:12.5,fontWeight:700,color:"#2d1040",marginBottom:1}}>{rc.label}</div>
               <div style={{fontSize:11,color:"rgba(80,40,120,.5)",lineHeight:1.35}}>{recommendedReason}</div>
             </div>
-            <button onClick={()=>setSelCat(recommended)} style={{flexShrink:0,padding:"7px 13px",borderRadius:99,border:"none",background:rc.color,color:"#fff",fontSize:11,fontWeight:700,cursor:"pointer"}}>Elegir</button>
+            <button onClick={()=>setSelCat(recommended)} style={{flexShrink:0,padding:"7px 13px",borderRadius:99,border:"none",background:rc.color,color:"#fff",fontSize:11,fontWeight:700,cursor:"pointer"}}>{MB_T.choose}</button>
           </div>
         ) : null; })()}
 
         {/* Selector de frecuencia */}
         {!playing && <div style={{borderRadius:20,overflow:"hidden",background:"rgba(255,255,255,.88)",border:"none",boxShadow:"0 4px 20px rgba(139,90,158,.12), 0 1px 0 rgba(255,255,255,.95) inset",flexShrink:0}}>
           <div style={{padding:"11px 16px 9px",borderBottom:"1px solid rgba(139,90,158,.12)",background:"rgba(139,90,158,.08)"}}>
-            <span style={{fontSize:10,fontWeight:800,letterSpacing:".12em",textTransform:"uppercase",color:"#4a2080"}}>Elige una frecuencia</span>
+            <span style={{fontSize:10,fontWeight:800,letterSpacing:".12em",textTransform:"uppercase",color:"#4a2080"}}>{MB_T.sectionChoose}</span>
           </div>
           {CATEGORIES.map((c,idx) => (
             <button key={c.id} className="cat-row-ms" onClick={()=>{if(!playing)setSelCat(c.id)}} style={{
@@ -4562,7 +5150,7 @@ function MusicaBebeScreen({ goBack, goToTab }) {
 
         {/* Duración */}
         {!playing && <div style={{borderRadius:18,overflow:"hidden",background:"rgba(255,255,255,.88)",border:"none",boxShadow:"0 4px 20px rgba(139,90,158,.11), 0 1px 0 rgba(255,255,255,.95) inset",padding:"13px 16px"}}>
-          <div style={{fontSize:10,fontWeight:800,letterSpacing:".12em",textTransform:"uppercase",color:"rgba(100,60,140,.5)",marginBottom:10}}>Duración</div>
+          <div style={{fontSize:10,fontWeight:800,letterSpacing:".12em",textTransform:"uppercase",color:"rgba(100,60,140,.5)",marginBottom:10}}>{MB_T.duration}</div>
           <div style={{display:"flex",gap:8}}>
             {DURATIONS.map(d => (
               <button key={d} className="dur-ms" onClick={()=>setSelDur(d)} style={{flex:1,padding:"11px 8px",borderRadius:13,border:`1.5px solid ${selDur===d?"rgba(139,90,158,.5)":"rgba(139,90,158,.15)"}`,background:selDur===d?"rgba(139,90,158,.15)":"rgba(255,255,255,.55)",color:selDur===d?"#8B5A9E":"rgba(80,40,120,.55)",fontWeight:700,fontSize:14,cursor:"pointer",textAlign:"center",transition:"all .15s",boxShadow:selDur===d?"0 4px 16px rgba(139,90,158,.2)":"none"}}>
@@ -4591,14 +5179,14 @@ function MusicaBebeScreen({ goBack, goToTab }) {
           opacity:1,
         }}>
           {playing
-            ? <><svg viewBox="0 0 24 24" width={18} height={18} fill="white"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>Pausar</>
-            : <><svg viewBox="0 0 24 24" width={18} height={18} fill="white"><path d="M8 5l12 7-12 7Z"/></svg>{selCat?"Reproducir":"Elige una frecuencia"}</>
+            ? <><svg viewBox="0 0 24 24" width={18} height={18} fill="white"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>{MB_T.pause}</>
+            : <><svg viewBox="0 0 24 24" width={18} height={18} fill="white"><path d="M8 5l12 7-12 7Z"/></svg>{selCat?MB_T.play:MB_T.playChoose}</>
           }
         </button>
 
         <div style={{display:"flex",gap:8,alignItems:"flex-start",padding:"8px 14px"}}>
           <span style={{fontSize:12,flexShrink:0,color:"rgba(139,90,158,.5)"}}>✦</span>
-          <p style={{margin:0,fontSize:11,color:"rgba(80,40,120,.45)",lineHeight:1.6}}>Coloca el móvil cerca del vientre o usa auriculares. Volumen moderado. No reemplaza supervisión médica.</p>
+          <p style={{margin:0,fontSize:11,color:"rgba(80,40,120,.45)",lineHeight:1.6}}>{MB_T.disclaimer}</p>
         </div>
       </div>
     </div>
@@ -4609,7 +5197,7 @@ function MusicaBebeScreen({ goBack, goToTab }) {
    MEDITACIÓN CON MÚSICA PARA MAMÁ (Bienestar)
 ══════════════════════════════════════════════ */
 
-const MEDIT_MUSIC_SESSIONS = [
+const MEDIT_MUSIC_SESSIONS_ES = [
   {
     id:"calma",
     title:"Calma profunda",
@@ -4618,6 +5206,7 @@ const MEDIT_MUSIC_SESSIONS = [
     bg:"rgba(58,128,112,.15)",
     dur:15,
     audio:"ocean",
+    audioLabel:"Océano",
     guide:[
       "Cierra los ojos suavemente. Deja que tu cuerpo encuentre su lugar.",
       "Siente cómo la superficie te sostiene por completo. No tienes que hacer nada.",
@@ -4648,6 +5237,7 @@ const MEDIT_MUSIC_SESSIONS = [
     bg:"rgba(200,149,42,.15)",
     dur:20,
     audio:"forest",
+    audioLabel:"Bosque",
     guide:[
       "Siéntate o recuéstate con comodidad. Cierra los ojos con suavidad.",
       "Pon ambas manos sobre tu vientre. Siente el calor que emana de tu piel.",
@@ -4681,6 +5271,7 @@ const MEDIT_MUSIC_SESSIONS = [
     bg:"rgba(107,90,158,.15)",
     dur:30,
     audio:"rain",
+    audioLabel:"Lluvia",
     guide:[
       "Estás en tu cama. La lluvia cae suave afuera. Todo está en calma.",
       "Cierra los ojos. No hay nada que necesites ver esta noche.",
@@ -4712,9 +5303,134 @@ const MEDIT_MUSIC_SESSIONS = [
     ]
   },
 ];
+const MEDIT_MUSIC_SESSIONS_EN = [
+  {
+    id:"calma",
+    title:"Deep calm",
+    icon:"ocean",
+    color:"#3A8070",
+    bg:"rgba(58,128,112,.15)",
+    dur:15,
+    audio:"ocean",
+    audioLabel:"Ocean",
+    guide:[
+      "Close your eyes gently. Let your body find its place.",
+      "Feel how the surface holds you completely. You don't have to do anything.",
+      "Bring one hand to your belly. Your baby is there, with you in this moment.",
+      "Inhale slowly… and exhale, releasing any tension from the day.",
+      "With each breath, your body settles a little more. Heavier, safer.",
+      "Relax your forehead… then your cheeks… your jaw… your lips. Everything softens.",
+      "Your baby feels your breathing. Every time you exhale, you both relax together.",
+      "Imagine the sound of the ocean arriving from far away, wrapping around the room.",
+      "Those waves carry away any thought you don't need right now. They drift off.",
+      "Your mind becomes like still water. Clear, calm, unhurried.",
+      "Feel the warmth of your hand on your belly. That warmth is pure love.",
+      "Your baby receives it. And in return, sends you calm from within.",
+      "You breathe together. A gentle rhythm that connects you without words.",
+      "There's nothing to solve right now. Nowhere you need to go.",
+      "Just this moment. Just this breath. Just the two of you.",
+      "Inhale deeply one last time… and as you exhale, smile softly.",
+      "You carry this calm with you. You can always return here when you need it.",
+      "Slowly, come back. With your eyes closed, feel the space around you.",
+      "When you're ready, open your eyes. Slowly. With gratitude.",
+    ]
+  },
+  {
+    id:"conexion",
+    title:"Connecting with your baby",
+    icon:"connection",
+    color:"#C8952A",
+    bg:"rgba(200,149,42,.15)",
+    dur:20,
+    audio:"forest",
+    audioLabel:"Forest",
+    guide:[
+      "Sit or lie down comfortably. Close your eyes gently.",
+      "Place both hands on your belly. Feel the warmth radiating from your skin.",
+      "Breathe deeply. With that breath, you're telling your baby: I'm here.",
+      "Imagine your baby can feel the weight of your hands. That touch, that love.",
+      "Let your mind travel inward. Toward that space where your baby lives.",
+      "They're floating, safe, listening to the steady rhythm of your heart.",
+      "That heartbeat has been their melody since day one. They know it better than any other.",
+      "Speak to them in silence. Tell them who you are. Tell them what you feel.",
+      "Tell them you're waiting with a full heart. That you already love them without having seen them.",
+      "Every movement you feel is their response. Their way of telling you: I hear you.",
+      "Picture their little face. Still undefined, but already completely yours.",
+      "Their tiny hands, their feet that will soon discover the world.",
+      "Imagine that first embrace. The moment you hold them against your chest.",
+      "Everything you're doing now, you're doing it for them. For that love.",
+      "Breathe love inward. Exhale any fear or doubt. You don't need them.",
+      "You're a team. You've walked through every week of this journey together.",
+      "They trust you. And you can trust yourself. You're already doing it well.",
+      "Bring your hands to your heart for a moment. Feel how much love fits here.",
+      "That love is inexhaustible. You'll always have enough for both of you.",
+      "This moment is a gift. One only the two of you can share.",
+      "Say goodbye for now with a deep breath and an inner smile.",
+      "Open your eyes when you're ready. Carrying this bond with you into the world.",
+    ]
+  },
+  {
+    id:"sueno",
+    title:"Restorative sleep",
+    icon:"moon",
+    color:"#6B5A9E",
+    bg:"rgba(107,90,158,.15)",
+    dur:30,
+    audio:"rain",
+    audioLabel:"Rain",
+    guide:[
+      "You're in your bed. Rain falls softly outside. Everything is calm.",
+      "Close your eyes. There's nothing you need to see tonight.",
+      "Bring your attention to the pillow. Feel how it cradles the weight of your head.",
+      "Now your shoulders. Let them drop. More. A little more still.",
+      "Feel your arms. Heavy, warm, completely at rest.",
+      "Your hands open gently. Your fingers relax one by one.",
+      "Bring your attention to your belly. Your baby is also resting tonight.",
+      "You both breathe at the same rhythm. Slow. Calm. Effortless.",
+      "Feel the weight of your legs sinking into the mattress. Even heavier.",
+      "Your feet relax. Your toes let go. Your whole body rests.",
+      "Listen to the rain. Every drop carries away a thought you no longer need.",
+      "If your mind brings worries, let them go with the next exhale.",
+      "You don't have to solve anything tonight. You already did enough today.",
+      "Inhale for four counts… hold for two… exhale for six. Once more.",
+      "Your body knows how to rest. Trust it. It deserves it.",
+      "Imagine a place that gives you peace. A beach, a forest, a warm room.",
+      "You're there. Safe. Protected. In complete peace.",
+      "Your baby is also in that place with you. Both of you, safe, resting.",
+      "The rain keeps falling outside. Soft, steady, like a lullaby.",
+      "Every drop reminds you that the world keeps turning while you rest.",
+      "You don't have to stay alert. Tonight you can let go of control.",
+      "Inhale deeply one last conscious time… and exhale everything that remains.",
+      "From now on, your breathing continues on its own. Your body knows the way.",
+      "You're safe. Your baby is safe. Tonight everything is exactly fine.",
+      "Sleep with the certainty that morning will come. And you'll both be fine.",
+      "Sleep. Let rest repair what the day wore down.",
+      "Good night. Thank you for taking care of yourself. Your baby thanks you too.",
+    ]
+  },
+];
 
 function MeditacionMusicaScreen({ goBack, goToTab }) {
   const isPremium = React.useMemo(() => { try { return !!localStorage.getItem("lume_premium"); } catch { return false; } }, []);
+  const mmLang = getAppLang2();
+  const MEDIT_MUSIC_SESSIONS = mmLang==="en" ? MEDIT_MUSIC_SESSIONS_EN : MEDIT_MUSIC_SESSIONS_ES;
+  const MM_T = mmLang==="en" ? {
+    lockedTitle:"Meditation with music", lockedDesc:"Simultaneous voice guidance + ambient music to reduce prenatal stress.",
+    activateCta:"✦ Activate Wellness — 7 days free", noCard:"No card needed · cancel anytime",
+    eyebrow:"Wellness · Meditation", headerTitle:"Meditation with music", headerSub:"Guided voice and ambient sound together",
+    remaining:(t)=>`${t} left`, endSession:"End session", chooseSession:"Choose your session",
+    startSession:"Start session", chooseSessionBtn:"Choose a session",
+    disclaimer:"Guided phrases appear during the session. Use headphones for deeper immersion.",
+    guidedPhrases:"guided phrases", sessionFallback:"Meditation",
+  } : {
+    lockedTitle:"Meditación con música", lockedDesc:"Guía de voz + música ambiental simultáneas para reducir el estrés prenatal.",
+    activateCta:"✦ Activar Bienestar — 7 días gratis", noCard:"Sin tarjeta · cancela cuando quieras",
+    eyebrow:"Bienestar · Meditación", headerTitle:"Meditación con música", headerSub:"Voz guiada y ambiente sonoro simultáneos",
+    remaining:(t)=>`quedan ${t}`, endSession:"Terminar sesión", chooseSession:"Elige tu sesión",
+    startSession:"Comenzar sesión", chooseSessionBtn:"Elige una sesión",
+    disclaimer:"Las frases guiadas aparecen durante la sesión. Usa auriculares para mayor inmersión.",
+    guidedPhrases:"frases guiadas", sessionFallback:"Meditación",
+  };
 
   const [selSession, setSelSession] = React.useState(null);
   const [playing, setPlaying] = React.useState(false);
@@ -4748,14 +5464,15 @@ function MeditacionMusicaScreen({ goBack, goToTab }) {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const utt = new SpeechSynthesisUtterance(text);
-    utt.lang = 'es-ES';
+    utt.lang = mmLang==="en" ? 'en-US' : 'es-ES';
     utt.rate = 0.82;
     utt.pitch = 1.05;
     utt.volume = 0.85;
     const trySpeak = () => {
       const voices = window.speechSynthesis.getVoices();
-      const esVoice = voices.find(v => v.lang.startsWith('es') && /female|mujer|monica|paulina|lucia|elena/i.test(v.name))
-                   || voices.find(v => v.lang.startsWith('es'));
+      const esVoice = mmLang==="en"
+                   ? (voices.find(v => v.lang.startsWith('en') && /female|samantha|victoria|karen|zira/i.test(v.name)) || voices.find(v => v.lang.startsWith('en')))
+                   : (voices.find(v => v.lang.startsWith('es') && /female|mujer|monica|paulina|lucia|elena/i.test(v.name)) || voices.find(v => v.lang.startsWith('es')));
       if (esVoice) utt.voice = esVoice;
       window.speechSynthesis.speak(utt);
     };
@@ -4783,7 +5500,7 @@ function MeditacionMusicaScreen({ goBack, goToTab }) {
       else if (s.audio === "forest") audio = makeForest(ctx);
       else audio = makeRain(ctx);
       audioRef.current = audio;
-      LUME_AUDIO_MGR.register(stop, s?.title || 'Meditación');
+      LUME_AUDIO_MGR.register(stop, s?.title || MM_T.sessionFallback);
 
       setPlaying(true); setElapsed(0); setGuideIdx(0);
       setTimeout(() => setShowGuide(true), 3000);
@@ -4823,15 +5540,15 @@ function MeditacionMusicaScreen({ goBack, goToTab }) {
           <div style={{width:72,height:72,borderRadius:"50%",background:"rgba(107,90,158,.2)",border:"1.5px solid rgba(107,90,158,.35)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px"}}>
               <WellnessIcon type="ocean" color="rgba(200,180,255,.9)" size={34}/>
             </div>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:30,fontWeight:600,color:"#fff",margin:"0 0 8px"}}>Meditación con música</h2>
-          <p style={{fontSize:13,color:"rgba(200,180,255,.7)",margin:0,lineHeight:1.6}}>Guía de voz + música ambiental simultáneas para reducir el estrés prenatal.</p>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:30,fontWeight:600,color:"#fff",margin:"0 0 8px"}}>{MM_T.lockedTitle}</h2>
+          <p style={{fontSize:13,color:"rgba(200,180,255,.7)",margin:0,lineHeight:1.6}}>{MM_T.lockedDesc}</p>
         </div>
       </div>
       <div style={{padding:"0 16px 100px",display:"flex",flexDirection:"column",gap:12}}>
         <button onClick={()=>goToTab&&goToTab("premium")} style={{width:"100%",padding:"16px",borderRadius:99,border:"none",cursor:"pointer",background:"linear-gradient(90deg,#6B5A9E,#3A8070)",fontFamily:"inherit",fontSize:15,fontWeight:800,color:"#fff",boxShadow:"0 12px 32px rgba(107,90,158,.5)"}}>
-          ✦ Activar Bienestar — 7 días gratis
+          {MM_T.activateCta}
         </button>
-        <p style={{textAlign:"center",fontSize:12,color:"rgba(200,180,255,.4)",margin:0}}>Sin tarjeta · cancela cuando quieras</p>
+        <p style={{textAlign:"center",fontSize:12,color:"rgba(200,180,255,.4)",margin:0}}>{MM_T.noCard}</p>
       </div>
     </div>
   );
@@ -4861,9 +5578,9 @@ function MeditacionMusicaScreen({ goBack, goToTab }) {
             <WellnessIcon type="ocean" color="#fff" size={28}/>
           </div>
           <div>
-            <div style={{fontSize:10,fontWeight:800,letterSpacing:".12em",color:"rgba(58,128,112,.6)",textTransform:"uppercase",marginBottom:4}}>Bienestar · Meditación</div>
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:26,fontWeight:600,color:"#3d1a0e",lineHeight:1.1,marginBottom:3}}>Meditación con música</div>
-            <div style={{fontSize:12,color:"rgba(58,128,112,.55)"}}>Voz guiada y ambiente sonoro simultáneos</div>
+            <div style={{fontSize:10,fontWeight:800,letterSpacing:".12em",color:"rgba(58,128,112,.6)",textTransform:"uppercase",marginBottom:4}}>{MM_T.eyebrow}</div>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:26,fontWeight:600,color:"#3d1a0e",lineHeight:1.1,marginBottom:3}}>{MM_T.headerTitle}</div>
+            <div style={{fontSize:12,color:"rgba(58,128,112,.55)"}}>{MM_T.headerSub}</div>
           </div>
         </div>
       </div>
@@ -4878,7 +5595,7 @@ function MeditacionMusicaScreen({ goBack, goToTab }) {
               <WellnessIcon type={session.icon} color={session.color} size={38}/>
             </div>
             <div style={{fontSize:16,fontWeight:700,color:"#3d1a0e",marginBottom:4}}>{session.title}</div>
-            <div style={{fontSize:13,color:"#a08070",marginBottom:16}}>{fmt(elapsed)} · quedan {fmt(session.dur*60 - elapsed)}</div>
+            <div style={{fontSize:13,color:"#a08070",marginBottom:16}}>{fmt(elapsed)} · {MM_T.remaining(fmt(session.dur*60 - elapsed))}</div>
 
             {/* Frase guiada */}
             {showGuide && (
@@ -4893,7 +5610,7 @@ function MeditacionMusicaScreen({ goBack, goToTab }) {
             </div>
 
             <button onClick={stop} style={{padding:"10px 28px",borderRadius:99,border:`1px solid ${session.color}40`,background:"rgba(255,255,255,.6)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",color:session.color,fontSize:13,fontWeight:700,cursor:"pointer"}}>
-              Terminar sesión
+              {MM_T.endSession}
             </button>
           </div>
         )}
@@ -4901,7 +5618,7 @@ function MeditacionMusicaScreen({ goBack, goToTab }) {
         {/* Selector de sesiones */}
         {!playing && (
           <div style={{...glassCard,padding:"18px 16px"}}>
-            <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.75,marginBottom:12}}>Elige tu sesión</div>
+            <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.75,marginBottom:12}}>{MM_T.chooseSession}</div>
             <div style={{display:"flex",flexDirection:"column",gap:10}}>
               {MEDIT_MUSIC_SESSIONS.map(s => (
                 <button key={s.id} className="sess-card" onClick={()=>setSelSession(s.id)} style={{
@@ -4917,7 +5634,7 @@ function MeditacionMusicaScreen({ goBack, goToTab }) {
                   </div>
                   <div style={{flex:1}}>
                     <div style={{fontSize:14,fontWeight:700,color:"#3d1a0e",marginBottom:2}}>{s.title}</div>
-                    <div style={{fontSize:11,color:"#a08070"}}>{s.dur} min · {s.audio === "ocean" ? "Océano" : s.audio === "forest" ? "Bosque" : "Lluvia"} · {s.guide.length} frases guiadas</div>
+                    <div style={{fontSize:11,color:"#a08070"}}>{s.dur} min · {s.audioLabel} · {s.guide.length} {MM_T.guidedPhrases}</div>
                   </div>
                   {selSession===s.id && <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke={s.color} strokeWidth="2.5" strokeLinecap="round"><path d="M5 12l5 5L19 7"/></svg>}
                 </button>
@@ -4938,13 +5655,13 @@ function MeditacionMusicaScreen({ goBack, goToTab }) {
             transition:"all .2s cubic-bezier(.34,1.56,.64,1)",
           }}>
             <svg viewBox="0 0 24 24" width={18} height={18} fill="white"><path d="M8 5l12 7-12 7Z"/></svg>
-            {selSession ? "Comenzar sesión" : "Elige una sesión"}
+            {selSession ? MM_T.startSession : MM_T.chooseSessionBtn}
           </button>
         )}
 
         <div style={{...glassCard,padding:"12px 14px",display:"flex",gap:10,alignItems:"flex-start",background:"rgba(255,255,255,.55)"}}>
           <span style={{fontSize:13,flexShrink:0,color:"#3A8070"}}>✦</span>
-          <p style={{margin:0,fontSize:11.5,color:"#5a3a2a",lineHeight:1.6}}>Las frases guiadas aparecen durante la sesión. Usa auriculares para mayor inmersión.</p>
+          <p style={{margin:0,fontSize:11.5,color:"#5a3a2a",lineHeight:1.6}}>{MM_T.disclaimer}</p>
         </div>
       </div>
     </div>
@@ -5002,7 +5719,7 @@ function makeBabyFreq(ctx, freq, harmonics = []) {
   return { master, nodes, src };
 }
 
-const BABY_SESSIONS = [
+const BABY_SESSIONS_ES = [
   { id:"432",  freq:432,  harmonics:[[2,.06],[0.5,.08]],
     title:"432 Hz", subtitle:"Armonía Universal",
     icon:"freq432", color:"#A58FE0", glow:"rgba(165,143,224,.45)",
@@ -5056,9 +5773,88 @@ const BABY_SESSIONS = [
            "Este es el sonido más seguro que tu bebé conoce. Relájate en él.",
            "Cada latido le dice a tu bebé: estás protegida, estás amada."] },
 ];
+const BABY_SESSIONS_EN = [
+  { id:"432",  freq:432,  harmonics:[[2,.06],[0.5,.08]],
+    title:"432 Hz", subtitle:"Universal Harmony",
+    icon:"freq432", color:"#A58FE0", glow:"rgba(165,143,224,.45)",
+    dark:"#12082e", mid:"#1e1248",
+    state:"Alpha Waves · Deep Relaxation", weeks:"Whole pregnancy",
+    desc:"Natural tuning frequency. Creates a harmonic field that calms your baby's nervous system and lowers maternal cortisol.",
+    benefits:["Reduces prenatal stress","Gentle cognitive stimulation","Mother-baby neural sync"],
+    guide:["Close your eyes gently. Feel the support of the surface beneath you.",
+           "Inhale for 4 counts… and exhale for 6. Effortlessly.",
+           "These frequencies reach your baby through the amniotic fluid.",
+           "Feel your body relax with every exhale. More and more.",
+           "Bring one hand to your belly. Picture your baby floating calmly.",
+           "432 Hz tunes your nervous system to its natural rhythm.",
+           "Your baby senses this harmony. Notice how they respond to it.",
+           "Breathe. Trust. Everything is exactly as it should be right now."] },
+  { id:"528",  freq:528,  harmonics:[[2,.05],[0.5,.07]],
+    title:"528 Hz", subtitle:"Frequency of Love",
+    icon:"freq528", color:"#5EC4A0", glow:"rgba(94,196,160,.45)",
+    dark:"#041e18", mid:"#0a3028",
+    state:"Theta Waves · Cellular Wellness", weeks:"Weeks 12+",
+    desc:"Known as the DNA repair frequency. Promotes cellular wellness and a deep emotional mother-baby connection.",
+    benefits:["Cellular wellness and vitality","Deep emotional connection","Stimulates neural development"] },
+  { id:"396",  freq:396,  harmonics:[[2,.07],[3,.04]],
+    title:"396 Hz", subtitle:"Release",
+    icon:"freq396", color:"#E0B45E", glow:"rgba(224,180,94,.45)",
+    dark:"#1e1000", mid:"#2e1a00",
+    state:"Delta Waves · Release", weeks:"Weeks 20+",
+    desc:"A frequency that releases tension and energetic blocks. Creates an environment of peace, balance, and wellbeing around your baby.",
+    benefits:["Releases uterine tension","Deep emotional balance","Environment of peace and calm"],
+    guide:["Release your shoulders. Release your jaw. Release everything you're holding.",
+           "Inhale space. Exhale any tension you carry in your body.",
+           "396 Hz releases energetic blocks in the field around your baby.",
+           "Picture tension dissolving like mist in the warmth of the sun.",
+           "Your belly softens. Your breathing becomes slower and deeper.",
+           "There's peace here. Inside and out. Your baby feels it and settles.",
+           "Let go of any fear. You don't have to carry it right now.",
+           "Exhale the weight of today. Only this moment remains. You and your baby."] },
+  { id:"heart", freq:null, harmonics:[],
+    title:"72 BPM", subtitle:"Mother's Heartbeat",
+    icon:"heartbeat", color:"#E07898", glow:"rgba(224,120,152,.45)",
+    dark:"#1e0510", mid:"#2e0a1a",
+    state:"Natural Biorhythm · Comfort", weeks:"Whole pregnancy",
+    desc:"The first sound your baby recognized. The synchronized maternal heartbeat activates the baby's innate sense of safety.",
+    benefits:["Reduces prenatal anxiety","Total recognition and comfort","Regulates sleep cycles"],
+    guide:["Close your eyes. Gently place both hands on your belly.",
+           "Inhale slowly… feel the warmth of your hands reaching your baby.",
+           "Your baby has heard this heartbeat since day one. They recognize it perfectly.",
+           "Exhale slowly. Releasing any tension you carry in your body.",
+           "Speak silently with your baby. Tell them you're here, that everything is okay.",
+           "Feel how your breathing synchronizes. One single rhythm, together.",
+           "This is the safest sound your baby knows. Relax into it.",
+           "Every heartbeat tells your baby: you're protected, you're loved."] },
+];
 
 function MeditacionBebesScreen({ goBack, goToTab }) {
   const isPremium = React.useMemo(() => { try { return !!localStorage.getItem("lume_premium"); } catch { return false; } }, []);
+  const mbbLang = getAppLang2();
+  const BABY_SESSIONS = mbbLang==="en" ? BABY_SESSIONS_EN : BABY_SESSIONS_ES;
+  const MBB_T = mbbLang==="en" ? {
+    lockedBadge:"Professional · Exclusive", lockedTitle:"Meditation for babies",
+    lockedDesc:"Special frequencies (432Hz, 528Hz, 396Hz) to create calm and positive stimulation for your baby.",
+    activateCta:"✦ Activate Professional", noCard:"No card needed · cancel anytime",
+    sessionComplete:"Session complete", diaryPlaceholder:"How did you feel during the session? Did your baby respond?",
+    skip:"Skip", saveToDiary:"Save to diary", inhale:"Inhale…", exhale:"Exhale…", endSession:"End session",
+    eyebrow:"✦ Professional · Frequency Therapy", titleLine1:"Meditation", titleLine2:"for your baby",
+    subLine:"Therapeutic frequencies that stimulate neural", subLine2:"development from the womb",
+    weekAbbr:"Wk.", duration:"Session duration", startTherapy:"Start frequency therapy", chooseFreq:"Choose a frequency",
+    disclaimer:"Gently place the phone near your belly. For guidance only, not a substitute for medical supervision.",
+    freqFallback:"Frequency",
+  } : {
+    lockedBadge:"Profesional · Exclusivo", lockedTitle:"Meditación para bebés",
+    lockedDesc:"Frecuencias especiales (432Hz, 528Hz, 396Hz) para crear calma y estimulación positiva en tu bebé.",
+    activateCta:"✦ Activar Profesional", noCard:"Sin tarjeta · cancela cuando quieras",
+    sessionComplete:"Sesión completada", diaryPlaceholder:"¿Cómo te sentiste durante la sesión? ¿Tu bebé respondió?",
+    skip:"Omitir", saveToDiary:"Guardar en diario", inhale:"Inhala…", exhale:"Exhala…", endSession:"Terminar sesión",
+    eyebrow:"✦ Profesional · Terapia de Frecuencias", titleLine1:"Meditación", titleLine2:"para tu bebé",
+    subLine:"Frecuencias terapéuticas que estimulan el", subLine2:"desarrollo neuronal desde el vientre",
+    weekAbbr:"Sem.", duration:"Duración de la sesión", startTherapy:"Iniciar terapia de frecuencias", chooseFreq:"Elige una frecuencia",
+    disclaimer:"Coloca el móvil suavemente cerca del vientre. Uso orientativo, no reemplaza supervisión médica.",
+    freqFallback:"Frecuencia",
+  };
 
   const [selId, setSelId] = React.useState(null);
   const [playing, setPlaying] = React.useState(false);
@@ -5074,6 +5870,7 @@ function MeditacionBebesScreen({ goBack, goToTab }) {
   const timerRef = React.useRef(null);
   const guideRef = React.useRef(null);
   const breathRef = React.useRef(null);
+  const dtLocaleMbb = mbbLang==="en" ? "en-US" : "es-ES";
   const weeks = React.useMemo(()=>parseInt(localStorage.getItem("lume_weeks")||"15")||15,[]);
 
   const sess = BABY_SESSIONS.find(s => s.id === selId);
@@ -5082,9 +5879,11 @@ function MeditacionBebesScreen({ goBack, goToTab }) {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const utt = new SpeechSynthesisUtterance(text);
-    utt.lang = 'es-ES'; utt.rate = 0.8; utt.pitch = 1.05; utt.volume = 0.8;
+    utt.lang = mbbLang==="en" ? 'en-US' : 'es-ES'; utt.rate = 0.8; utt.pitch = 1.05; utt.volume = 0.8;
     const voices = window.speechSynthesis.getVoices();
-    const v = voices.find(v=>v.lang.startsWith('es')&&/female|mujer|monica|lucia|elena/i.test(v.name))||voices.find(v=>v.lang.startsWith('es'));
+    const v = mbbLang==="en"
+      ? (voices.find(v=>v.lang.startsWith('en')&&/female|samantha|victoria|karen|zira/i.test(v.name))||voices.find(v=>v.lang.startsWith('en')))
+      : (voices.find(v=>v.lang.startsWith('es')&&/female|mujer|monica|lucia|elena/i.test(v.name))||voices.find(v=>v.lang.startsWith('es')));
     if(v) utt.voice=v;
     window.speechSynthesis.speak(utt);
   }, []);
@@ -5128,7 +5927,7 @@ function MeditacionBebesScreen({ goBack, goToTab }) {
         audio = makeBabyFreq(ctx, s.freq, s.harmonics);
       }
       audioRef.current = audio;
-      LUME_AUDIO_MGR.register(stop, (BABY_SESSIONS.find(x=>x.id===selId))?.title || 'Frecuencia');
+      LUME_AUDIO_MGR.register(stop, (BABY_SESSIONS.find(x=>x.id===selId))?.title || MBB_T.freqFallback);
       setPlaying(true); setElapsed(0); setGuideIdx(0); setBreathPhase('inhale');
       setTimeout(()=>setShowGuide(true), 2000);
 
@@ -5169,16 +5968,16 @@ function MeditacionBebesScreen({ goBack, goToTab }) {
           <div style={{width:72,height:72,borderRadius:"50%",background:"rgba(139,90,158,.2)",border:"1.5px solid rgba(139,90,158,.35)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px"}}>
               <WellnessIcon type="freq528" color="rgba(200,180,255,.9)" size={34}/>
             </div>
-          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(180,150,255,.8)",textTransform:"uppercase",marginBottom:8}}>Profesional · Exclusivo</div>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:30,fontWeight:600,color:"#fff",margin:"0 0 8px"}}>Meditación para bebés</h2>
-          <p style={{fontSize:13,color:"rgba(180,150,255,.65)",margin:0,lineHeight:1.6}}>Frecuencias especiales (432Hz, 528Hz, 396Hz) para crear calma y estimulación positiva en tu bebé.</p>
+          <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".14em",color:"rgba(180,150,255,.8)",textTransform:"uppercase",marginBottom:8}}>{MBB_T.lockedBadge}</div>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:30,fontWeight:600,color:"#fff",margin:"0 0 8px"}}>{MBB_T.lockedTitle}</h2>
+          <p style={{fontSize:13,color:"rgba(180,150,255,.65)",margin:0,lineHeight:1.6}}>{MBB_T.lockedDesc}</p>
         </div>
       </div>
       <div style={{padding:"0 16px 100px",display:"flex",flexDirection:"column",gap:12}}>
         <button onClick={()=>goToTab&&goToTab("premium")} style={{width:"100%",padding:"16px",borderRadius:99,border:"none",cursor:"pointer",background:"linear-gradient(90deg,#C8952A,#8B5A9E)",fontFamily:"inherit",fontSize:15,fontWeight:800,color:"#fff",boxShadow:"0 12px 32px rgba(200,149,42,.4)"}}>
-          ✦ Activar Profesional
+          {MBB_T.activateCta}
         </button>
-        <p style={{textAlign:"center",fontSize:12,color:"rgba(180,150,255,.4)",margin:0}}>Sin tarjeta · cancela cuando quieras</p>
+        <p style={{textAlign:"center",fontSize:12,color:"rgba(180,150,255,.4)",margin:0}}>{MBB_T.noCard}</p>
       </div>
     </div>
   );
@@ -5206,22 +6005,22 @@ function MeditacionBebesScreen({ goBack, goToTab }) {
         <div style={{position:"fixed",inset:0,zIndex:100,background:"rgba(5,3,16,.88)",backdropFilter:"blur(20px)",display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
           <div style={{width:"100%",maxWidth:320,background:"linear-gradient(160deg,#1a1040,#0e0820)",border:"1px solid rgba(165,143,224,.25)",borderRadius:24,padding:"28px 22px",boxShadow:"0 24px 80px rgba(0,0,0,.6)"}}>
             <div style={{fontSize:28,textAlign:"center",marginBottom:8}}>✨</div>
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:24,fontWeight:600,color:"#fff",textAlign:"center",marginBottom:6}}>Sesión completada</div>
-            <div style={{fontSize:12.5,color:"rgba(255,255,255,.45)",textAlign:"center",lineHeight:1.6,marginBottom:20}}>{sess?.title} · {selDur} min · Semana {weeks}</div>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:24,fontWeight:600,color:"#fff",textAlign:"center",marginBottom:6}}>{MBB_T.sessionComplete}</div>
+            <div style={{fontSize:12.5,color:"rgba(255,255,255,.45)",textAlign:"center",lineHeight:1.6,marginBottom:20}}>{sess?.title} · {selDur} min · {mbbLang==="en"?"Week":"Semana"} {weeks}</div>
             <textarea value={diarioNote} onChange={e=>setDiarioNote(e.target.value)}
-              placeholder="¿Cómo te sentiste durante la sesión? ¿Tu bebé respondió?"
+              placeholder={MBB_T.diaryPlaceholder}
               style={{width:"100%",minHeight:90,borderRadius:14,border:"1px solid rgba(165,143,224,.2)",background:"rgba(255,255,255,.06)",padding:"12px 14px",fontFamily:"inherit",fontSize:13,color:"rgba(255,255,255,.85)",resize:"none",boxSizing:"border-box",outline:"none",lineHeight:1.6,marginBottom:14,placeholder:"rgba(255,255,255,.3)"}}
             />
             <div style={{display:"flex",gap:10}}>
-              <button onClick={()=>setShowDiario(false)} style={{flex:1,padding:"12px",borderRadius:99,border:"1px solid rgba(255,255,255,.12)",background:"transparent",color:"rgba(255,255,255,.5)",fontSize:13,fontWeight:600,cursor:"pointer"}}>Omitir</button>
+              <button onClick={()=>setShowDiario(false)} style={{flex:1,padding:"12px",borderRadius:99,border:"1px solid rgba(255,255,255,.12)",background:"transparent",color:"rgba(255,255,255,.5)",fontSize:13,fontWeight:600,cursor:"pointer"}}>{MBB_T.skip}</button>
               <button onClick={()=>{
                 if(diarioNote.trim()){
-                  const entry={id:Date.now(),fecha:new Date().toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"}),semana:weeks,texto:`[Sesión: ${sess?.title}] ${diarioNote}`,mood:"✨"};
+                  const entry={id:Date.now(),fecha:new Date().toLocaleDateString(dtLocaleMbb,{day:"numeric",month:"long",year:"numeric"}),semana:weeks,texto:`[Sesión: ${sess?.title}] ${diarioNote}`,mood:"✨"};
                   try{const prev=JSON.parse(localStorage.getItem("lume_diario")||"[]");localStorage.setItem("lume_diario",JSON.stringify([entry,...prev]));}catch{}
                 }
                 setShowDiario(false);
               }} style={{flex:2,padding:"12px",borderRadius:99,border:"none",background:"linear-gradient(90deg,#A58FE0,#6B5A9E)",color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer"}}>
-                Guardar en diario
+                {MBB_T.saveToDiary}
               </button>
             </div>
           </div>
@@ -5257,7 +6056,7 @@ function MeditacionBebesScreen({ goBack, goToTab }) {
 
           {/* Instrucción de respiración */}
           <div style={{fontSize:11,fontWeight:800,letterSpacing:".2em",textTransform:"uppercase",color:sess.color,opacity:.8,marginBottom:16,transition:"opacity .5s"}}>
-            {breathPhase==='inhale'?'Inhala…':'Exhala…'}
+            {breathPhase==='inhale'?MBB_T.inhale:MBB_T.exhale}
           </div>
 
           {/* Hz display */}
@@ -5285,7 +6084,7 @@ function MeditacionBebesScreen({ goBack, goToTab }) {
           </div>
 
           <button onClick={()=>stop(true)} style={{padding:"13px 36px",borderRadius:99,border:`1.5px solid ${sess.color}45`,background:"rgba(255,255,255,.07)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",color:sess.color,fontSize:13,fontWeight:700,cursor:"pointer",letterSpacing:".04em"}}>
-            Terminar sesión
+            {MBB_T.endSession}
           </button>
         </div>
       )}
@@ -5296,9 +6095,9 @@ function MeditacionBebesScreen({ goBack, goToTab }) {
 
           {/* Título */}
           <div style={{textAlign:"center",marginBottom:4}}>
-            <div style={{fontSize:10,fontWeight:800,letterSpacing:".16em",textTransform:"uppercase",color:"rgba(180,150,255,.5)",marginBottom:8}}>✦ Profesional · Terapia de Frecuencias</div>
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:300,color:"rgba(255,255,255,.92)",lineHeight:1.15,marginBottom:6}}>Meditación<br/>para tu bebé</div>
-            <div style={{fontSize:12.5,color:"rgba(255,255,255,.35)",lineHeight:1.6}}>Frecuencias terapéuticas que estimulan el<br/>desarrollo neuronal desde el vientre</div>
+            <div style={{fontSize:10,fontWeight:800,letterSpacing:".16em",textTransform:"uppercase",color:"rgba(180,150,255,.5)",marginBottom:8}}>{MBB_T.eyebrow}</div>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:300,color:"rgba(255,255,255,.92)",lineHeight:1.15,marginBottom:6}}>{MBB_T.titleLine1}<br/>{MBB_T.titleLine2}</div>
+            <div style={{fontSize:12.5,color:"rgba(255,255,255,.35)",lineHeight:1.6}}>{MBB_T.subLine}<br/>{MBB_T.subLine2}</div>
           </div>
 
           {/* Cards de frecuencia (2x2 grid) */}
@@ -5319,7 +6118,7 @@ function MeditacionBebesScreen({ goBack, goToTab }) {
                   </div>
                   <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:600,color:on?s.color:"rgba(255,255,255,.85)",lineHeight:1,marginBottom:3}}>{s.title}</div>
                   <div style={{fontSize:10,color:"rgba(255,255,255,.4)",marginBottom:8,letterSpacing:".04em"}}>{s.subtitle}</div>
-                  <div style={{fontSize:9.5,color:"rgba(255,255,255,.3)",display:"inline-block",padding:"2px 8px",borderRadius:99,border:"1px solid rgba(255,255,255,.12)"}}>Sem. {s.weeks}</div>
+                  <div style={{fontSize:9.5,color:"rgba(255,255,255,.3)",display:"inline-block",padding:"2px 8px",borderRadius:99,border:"1px solid rgba(255,255,255,.12)"}}>{MBB_T.weekAbbr} {s.weeks}</div>
                 </button>
               );
             })}
@@ -5327,7 +6126,7 @@ function MeditacionBebesScreen({ goBack, goToTab }) {
 
           {/* Duración */}
           <div style={{background:"rgba(255,255,255,.05)",border:"1px solid rgba(255,255,255,.1)",borderRadius:18,padding:"14px 16px"}}>
-            <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"rgba(255,255,255,.3)",marginBottom:10}}>Duración de la sesión</div>
+            <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"rgba(255,255,255,.3)",marginBottom:10}}>{MBB_T.duration}</div>
             <div style={{display:"flex",gap:8}}>
               {[10,20,30].map(d=>(
                 <button key={d} onClick={()=>setSelDur(d)} style={{flex:1,padding:"11px 8px",borderRadius:13,border:`1.5px solid ${selDur===d?"rgba(165,143,224,.5)":"rgba(255,255,255,.1)"}`,background:selDur===d?"rgba(165,143,224,.18)":"transparent",color:selDur===d?"#A58FE0":"rgba(255,255,255,.4)",fontWeight:700,fontSize:14,cursor:"pointer",textAlign:"center"}}>
@@ -5348,13 +6147,13 @@ function MeditacionBebesScreen({ goBack, goToTab }) {
             opacity:selId?1:0.35,transition:"all .2s cubic-bezier(.34,1.56,.64,1)",
           }}>
             <svg viewBox="0 0 24 24" width={18} height={18} fill="white"><path d="M8 5l12 7-12 7Z"/></svg>
-            {selId?"Iniciar terapia de frecuencias":"Elige una frecuencia"}
+            {selId?MBB_T.startTherapy:MBB_T.chooseFreq}
           </button>
 
           {/* Disclaimer */}
           <div style={{display:"flex",gap:8,alignItems:"flex-start",padding:"0 4px"}}>
             <span style={{fontSize:12,color:"rgba(165,143,224,.4)",flexShrink:0}}>✦</span>
-            <p style={{margin:0,fontSize:11,color:"rgba(255,255,255,.25)",lineHeight:1.6}}>Coloca el móvil suavemente cerca del vientre. Uso orientativo, no reemplaza supervisión médica.</p>
+            <p style={{margin:0,fontSize:11,color:"rgba(255,255,255,.25)",lineHeight:1.6}}>{MBB_T.disclaimer}</p>
           </div>
         </div>
       )}
