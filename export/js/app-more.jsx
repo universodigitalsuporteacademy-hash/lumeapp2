@@ -7,15 +7,57 @@ const MEAL_CAT_META = {
   "Snacks":   { icon: "heart", img: "uploads/icon-app-05.png", color: "#C84878", bg: "rgba(200,72,120,.11)", shadow: "rgba(200,72,120,.24)" },
 };
 
-const SUGGESTIONS = ["¿Es normal sentir contracciones?", "¿Qué puedo comer hoy?", "Tengo dolor de espalda", "Ideas para dormir mejor"];
+const SUGGESTIONS_ES = ["¿Es normal sentir contracciones?", "¿Qué puedo comer hoy?", "Tengo dolor de espalda", "Ideas para dormir mejor"];
+const SUGGESTIONS_EN = ["Is it normal to feel contractions?", "What can I eat today?", "I have back pain", "Ideas to sleep better"];
+function getAppLang2() { try { return localStorage.getItem("lume_lang") || "es"; } catch { return "es"; } }
+const SUGGESTIONS = getAppLang2()==="en" ? SUGGESTIONS_EN : SUGGESTIONS_ES;
 
-function Asistente() {
-  const INITIAL_MSG = "Hola, soy Glow — tu asistente personal de Lumé. Puedes preguntarme cualquier duda sobre tu embarazo, síntomas, nutrición o bienestar. Estoy aquí a cualquier hora. ¿En qué te ayudo hoy?";
+const AI_T = {
+  es: { greeting:"Hola, soy Glow — tu asistente personal de Lumé. Puedes preguntarme cualquier duda sobre tu embarazo, síntomas, nutrición o bienestar. Estoy aquí a cualquier hora. ¿En qué te ayudo hoy?",
+    limit:" preguntas gratis de hoy. Activa Bienestar para consultas ilimitadas con Glow, a cualquier hora. \uD83D\uDC9B", usedPrefix:"Ya usaste tus ",
+    clearChat:"Limpiar chat", header:"Asistente Lumé", week:"Sem.", aiContext:"Contexto IA", noSx:"Sin síntomas · editar",
+    weekOf:"Semana de embarazo", wk4:"Sem. 4", wk42:"Sem. 42", activeSx:"Síntomas activos", of5:"/5 seleccionados",
+    saveCtx:"Guardar contexto", ctxUpdated:"Contexto actualizado", inputPh:"Escribe tu pregunta\u2026",
+    freeMid:" de ", freeSuffix:" preguntas gratis hoy · Activa Bienestar para ilimitadas",
+    tri:["Primer trimestre","Segundo trimestre","Tercer trimestre"],
+    sxList:["Náuseas", "Cansancio", "Dolor lumbar", "Acidez", "Insomnio", "Mareos", "Calambres", "Antojos", "Hinchazón", "Buen ánimo"],
+    aiLang:"Responde en español con calidez y precisión médica.",
+    fallbackDefault:"Ante cualquier síntoma nuevo o preocupación, tu ginecóloga o matrona son siempre tu mejor apoyo. Lumé está aquí para acompañarte. ¿Hay algo más en lo que pueda orientarte? \uD83D\uDC9B",
+    fallbackNausea:"Las náuseas son muy frecuentes en el embarazo. Come porciones pequeñas y frecuentes, prueba el jengibre y mantén galletas a mano al despertar. Si no puedes retener líquidos, avisa a tu médica.",
+    fallbackBack:"El dolor de espalda es muy común conforme el bebé crece. Calor suave en la zona lumbar, almohada entre las rodillas al dormir y estiramientos suaves ayudan mucho.",
+    fallbackFood:"La nutrición prenatal es clave. Prioriza proteínas, hierro, calcio, ácido fólico y omega-3. Evita crudos y embutidos sin cocinar.",
+    fallbackSleep:"El insomnio prenatal es normal. Prueba la posición de lado izquierdo con almohada de embarazo, la respiración 4-7-8 y evita pantallas 1 hora antes de dormir.",
+  },
+  en: { greeting:"Hi, I'm Glow — your personal Lumé assistant. Ask me anything about your pregnancy, symptoms, nutrition, or wellness. I'm here any time. How can I help today?",
+    limit:" free questions for today. Activate Wellness for unlimited chats with Glow, any time. \uD83D\uDC9B", usedPrefix:"You've used your ",
+    clearChat:"Clear chat", header:"Lumé Assistant", week:"Wk.", aiContext:"AI Context", noSx:"No symptoms · edit",
+    weekOf:"Pregnancy week", wk4:"Wk. 4", wk42:"Wk. 42", activeSx:"Active symptoms", of5:"/5 selected",
+    saveCtx:"Save context", ctxUpdated:"Context updated", inputPh:"Type your question\u2026",
+    freeMid:" of ", freeSuffix:" free questions today · Activate Wellness for unlimited",
+    tri:["First trimester","Second trimester","Third trimester"],
+    sxList:["Nausea", "Fatigue", "Lower back pain", "Heartburn", "Insomnia", "Dizziness", "Cramps", "Cravings", "Bloating", "Feeling good"],
+    aiLang:"Respond in English with warmth and medical accuracy.",
+    fallbackDefault:"For any new symptom or concern, your OB-GYN or midwife is always your best support. Lumé is here to walk with you. Is there anything else I can help with? \uD83D\uDC9B",
+    fallbackNausea:"Nausea is very common in pregnancy. Eat small, frequent portions, try ginger, and keep crackers close at hand for when you wake up. If you can't keep liquids down, tell your doctor.",
+    fallbackBack:"Back pain is very common as your baby grows. Gentle heat on the lower back, a pillow between your knees while sleeping, and gentle stretches help a lot.",
+    fallbackFood:"Prenatal nutrition is key. Prioritize protein, iron, calcium, folic acid, and omega-3. Avoid raw or uncooked deli meats.",
+    fallbackSleep:"Prenatal insomnia is normal. Try sleeping on your left side with a pregnancy pillow, 4-7-8 breathing, and avoid screens 1 hour before bed.",
+  },
+};
+
+function Asistente({ goToTab } = {}) {
+  const isPremium = React.useMemo(()=>{try{return !!localStorage.getItem("lume_premium");}catch{return false;}}, []);
+  const aiLang = getAppLang2();
+  const at = AI_T[aiLang];
+  const FREE_CHATS = 3;
+  const chatKey = "lume_chats_" + new Date().toISOString().slice(0,10);
+  const INITIAL_MSG = at.greeting;
 
   /* ── Estado del chat ── */
   const [msgs, setMsgs] = React.useState([{ who: "bot", text: INITIAL_MSG }]);
   const [val, setVal] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const [chatsToday, setChatsToday] = React.useState(() => { try { return parseInt(localStorage.getItem(chatKey) || "0") || 0; } catch { return 0; } });
   const logRef = React.useRef(null);
 
   /* ── Estado del contexto editable ── */
@@ -30,8 +72,8 @@ function Asistente() {
   const [ctxSaved, setCtxSaved] = React.useState(false);
 
   const tri = editWeeks <= 13 ? 1 : editWeeks <= 26 ? 2 : 3;
-  const triLabel = ["Primer trimestre", "Segundo trimestre", "Tercer trimestre"][tri - 1];
-  const SX_LIST = ["Náuseas", "Cansancio", "Dolor lumbar", "Acidez", "Insomnio", "Mareos", "Calambres", "Antojos", "Hinchazón", "Buen ánimo"];
+  const triLabel = at.tri[tri - 1];
+  const SX_LIST = at.sxList;
 
   React.useEffect(() => {
     const l = logRef.current;
@@ -56,15 +98,25 @@ function Asistente() {
   const send = async (text) => {
     const t = (text ?? val).trim();
     if (!t || loading) return;
+    if (!isPremium && chatsToday >= FREE_CHATS) {
+      setVal("");
+      setMsgs(m => [...m, { who: "me", text: t }, { who: "bot", text: at.usedPrefix + FREE_CHATS + at.limit }]);
+      return;
+    }
     setVal("");
     setMsgs(m => [...m, { who: "me", text: t }]);
     setLoading(true);
+    if (!isPremium) {
+      const n = chatsToday + 1;
+      setChatsToday(n);
+      try { localStorage.setItem(chatKey, String(n)); } catch {}
+    }
     try {
       const nombre = localStorage.getItem("lume_nombre") || "Sofía";
       const due = localStorage.getItem("lume_due") || "";
-      const sxStr = editSx.length ? editSx.join(", ") : "ninguno reportado";
+      const sxStr = editSx.length ? editSx.join(", ") : (aiLang==="en"?"none reported":"ninguno reportado");
       // Build context prompt — simple string form, most compatible
-      const ctx = `Eres Glow, el asistente de IA de Lumé. Hablas con ${nombre}, semana ${editWeeks} (${triLabel}).${due ? " Parto esperado: " + due + "." : ""} Síntomas activos: ${sxStr}. Responde en español con calidez y precisión médica. Máximo 3 párrafos cortos. Sin markdown. Nunca reemplaces al médico.`;
+      const ctx = `Eres Glow, el asistente de IA de Lumé. Hablas con ${nombre}, semana ${editWeeks} (${triLabel}).${due ? " Parto esperado: " + due + "." : ""} Síntomas activos: ${sxStr}. ${at.aiLang} Máximo 3 párrafos cortos. Sin markdown. Nunca reemplaces al médico.`;
       // Include last 4 exchanges as context in the prompt
       const recent = msgs.slice(-8).filter(m => m.who !== "bot" || m.text !== INITIAL_MSG);
       const history = recent.map(m => (m.who === "me" ? "Usuaria: " : "Glow: ") + m.text).join("\n");
@@ -74,11 +126,11 @@ function Asistente() {
     } catch (e) {
       console.error('[Glow]', e);
       const lower = t.toLowerCase();
-      let fallback = "Ante cualquier síntoma nuevo o preocupación, tu ginecóloga o matrona son siempre tu mejor apoyo. Lumé está aquí para acompañarte. ¿Hay algo más en lo que pueda orientarte? 💛";
-      if (lower.match(/nause|vomit|mareo/)) fallback = "Las náuseas son muy frecuentes en el embarazo. Come porciones pequeñas y frecuentes, prueba el jengibre y mantén galletas a mano al despertar. Si no puedes retener líquidos, avisa a tu médica.";
-      else if (lower.match(/dolor|espalda|calambr/)) fallback = "El dolor de espalda es muy común conforme el bebé crece. Calor suave en la zona lumbar, almohada entre las rodillas al dormir y estiramientos suaves ayudan mucho.";
-      else if (lower.match(/com|aliment|nutri|comer|receta/)) fallback = "La nutrición prenatal es clave. Prioriza proteínas, hierro, calcio, ácido fólico y omega-3. Evita crudos y embutidos sin cocinar.";
-      else if (lower.match(/dormir|insomnio|sue/)) fallback = "El insomnio prenatal es normal. Prueba la posición de lado izquierdo con almohada de embarazo, la respiración 4-7-8 y evita pantallas 1 hora antes de dormir.";
+      let fallback = at.fallbackDefault;
+      if (lower.match(/nause|vomit|mareo|sick/)) fallback = at.fallbackNausea;
+      else if (lower.match(/dolor|espalda|calambr|back pain/)) fallback = at.fallbackBack;
+      else if (lower.match(/com|aliment|nutri|comer|receta|food|eat/)) fallback = at.fallbackFood;
+      else if (lower.match(/dormir|insomnio|sue|sleep/)) fallback = at.fallbackSleep;
       setMsgs(m => [...m, { who: "bot", text: fallback }]);
     }
     setLoading(false);
@@ -119,10 +171,10 @@ function Asistente() {
           <AppIcon name="spark" size={30}/>
         </div>
         <div style={{ flex: 1 }}>
-          <h3 style={{ margin: 0 }}>Asistente Lumé</h3>
-          <div className="st" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Glow · Sem. {editWeeks} · T{tri}{editSx.length ? ` · ${editSx[0]}` : ""}</div>
+          <h3 style={{ margin: 0 }}>{at.header}</h3>
+          <div className="st" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Glow · {at.week} {editWeeks} · T{tri}{editSx.length ? ` · ${editSx[0]}` : ""}</div>
         </div>
-        <button onClick={clearChat} title="Limpiar chat" style={{ width: 34, height: 34, borderRadius: "50%", border: "1px solid rgba(168,73,42,.18)", background: "rgba(255,255,255,.55)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", color: "#A8492A", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, boxShadow: "0 4px 12px rgba(168,73,42,.15)" }}>
+        <button onClick={clearChat} title={at.clearChat} style={{ width: 34, height: 34, borderRadius: "50%", border: "1px solid rgba(168,73,42,.18)", background: "rgba(255,255,255,.55)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", color: "#A8492A", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, boxShadow: "0 4px 12px rgba(168,73,42,.15)" }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
         </button>
       </div>
@@ -143,13 +195,13 @@ function Asistente() {
 
             {/* Chips de contexto */}
             <div style={{ flex: 1, display: "flex", flexWrap: "wrap", gap: 5, alignItems: "center" }}>
-              <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".13em", textTransform: "uppercase", color: "#A8492A", opacity: .72, marginRight: 2 }}>Contexto IA</span>
-              <span style={{ fontSize: 11.5, fontWeight: 700, color: "#5a3a2a", background: "rgba(168,73,42,.11)", border: "1px solid rgba(168,73,42,.2)", borderRadius: 20, padding: "2px 10px" }}>Sem. {editWeeks}</span>
+              <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".13em", textTransform: "uppercase", color: "#A8492A", opacity: .72, marginRight: 2 }}>{at.aiContext}</span>
+              <span style={{ fontSize: 11.5, fontWeight: 700, color: "#5a3a2a", background: "rgba(168,73,42,.11)", border: "1px solid rgba(168,73,42,.2)", borderRadius: 20, padding: "2px 10px" }}>{at.week} {editWeeks}</span>
               <span style={{ fontSize: 11.5, fontWeight: 700, color: "#5a3a2a", background: "rgba(168,73,42,.11)", border: "1px solid rgba(168,73,42,.2)", borderRadius: 20, padding: "2px 10px" }}>T{tri}</span>
               {editSx.length > 0 ? editSx.slice(0, 3).map(s => (
                 <span key={s} style={{ fontSize: 11, fontWeight: 600, color: "#7a4535", background: "rgba(168,73,42,.07)", border: "1px solid rgba(168,73,42,.15)", borderRadius: 20, padding: "2px 9px" }}>{s}</span>
               )) : (
-                <span style={{ fontSize: 11, color: "#b09080", fontStyle: "italic" }}>Sin síntomas · editar</span>
+                <span style={{ fontSize: 11, color: "#b09080", fontStyle: "italic" }}>{at.noSx}</span>
               )}
             </div>
 
@@ -165,7 +217,7 @@ function Asistente() {
 
               {/* — Semana — */}
               <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "#A8492A", opacity: .7, marginBottom: 10 }}>Semana de embarazo</div>
+                <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "#A8492A", opacity: .7, marginBottom: 10 }}>{at.weekOf}</div>
                 <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
                   <button className="wk-btn" onClick={() => setEditWeeks(w => Math.max(4, w - 1))} style={{ width: 38, height: 38, borderRadius: "50%", border: "1.5px solid rgba(168,73,42,.22)", background: "rgba(255,255,255,.75)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", color: "#A8492A", fontSize: 20, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, boxShadow: "0 4px 14px rgba(168,73,42,.12)" }}>−</button>
                   <div style={{ flex: 1, textAlign: "center" }}>
@@ -179,16 +231,16 @@ function Asistente() {
                   <div style={{ height: "100%", width: `${pct}%`, background: "linear-gradient(90deg, #A8492A, #D4AF80)", borderRadius: 5, transition: "width .22s ease" }}></div>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
-                  <span style={{ fontSize: 10, color: "#c0a090" }}>Sem. 4</span>
-                  <span style={{ fontSize: 10, color: "#c0a090" }}>Sem. 42</span>
+                  <span style={{ fontSize: 10, color: "#c0a090" }}>{at.wk4}</span>
+                  <span style={{ fontSize: 10, color: "#c0a090" }}>{at.wk42}</span>
                 </div>
               </div>
 
               {/* — Síntomas activos — */}
               <div style={{ marginBottom: 16 }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                  <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "#A8492A", opacity: .7 }}>Síntomas activos</div>
-                  <div style={{ fontSize: 10, color: "#b09080" }}>{editSx.length}/5 seleccionados</div>
+                  <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "#A8492A", opacity: .7 }}>{at.activeSx}</div>
+                  <div style={{ fontSize: 10, color: "#b09080" }}>{editSx.length}{at.of5}</div>
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
                   {SX_LIST.map((s, idx) => {
@@ -224,9 +276,9 @@ function Asistente() {
                 {ctxSaved ? (
                   <>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12l4.5 4.5L19 7"/></svg>
-                    Contexto actualizado
+                    {at.ctxUpdated}
                   </>
-                ) : "Guardar contexto"}
+                ) : at.saveCtx}
               </button>
             </div>
           )}
@@ -270,9 +322,15 @@ function Asistente() {
         ))}
       </div>
 
+      {!isPremium && (
+        <div onClick={() => goToTab && goToTab("premium")} style={{ position: "relative", zIndex: 2, margin: "0 14px 8px", padding: "8px 14px", borderRadius: 12, background: "rgba(168,73,42,.08)", border: "1px solid rgba(168,73,42,.18)", fontSize: 11.5, fontWeight: 600, color: "#A8492A", textAlign: "center", cursor: "pointer" }}>
+          {Math.max(0, FREE_CHATS - chatsToday)}{at.freeMid}{FREE_CHATS}{at.freeSuffix}
+        </div>
+      )}
+
       {/* ── Input ── */}
       <div className="chat-input" style={{ position: "relative", zIndex: 2, background: "rgba(236,220,200,.82)", backdropFilter: "blur(22px) saturate(145%)", WebkitBackdropFilter: "blur(22px) saturate(145%)" }}>
-        <input value={val} onChange={e => setVal(e.target.value)} onKeyDown={e => { if (e.key === "Enter") send(); }} placeholder="Escribe tu pregunta…" disabled={loading} style={{ opacity: loading ? .6 : 1 }} />
+        <input value={val} onChange={e => setVal(e.target.value)} onKeyDown={e => { if (e.key === "Enter") send(); }} placeholder={at.inputPh} disabled={loading} style={{ opacity: loading ? .6 : 1 }} />
         <button className="send" onClick={() => send()} aria-label="Enviar" disabled={loading} style={{ opacity: loading ? .5 : 1 }}>
           <AppIcon name="send" size={26}/>
         </button>
@@ -282,45 +340,57 @@ function Asistente() {
 }
 
 const NAMES = [
-  { nm:"Valentina",   g:"Niña", ipa:"va·len·TEE·na",   origin:"Latín",      mean:"Fuerte, valiente y llena de vitalidad." },
-  { nm:"Mateo",       g:"Niño", ipa:"ma·TEH·o",        origin:"Hebreo",     mean:"Regalo de Dios; un don esperado." },
-  { nm:"Aurora",      g:"Niña", ipa:"au·RO·ra",        origin:"Latín",      mean:"El amanecer, la primera luz del día." },
-  { nm:"Thiago",      g:"Niño", ipa:"ti·A·go",         origin:"Griego",     mean:"El que sostiene firme; sereno y noble." },
-  { nm:"Olivia",      g:"Niña", ipa:"o·LI·via",        origin:"Latín",      mean:"Símbolo de paz, como la rama de olivo." },
-  { nm:"Bruno",       g:"Niño", ipa:"BRU·no",          origin:"Germánico",  mean:"De cálido color tierra; protector." },
-  { nm:"Lucía",       g:"Niña", ipa:"lu·SEE·a",        origin:"Latín",      mean:"Luz; la que trae claridad al mundo." },
-  { nm:"Santiago",    g:"Niño", ipa:"san·TIA·go",      origin:"Hebreo",     mean:"El que sigue a Dios; fiel y constante." },
-  { nm:"Sofía",       g:"Niña", ipa:"so·FEE·a",        origin:"Griego",     mean:"Sabiduría serena y profunda." },
-  { nm:"Benjamín",    g:"Niño", ipa:"ben·ja·MIN",      origin:"Hebreo",     mean:"Hijo predilecto, el más querido." },
-  { nm:"Emma",        g:"Niña", ipa:"E·ma",            origin:"Germánico",  mean:"Universal, fuerte y completa." },
-  { nm:"Lucas",       g:"Niño", ipa:"LU·cas",          origin:"Latín",      mean:"Nacido con la luz del amanecer." },
-  { nm:"Isabella",    g:"Niña", ipa:"i·sa·BE·la",      origin:"Hebreo",     mean:"Promesa de Dios; gracia y devoción." },
-  { nm:"Emiliano",    g:"Niño", ipa:"e·mi·LIA·no",     origin:"Latín",      mean:"Esforzado, amable y trabajador." },
-  { nm:"Camila",      g:"Niña", ipa:"ca·MI·la",        origin:"Latín",      mean:"La que está cerca, noble y atenta." },
-  { nm:"Joaquín",     g:"Niño", ipa:"jo·a·KIN",        origin:"Hebreo",     mean:"Dios construye y sostiene." },
-  { nm:"Martina",     g:"Niña", ipa:"mar·TI·na",       origin:"Latín",      mean:"Consagrada a la fuerza y la valentía." },
-  { nm:"Maximiliano", g:"Niño", ipa:"max·i·mi·LIA·no", origin:"Latín",      mean:"El más grande, de gran nobleza." },
-  { nm:"Julieta",     g:"Niña", ipa:"ju·LIE·ta",       origin:"Latín",      mean:"Joven y luminosa, de raíz noble." },
-  { nm:"Dante",       g:"Niño", ipa:"DAN·te",          origin:"Latín",      mean:"Firme y duradero en su voluntad." },
-  { nm:"Renata",      g:"Niña", ipa:"re·NA·ta",        origin:"Latín",      mean:"La que vuelve a nacer; renovada." },
-  { nm:"Gael",        g:"Niño", ipa:"ga·EL",           origin:"Bretón",     mean:"Generoso, de espíritu libre." },
-  { nm:"Catalina",    g:"Niña", ipa:"ca·ta·LI·na",     origin:"Griego",     mean:"Pura y limpia de corazón." },
-  { nm:"Sebastián",   g:"Niño", ipa:"se·bas·TIAN",     origin:"Griego",     mean:"Venerable y digno de respeto." },
-  { nm:"Elena",       g:"Niña", ipa:"e·LE·na",         origin:"Griego",     mean:"Antorcha brillante, la que ilumina." },
-  { nm:"Nicolás",     g:"Niño", ipa:"ni·co·LAS",       origin:"Griego",     mean:"La victoria del pueblo." },
-  { nm:"Antonella",   g:"Niña", ipa:"an·to·NE·la",     origin:"Latín",      mean:"Inestimable, de valor incalculable." },
-  { nm:"Lorenzo",     g:"Niño", ipa:"lo·REN·zo",       origin:"Latín",      mean:"Coronado de laurel, victorioso." },
-  { nm:"Victoria",    g:"Niña", ipa:"vic·TO·ria",      origin:"Latín",      mean:"La que triunfa con gracia." },
-  { nm:"Tomás",       g:"Niño", ipa:"to·MAS",          origin:"Arameo",     mean:"Hermano cercano; leal y constante." },
-  { nm:"Mía",         g:"Niña", ipa:"MI·a",            origin:"Italiano",   mean:"Mía; querida y muy amada." },
-  { nm:"Ian",         g:"Niño", ipa:"I·an",            origin:"Hebreo",     mean:"Dios es misericordioso." },
-  { nm:"Regina",      g:"Niña", ipa:"re·JI·na",        origin:"Latín",      mean:"Reina, de espíritu digno." },
-  { nm:"Alejandro",   g:"Niño", ipa:"a·le·JAN·dro",    origin:"Griego",     mean:"Protector y defensor de todos." },
-  { nm:"Daniela",     g:"Niña", ipa:"da·NIE·la",       origin:"Hebreo",     mean:"Dios es mi juez y mi guía." },
-  { nm:"Liam",        g:"Niño", ipa:"LI·am",           origin:"Irlandés",   mean:"Protector decidido y voluntarioso." },
+  { nm:"Valentina", g:"Niña", ipa:"va·len·TEE·na", origin:"Latín", originEn:"Latin", mean:"Fuerte, valiente y llena de vitalidad.", meanEn:"Strong, brave, and full of vitality." },
+  { nm:"Mateo", g:"Niño", ipa:"ma·TEH·o", origin:"Hebreo", originEn:"Hebrew", mean:"Regalo de Dios; un don esperado.", meanEn:"Gift of God; a long-awaited blessing." },
+  { nm:"Aurora", g:"Niña", ipa:"au·RO·ra", origin:"Latín", originEn:"Latin", mean:"El amanecer, la primera luz del día.", meanEn:"The dawn, the first light of day." },
+  { nm:"Thiago", g:"Niño", ipa:"ti·A·go", origin:"Griego", originEn:"Greek", mean:"El que sostiene firme; sereno y noble.", meanEn:"He who holds firm; calm and noble." },
+  { nm:"Olivia", g:"Niña", ipa:"o·LI·via", origin:"Latín", originEn:"Latin", mean:"Símbolo de paz, como la rama de olivo.", meanEn:"Symbol of peace, like the olive branch." },
+  { nm:"Bruno", g:"Niño", ipa:"BRU·no", origin:"Germánico", originEn:"Germanic", mean:"De cálido color tierra; protector.", meanEn:"Of warm earthy color; a protector." },
+  { nm:"Lucía", g:"Niña", ipa:"lu·SEE·a", origin:"Latín", originEn:"Latin", mean:"Luz; la que trae claridad al mundo.", meanEn:"Light; she who brings clarity to the world." },
+  { nm:"Santiago", g:"Niño", ipa:"san·TIA·go", origin:"Hebreo", originEn:"Hebrew", mean:"El que sigue a Dios; fiel y constante.", meanEn:"He who follows God; faithful and steadfast." },
+  { nm:"Sofía", g:"Niña", ipa:"so·FEE·a", origin:"Griego", originEn:"Greek", mean:"Sabiduría serena y profunda.", meanEn:"Calm and profound wisdom." },
+  { nm:"Benjamín", g:"Niño", ipa:"ben·ja·MIN", origin:"Hebreo", originEn:"Hebrew", mean:"Hijo predilecto, el más querido.", meanEn:"Favorite son, the most beloved." },
+  { nm:"Emma", g:"Niña", ipa:"E·ma", origin:"Germánico", originEn:"Germanic", mean:"Universal, fuerte y completa.", meanEn:"Universal, strong, and whole." },
+  { nm:"Lucas", g:"Niño", ipa:"LU·cas", origin:"Latín", originEn:"Latin", mean:"Nacido con la luz del amanecer.", meanEn:"Born with the light of dawn." },
+  { nm:"Isabella", g:"Niña", ipa:"i·sa·BE·la", origin:"Hebreo", originEn:"Hebrew", mean:"Promesa de Dios; gracia y devoción.", meanEn:"Promise of God; grace and devotion." },
+  { nm:"Emiliano", g:"Niño", ipa:"e·mi·LIA·no", origin:"Latín", originEn:"Latin", mean:"Esforzado, amable y trabajador.", meanEn:"Diligent, kind, and hardworking." },
+  { nm:"Camila", g:"Niña", ipa:"ca·MI·la", origin:"Latín", originEn:"Latin", mean:"La que está cerca, noble y atenta.", meanEn:"She who is near, noble and attentive." },
+  { nm:"Joaquín", g:"Niño", ipa:"jo·a·KIN", origin:"Hebreo", originEn:"Hebrew", mean:"Dios construye y sostiene.", meanEn:"God builds and sustains." },
+  { nm:"Martina", g:"Niña", ipa:"mar·TI·na", origin:"Latín", originEn:"Latin", mean:"Consagrada a la fuerza y la valentía.", meanEn:"Devoted to strength and courage." },
+  { nm:"Maximiliano", g:"Niño", ipa:"max·i·mi·LIA·no", origin:"Latín", originEn:"Latin", mean:"El más grande, de gran nobleza.", meanEn:"The greatest, of great nobility." },
+  { nm:"Julieta", g:"Niña", ipa:"ju·LIE·ta", origin:"Latín", originEn:"Latin", mean:"Joven y luminosa, de raíz noble.", meanEn:"Young and radiant, of noble root." },
+  { nm:"Dante", g:"Niño", ipa:"DAN·te", origin:"Latín", originEn:"Latin", mean:"Firme y duradero en su voluntad.", meanEn:"Firm and enduring in his will." },
+  { nm:"Renata", g:"Niña", ipa:"re·NA·ta", origin:"Latín", originEn:"Latin", mean:"La que vuelve a nacer; renovada.", meanEn:"She who is reborn; renewed." },
+  { nm:"Gael", g:"Niño", ipa:"ga·EL", origin:"Bretón", originEn:"Breton", mean:"Generoso, de espíritu libre.", meanEn:"Generous, of a free spirit." },
+  { nm:"Catalina", g:"Niña", ipa:"ca·ta·LI·na", origin:"Griego", originEn:"Greek", mean:"Pura y limpia de corazón.", meanEn:"Pure and clean of heart." },
+  { nm:"Sebastián", g:"Niño", ipa:"se·bas·TIAN", origin:"Griego", originEn:"Greek", mean:"Venerable y digno de respeto.", meanEn:"Venerable and worthy of respect." },
+  { nm:"Elena", g:"Niña", ipa:"e·LE·na", origin:"Griego", originEn:"Greek", mean:"Antorcha brillante, la que ilumina.", meanEn:"Bright torch, she who illuminates." },
+  { nm:"Nicolás", g:"Niño", ipa:"ni·co·LAS", origin:"Griego", originEn:"Greek", mean:"La victoria del pueblo.", meanEn:"Victory of the people." },
+  { nm:"Antonella", g:"Niña", ipa:"an·to·NE·la", origin:"Latín", originEn:"Latin", mean:"Inestimable, de valor incalculable.", meanEn:"Priceless, of inestimable worth." },
+  { nm:"Lorenzo", g:"Niño", ipa:"lo·REN·zo", origin:"Latín", originEn:"Latin", mean:"Coronado de laurel, victorioso.", meanEn:"Crowned with laurel, victorious." },
+  { nm:"Victoria", g:"Niña", ipa:"vic·TO·ria", origin:"Latín", originEn:"Latin", mean:"La que triunfa con gracia.", meanEn:"She who triumphs with grace." },
+  { nm:"Tomás", g:"Niño", ipa:"to·MAS", origin:"Arameo", originEn:"Aramaic", mean:"Hermano cercano; leal y constante.", meanEn:"Close brother; loyal and steadfast." },
+  { nm:"Mía", g:"Niña", ipa:"MI·a", origin:"Italiano", originEn:"Italian", mean:"Mía; querida y muy amada.", meanEn:"Mine; dear and deeply loved." },
+  { nm:"Ian", g:"Niño", ipa:"I·an", origin:"Hebreo", originEn:"Hebrew", mean:"Dios es misericordioso.", meanEn:"God is gracious." },
+  { nm:"Regina", g:"Niña", ipa:"re·JI·na", origin:"Latín", originEn:"Latin", mean:"Reina, de espíritu digno.", meanEn:"Queen, of dignified spirit." },
+  { nm:"Alejandro", g:"Niño", ipa:"a·le·JAN·dro", origin:"Griego", originEn:"Greek", mean:"Protector y defensor de todos.", meanEn:"Protector and defender of all." },
+  { nm:"Daniela", g:"Niña", ipa:"da·NIE·la", origin:"Hebreo", originEn:"Hebrew", mean:"Dios es mi juez y mi guía.", meanEn:"God is my judge and my guide." },
+  { nm:"Liam", g:"Niño", ipa:"LI·am", origin:"Irlandés", originEn:"Irish", mean:"Protector decidido y voluntarioso.", meanEn:"Determined and resolute protector." },
 ];
 
 function Nombres({ goBack }) {
+  const nlang = getAppLang2();
+  const NM_T = nlang==="en" ? {
+    forBaby:"For your baby", title:"Names", sub:"Swipe to discover · Save the ones you love",
+    backAria:"Back", noBg:{ Niña:"Girl", Niño:"Boy" }, origin:"Origin",
+    nope:"Discard", like:"Like", left:"Left · discard", right:"Right · save",
+    favBtn:"favorites", favTitle:"Your picks", favHeading:"Favorite names", favEmpty:"No favorites yet. Swipe ❤\uFE0F the names you love.",
+  } : {
+    forBaby:"Para tu bebé", title:"Nombres", sub:"Desliza para descubrir · Guarda los que enamoran",
+    backAria:"Regresar", noBg:{ Niña:"Niña", Niño:"Niño" }, origin:"Origen",
+    nope:"Descartar", like:"Me gusta", left:"Izquierda · descartar", right:"Derecha · guardar",
+    favBtn:"favoritos", favTitle:"Tus elegidos", favHeading:"Nombres favoritos", favEmpty:"Aún no tienes favoritos. Desliza ❤\uFE0F los nombres que más te gusten.",
+  };
   const [idx, setIdx] = React.useState(0);
   const [favNames, setFavNames] = React.useState(() => { try { return JSON.parse(localStorage.getItem("lume_fav_names")) || ["Lucía", "Mateo"]; } catch { return ["Lucía", "Mateo"]; } });
   const [swipe, setSwipe] = React.useState("");
@@ -401,9 +471,9 @@ function Nombres({ goBack }) {
           </button>
         )}
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .65, marginBottom: 5 }}>Para tu bebé</div>
-          <h2 style={{ margin: 0, fontSize: 23, fontWeight: 800, color: "#3d1a0e", letterSpacing: "-.3px", lineHeight: 1, marginBottom: 4 }}>Nombres</h2>
-          <p style={{ margin: 0, fontSize: 11.5, color: "#a08070" }}>Desliza para descubrir · Guarda los que enamoran</p>
+          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .65, marginBottom: 5 }}>{NM_T.forBaby}</div>
+          <h2 style={{ margin: 0, fontSize: 23, fontWeight: 800, color: "#3d1a0e", letterSpacing: "-.3px", lineHeight: 1, marginBottom: 4 }}>{NM_T.title}</h2>
+          <p style={{ margin: 0, fontSize: 11.5, color: "#a08070" }}>{NM_T.sub}</p>
         </div>
         <button
           onClick={() => setShowFavs(true)}
@@ -420,7 +490,7 @@ function Nombres({ goBack }) {
         <div style={{ position: "relative", width: "100%", height: 400 }}>
           {/* Carta de atrás */}
           <div style={{ position: "absolute", inset: 0, borderRadius: 28, padding: 28, ...glassCard, transform: "scale(.92) translateY(22px)", filter: "saturate(.8)", zIndex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-            <span style={{ alignSelf: "flex-start", fontSize: 10.5, fontWeight: 800, letterSpacing: ".09em", textTransform: "uppercase", padding: "6px 14px", borderRadius: 99, background: GENDER[next.g].soft, color: GENDER[next.g].color }}>{next.g}</span>
+            <span style={{ alignSelf: "flex-start", fontSize: 10.5, fontWeight: 800, letterSpacing: ".09em", textTransform: "uppercase", padding: "6px 14px", borderRadius: 99, background: GENDER[next.g].soft, color: GENDER[next.g].color }}>{NM_T.noBg[next.g]}</span>
             <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 52, lineHeight: 1, color: "#3d1a0e", opacity: .5 }}>{next.nm}</div>
             <div></div>
           </div>
@@ -458,10 +528,10 @@ function Nombres({ goBack }) {
             {/* Halo decorativo por género */}
             <div style={{ position: "absolute", top: -50, right: -40, width: 210, height: 210, borderRadius: "50%", background: `radial-gradient(circle, ${g.halo}, transparent 65%)`, pointerEvents: "none" }}></div>
 
-            <span className="nm-stamp like" style={{ right: 24, color: "#3e8836", borderColor: "#3e8836", opacity: drag.x > 40 ? Math.min(1, (drag.x - 40) / 60) : undefined }}>Favorito</span>
-            <span className="nm-stamp nope" style={{ left: 24, color: "#c04040", borderColor: "#c04040", opacity: drag.x < -40 ? Math.min(1, (-drag.x - 40) / 60) : undefined }}>Quizás no</span>
+            <span className="nm-stamp like" style={{ right: 24, color: "#3e8836", borderColor: "#3e8836", opacity: drag.x > 40 ? Math.min(1, (drag.x - 40) / 60) : undefined }}>{NM_T.like}</span>
+            <span className="nm-stamp nope" style={{ left: 24, color: "#c04040", borderColor: "#c04040", opacity: drag.x < -40 ? Math.min(1, (-drag.x - 40) / 60) : undefined }}>{nlang==="en"?"Maybe not":"Quizás no"}</span>
 
-            <span style={{ alignSelf: "flex-start", fontSize: 10.5, fontWeight: 800, letterSpacing: ".09em", textTransform: "uppercase", padding: "6px 14px", borderRadius: 99, background: g.soft, color: g.color, border: `1px solid ${g.color}33`, position: "relative", zIndex: 1 }}>{cur.g}</span>
+            <span style={{ alignSelf: "flex-start", fontSize: 10.5, fontWeight: 800, letterSpacing: ".09em", textTransform: "uppercase", padding: "6px 14px", borderRadius: 99, background: g.soft, color: g.color, border: `1px solid ${g.color}33`, position: "relative", zIndex: 1 }}>{NM_T.noBg[cur.g]}</span>
 
             <div style={{ position: "relative", zIndex: 1, pointerEvents: "none", maxWidth: "72%" }}>
               <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 60, fontWeight: 700, lineHeight: 1, letterSpacing: "-.02em", color: "#3d1a0e" }}>{cur.nm}</div>
@@ -471,9 +541,9 @@ function Nombres({ goBack }) {
             <div style={{ position: "relative", zIndex: 1, pointerEvents: "none", maxWidth: "76%" }}>
               <div style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 10.5, fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase", color: g.color, padding: "4px 11px", borderRadius: 99, background: g.soft, marginBottom: 10 }}>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/></svg>
-                Origen {cur.origin}
+                {NM_T.origin} {nlang==="en"?cur.originEn:cur.origin}
               </div>
-              <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 21, fontWeight: 600, color: "#5a3a2a", lineHeight: 1.4, fontStyle: "italic", marginBottom: 18 }}>{cur.mean}</div>
+              <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 21, fontWeight: 600, color: "#5a3a2a", lineHeight: 1.4, fontStyle: "italic", marginBottom: 18 }}>{nlang==="en"?cur.meanEn:cur.mean}</div>
 
               {/* Pills deslizá ambos lados */}
               <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
@@ -492,10 +562,10 @@ function Nombres({ goBack }) {
 
         {/* ── Botones de acción ── */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 26, marginTop: 28 }}>
-          <button onClick={() => act("nope")} aria-label="Descartar" style={{ width: 60, height: 60, borderRadius: "50%", border: "1px solid rgba(168,73,42,.14)", background: "rgba(255,255,255,.6)", backdropFilter: "blur(12px)", color: "#c04040", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 10px 28px -8px rgba(100,40,20,.3)", transition: "transform .18s" }}>
+          <button onClick={() => act("nope")} aria-label={NM_T.nope} style={{ width: 60, height: 60, borderRadius: "50%", border: "1px solid rgba(168,73,42,.14)", background: "rgba(255,255,255,.6)", backdropFilter: "blur(12px)", color: "#c04040", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 10px 28px -8px rgba(100,40,20,.3)", transition: "transform .18s" }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
-          <button onClick={() => act("like")} aria-label="Me gusta" style={{ width: 74, height: 74, borderRadius: "50%", border: "none", background: "linear-gradient(135deg,#c4693a,#A8492A)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 14px 34px -8px rgba(168,73,42,.6)", transition: "transform .18s" }}>
+          <button onClick={() => act("like")} aria-label={NM_T.like} style={{ width: 74, height: 74, borderRadius: "50%", border: "none", background: "linear-gradient(135deg,#c4693a,#A8492A)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 14px 34px -8px rgba(168,73,42,.6)", transition: "transform .18s" }}>
             <svg width="32" height="32" viewBox="0 0 24 24" fill="#fff"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
           </button>
         </div>
@@ -504,18 +574,18 @@ function Nombres({ goBack }) {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginTop: 14 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 700, color: "#c04040" }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            Izquierda · descartar
+            {NM_T.left}
           </div>
           <div style={{ width: 1, height: 12, background: "rgba(168,73,42,.2)" }}></div>
           <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 700, color: "#3e8836" }}>
-            Derecha · guardar
+            {NM_T.right}
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
         </div>
 
         <button onClick={() => setShowFavs(true)} style={{ display: "inline-flex", alignItems: "center", gap: 7, marginTop: 22, padding: "8px 16px", borderRadius: 99, background: "rgba(168,73,42,.07)", border: "1px solid rgba(168,73,42,.13)", color: "#A8492A", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="#A8492A"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          {favNames.length} favoritos {favNames.length > 0 ? "· " + favNames.slice(-2).join(", ") : ""}
+          {favNames.length} {NM_T.favBtn} {favNames.length > 0 ? "· " + favNames.slice(-2).join(", ") : ""}
         </button>
       </div>
 
@@ -526,8 +596,8 @@ function Nombres({ goBack }) {
             <div style={{ width: 38, height: 4, borderRadius: 99, background: "rgba(168,73,42,.2)", margin: "0 auto 20px" }}></div>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
               <div>
-                <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .65, marginBottom: 4 }}>Tus elegidos</div>
-                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 24, fontWeight: 700, color: "#3d1a0e" }}>Nombres favoritos</div>
+                <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", color: "#A8492A", opacity: .65, marginBottom: 4 }}>{NM_T.favTitle}</div>
+                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 24, fontWeight: 700, color: "#3d1a0e" }}>{NM_T.favHeading}</div>
               </div>
               <button onClick={() => setShowFavs(false)} style={{ width: 34, height: 34, borderRadius: "50%", border: "none", background: "rgba(168,73,42,.1)", color: "#A8492A", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -535,7 +605,7 @@ function Nombres({ goBack }) {
             </div>
 
             {favNames.length === 0 ? (
-              <p style={{ textAlign: "center", padding: "30px 20px", fontSize: 13.5, color: "#a08070", lineHeight: 1.6 }}>Aún no tienes favoritos. Desliza ❤️ los nombres que más te gusten.</p>
+              <p style={{ textAlign: "center", padding: "30px 20px", fontSize: 13.5, color: "#a08070", lineHeight: 1.6 }}>{NM_T.favEmpty}</p>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
                 {favNames.map((nm) => {
@@ -548,7 +618,7 @@ function Nombres({ goBack }) {
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 19, fontWeight: 700, color: "#3d1a0e", lineHeight: 1.1 }}>{nm}</div>
-                        {info.mean && <div style={{ fontSize: 11.5, color: "#a08070", marginTop: 2, lineHeight: 1.4 }}>{info.g}{info.origin ? " · " + info.origin : ""}</div>}
+                        {info.mean && <div style={{ fontSize: 11.5, color: "#a08070", marginTop: 2, lineHeight: 1.4 }}>{NM_T.noBg[info.g]||info.g}{info.origin ? " · " + (nlang==="en"?(info.originEn||info.origin):info.origin) : ""}</div>}
                       </div>
                       <button onClick={() => removeFav(nm)} style={{ width: 30, height: 30, borderRadius: "50%", border: "1px solid rgba(200,60,60,.16)", background: "rgba(220,60,60,.06)", color: "#c04040", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
@@ -568,65 +638,65 @@ function Nombres({ goBack }) {
 /* ── Nutrición v3 — rediseño completo ─── */
 
 const NUTRI_TIPS = [
-  { t:"Hierro + vitamina C", d:"Come una naranja junto a tus lentejas o espinacas. La vitamina C triplica la absorción del hierro vegetal.", tag:"hierro" },
-  { t:"Calcio sin lácteos", d:"El brócoli, las almendras y el tofu son excelentes fuentes de calcio si no toleras bien la leche.", tag:"calcio" },
-  { t:"Folato cada día", d:"Espinacas, aguacate y lentejas junto a tu suplemento de ácido fólico cubren las necesidades de desarrollo.", tag:"folato" },
-  { t:"Proteína en cada comida", d:"Apunta a una fuente de proteína en cada comida: huevo, legumbre, pollo, salmón o tofu.", tag:"proteina" },
-  { t:"Hidratación constante", d:"Tu volumen de sangre aumenta un 50%. Los calambres y el mareo suelen ser señal de deshidratación.", tag:"hidrat" },
-  { t:"Omega-3 para el cerebro", d:"El salmón, sardinas y nueces aportan DHA, esencial para el desarrollo cerebral de tu bebé.", tag:"proteina" },
+  { t:"Hierro + vitamina C", tEn:"Iron + vitamin C", d:"Come una naranja junto a tus lentejas o espinacas. La vitamina C triplica la absorción del hierro vegetal.", dEn:"Eat an orange alongside your lentils or spinach. Vitamin C triples the absorption of plant-based iron.", tag:"hierro" },
+  { t:"Calcio sin lácteos", tEn:"Calcium without dairy", d:"El brócoli, las almendras y el tofu son excelentes fuentes de calcio si no toleras bien la leche.", dEn:"Broccoli, almonds, and tofu are excellent calcium sources if you don't tolerate milk well.", tag:"calcio" },
+  { t:"Folato cada día", tEn:"Folate every day", d:"Espinacas, aguacate y lentejas junto a tu suplemento de ácido fólico cubren las necesidades de desarrollo.", dEn:"Spinach, avocado, and lentils alongside your folic acid supplement cover developmental needs.", tag:"folato" },
+  { t:"Proteína en cada comida", tEn:"Protein at every meal", d:"Apunta a una fuente de proteína en cada comida: huevo, legumbre, pollo, salmón o tofu.", dEn:"Aim for a protein source at every meal: egg, legumes, chicken, salmon, or tofu.", tag:"proteina" },
+  { t:"Hidratación constante", tEn:"Stay hydrated", d:"Tu volumen de sangre aumenta un 50%. Los calambres y el mareo suelen ser señal de deshidratación.", dEn:"Your blood volume increases by 50%. Cramps and dizziness are often a sign of dehydration.", tag:"hidrat" },
+  { t:"Omega-3 para el cerebro", tEn:"Omega-3 for the brain", d:"El salmón, sardinas y nueces aportan DHA, esencial para el desarrollo cerebral de tu bebé.", dEn:"Salmon, sardines, and walnuts provide DHA, essential for your baby's brain development.", tag:"proteina" },
 ];
 const TODAY_TIP = NUTRI_TIPS[new Date().getDay() % NUTRI_TIPS.length];
 
 const MEAL_PLAN = [
   { cat:"Desayuno", ico:"☀️", meals:[
-    { name:"Avena con frutas rojas y semillas de chía",       tag:"calcio",   label:"Calcio",   kcal:320 },
-    { name:"Huevo revuelto con espinacas y tostada integral", tag:"proteina", label:"Proteína", kcal:280 },
-    { name:"Smoothie verde de plátano, espinaca y avena",     tag:"folato",   label:"Folato",   kcal:260 },
-    { name:"Tostadas de aguacate con huevo poché",            tag:"proteina", label:"Proteína", kcal:310 },
-    { name:"Yogur griego con granola y frutos rojos",          tag:"calcio",   label:"Calcio",   kcal:290 },
-    { name:"Panqueques de avena con miel y nueces",            tag:"proteina", label:"Proteína", kcal:350 },
-    { name:"Bowl de frutas con yogur y semillas",              tag:"calcio",   label:"Calcio",   kcal:240 },
-    { name:"Tostada integral con ricotta y fresas",            tag:"calcio",   label:"Calcio",   kcal:270 },
-    { name:"Omelet de champiñones y queso",                   tag:"proteina", label:"Proteína", kcal:300 },
-    { name:"Batido de mango, zanahoria y jengibre",            tag:"folato",   label:"Folato",   kcal:220 },
+    { name:"Avena con frutas rojas y semillas de chía", nameEn:"Oatmeal with berries and chia seeds",       tag:"calcio",   label:"Calcio",   kcal:320 },
+    { name:"Huevo revuelto con espinacas y tostada integral", nameEn:"Scrambled eggs with spinach and whole-grain toast", tag:"proteina", label:"Proteína", kcal:280 },
+    { name:"Smoothie verde de plátano, espinaca y avena", nameEn:"Green smoothie with banana, spinach, and oats",     tag:"folato",   label:"Folato",   kcal:260 },
+    { name:"Tostadas de aguacate con huevo poché", nameEn:"Avocado toast with poached egg",            tag:"proteina", label:"Proteína", kcal:310 },
+    { name:"Yogur griego con granola y frutos rojos", nameEn:"Greek yogurt with granola and berries",          tag:"calcio",   label:"Calcio",   kcal:290 },
+    { name:"Panqueques de avena con miel y nueces", nameEn:"Oat pancakes with honey and walnuts",            tag:"proteina", label:"Proteína", kcal:350 },
+    { name:"Bowl de frutas con yogur y semillas", nameEn:"Fruit bowl with yogurt and seeds",              tag:"calcio",   label:"Calcio",   kcal:240 },
+    { name:"Tostada integral con ricotta y fresas", nameEn:"Whole-grain toast with ricotta and strawberries",            tag:"calcio",   label:"Calcio",   kcal:270 },
+    { name:"Omelet de champiñones y queso", nameEn:"Mushroom and cheese omelet",                   tag:"proteina", label:"Proteína", kcal:300 },
+    { name:"Batido de mango, zanahoria y jengibre", nameEn:"Mango, carrot, and ginger smoothie",            tag:"folato",   label:"Folato",   kcal:220 },
   ]},
   { cat:"Almuerzo", ico:"🥗", meals:[
-    { name:"Lentejas con verduras y arroz integral",           tag:"folato",   label:"Folato",   kcal:420 },
-    { name:"Ensalada de espinacas, nueces y queso feta",       tag:"hierro",   label:"Hierro",   kcal:280 },
-    { name:"Crema de brócoli con pan integral",                tag:"folato",   label:"Folato",   kcal:240 },
-    { name:"Bowl de quinoa con pollo y verduras asadas",       tag:"proteina", label:"Proteína", kcal:450 },
-    { name:"Pasta integral con tomate, albahaca y mozzarella", tag:"calcio",   label:"Calcio",   kcal:380 },
-    { name:"Wrap de pollo con aguacate y lechuga",             tag:"proteina", label:"Proteína", kcal:400 },
-    { name:"Sopa de garbanzos con espinacas",                  tag:"folato",   label:"Folato",   kcal:310 },
-    { name:"Arroz con salmón teriyaki y edamame",              tag:"proteina", label:"Proteína", kcal:460 },
-    { name:"Ensalada mediterránea de garbanzos y pepino",      tag:"hierro",   label:"Hierro",   kcal:290 },
-    { name:"Tacos de atún con aguacate y pico de gallo",       tag:"proteina", label:"Proteína", kcal:370 },
+    { name:"Lentejas con verduras y arroz integral", nameEn:"Lentils with vegetables and brown rice",           tag:"folato",   label:"Folato",   kcal:420 },
+    { name:"Ensalada de espinacas, nueces y queso feta", nameEn:"Spinach salad with walnuts and feta cheese",       tag:"hierro",   label:"Hierro",   kcal:280 },
+    { name:"Crema de brócoli con pan integral", nameEn:"Broccoli cream soup with whole-grain bread",                tag:"folato",   label:"Folato",   kcal:240 },
+    { name:"Bowl de quinoa con pollo y verduras asadas", nameEn:"Quinoa bowl with chicken and roasted vegetables",       tag:"proteina", label:"Proteína", kcal:450 },
+    { name:"Pasta integral con tomate, albahaca y mozzarella", nameEn:"Whole-grain pasta with tomato, basil, and mozzarella", tag:"calcio",   label:"Calcio",   kcal:380 },
+    { name:"Wrap de pollo con aguacate y lechuga", nameEn:"Chicken wrap with avocado and lettuce",             tag:"proteina", label:"Proteína", kcal:400 },
+    { name:"Sopa de garbanzos con espinacas", nameEn:"Chickpea soup with spinach",                  tag:"folato",   label:"Folato",   kcal:310 },
+    { name:"Arroz con salmón teriyaki y edamame", nameEn:"Rice with teriyaki salmon and edamame",              tag:"proteina", label:"Proteína", kcal:460 },
+    { name:"Ensalada mediterránea de garbanzos y pepino", nameEn:"Mediterranean chickpea and cucumber salad",      tag:"hierro",   label:"Hierro",   kcal:290 },
+    { name:"Tacos de atún con aguacate y pico de gallo", nameEn:"Tuna tacos with avocado and pico de gallo",       tag:"proteina", label:"Proteína", kcal:370 },
   ]},
   { cat:"Cena", ico:"🌙", meals:[
-    { name:"Salmón al horno con quinoa y espárragos",          tag:"proteina", label:"Proteína", kcal:380 },
-    { name:"Pollo con batata asada y ensalada verde",           tag:"proteina", label:"Proteína", kcal:360 },
-    { name:"Tortilla de verduras con ensalada mixta",           tag:"proteina", label:"Proteína", kcal:290 },
-    { name:"Sopa de zanahoria con jengibre y tofu",            tag:"folato",   label:"Folato",   kcal:220 },
-    { name:"Merluza al vapor con puré de calabaza",            tag:"proteina", label:"Proteína", kcal:310 },
-    { name:"Crema de lentejas rojas con cúrcuma",              tag:"hierro",   label:"Hierro",   kcal:280 },
-    { name:"Pavo al horno con arroz y brócoli",                tag:"proteina", label:"Proteína", kcal:340 },
-    { name:"Risotto de champiñones con espinacas",             tag:"hierro",   label:"Hierro",   kcal:350 },
-    { name:"Tofu salteado con verduras y sésamo",              tag:"calcio",   label:"Calcio",   kcal:260 },
-    { name:"Pechuga de pollo con ensalada de rúcula",          tag:"proteina", label:"Proteína", kcal:290 },
+    { name:"Salmón al horno con quinoa y espárragos", nameEn:"Baked salmon with quinoa and asparagus",          tag:"proteina", label:"Proteína", kcal:380 },
+    { name:"Pollo con batata asada y ensalada verde", nameEn:"Chicken with roasted sweet potato and green salad",           tag:"proteina", label:"Proteína", kcal:360 },
+    { name:"Tortilla de verduras con ensalada mixta", nameEn:"Vegetable omelet with mixed salad",           tag:"proteina", label:"Proteína", kcal:290 },
+    { name:"Sopa de zanahoria con jengibre y tofu", nameEn:"Carrot and ginger soup with tofu",            tag:"folato",   label:"Folato",   kcal:220 },
+    { name:"Merluza al vapor con puré de calabaza", nameEn:"Steamed hake with pumpkin puree",            tag:"proteina", label:"Proteína", kcal:310 },
+    { name:"Crema de lentejas rojas con cúrcuma", nameEn:"Red lentil cream soup with turmeric",              tag:"hierro",   label:"Hierro",   kcal:280 },
+    { name:"Pavo al horno con arroz y brócoli", nameEn:"Roast turkey with rice and broccoli",                tag:"proteina", label:"Proteína", kcal:340 },
+    { name:"Risotto de champiñones con espinacas", nameEn:"Mushroom risotto with spinach",             tag:"hierro",   label:"Hierro",   kcal:350 },
+    { name:"Tofu salteado con verduras y sésamo", nameEn:"Stir-fried tofu with vegetables and sesame",              tag:"calcio",   label:"Calcio",   kcal:260 },
+    { name:"Pechuga de pollo con ensalada de rúcula", nameEn:"Chicken breast with arugula salad",          tag:"proteina", label:"Proteína", kcal:290 },
   ]},
   { cat:"Snacks", ico:"🍎", meals:[
-    { name:"Yogur griego con semillas de chía",                tag:"calcio",   label:"Calcio",   kcal:150 },
-    { name:"Aguacate sobre tostada con huevo",                 tag:"proteina", label:"Proteína", kcal:180 },
-    { name:"Smoothie de plátano, avena y leche",              tag:"calcio",   label:"Calcio",   kcal:200 },
-    { name:"Almendras y frutos secos mixtos",                  tag:"proteina", label:"Proteína", kcal:160 },
-    { name:"Manzana con mantequilla de almendras",             tag:"hierro",   label:"Hierro",   kcal:180 },
-    { name:"Dátiles con queso ricotta",                       tag:"calcio",   label:"Calcio",   kcal:140 },
-    { name:"Hummus con palitos de zanahoria y pepino",         tag:"proteina", label:"Proteína", kcal:130 },
-    { name:"Galletas de avena con arándanos",                  tag:"hierro",   label:"Hierro",   kcal:155 },
-    { name:"Queso cottage con piña y semillas",                tag:"calcio",   label:"Calcio",   kcal:145 },
-    { name:"Edamame con sal marina",                           tag:"proteina", label:"Proteína", kcal:120 },
-    { name:"Batido de fresas y leche de avena",                tag:"calcio",   label:"Calcio",   kcal:175 },
-    { name:"Nueces con chocolate negro 70%",                   tag:"hierro",   label:"Hierro",   kcal:170 },
+    { name:"Yogur griego con semillas de chía", nameEn:"Greek yogurt with chia seeds",                tag:"calcio",   label:"Calcio",   kcal:150 },
+    { name:"Aguacate sobre tostada con huevo", nameEn:"Avocado toast with egg",                 tag:"proteina", label:"Proteína", kcal:180 },
+    { name:"Smoothie de plátano, avena y leche", nameEn:"Banana, oat, and milk smoothie",              tag:"calcio",   label:"Calcio",   kcal:200 },
+    { name:"Almendras y frutos secos mixtos", nameEn:"Almonds and mixed nuts",                  tag:"proteina", label:"Proteína", kcal:160 },
+    { name:"Manzana con mantequilla de almendras", nameEn:"Apple with almond butter",             tag:"hierro",   label:"Hierro",   kcal:180 },
+    { name:"Dátiles con queso ricotta", nameEn:"Dates with ricotta cheese",                       tag:"calcio",   label:"Calcio",   kcal:140 },
+    { name:"Hummus con palitos de zanahoria y pepino", nameEn:"Hummus with carrot and cucumber sticks",         tag:"proteina", label:"Proteína", kcal:130 },
+    { name:"Galletas de avena con arándanos", nameEn:"Oat cookies with blueberries",                  tag:"hierro",   label:"Hierro",   kcal:155 },
+    { name:"Queso cottage con piña y semillas", nameEn:"Cottage cheese with pineapple and seeds",                tag:"calcio",   label:"Calcio",   kcal:145 },
+    { name:"Edamame con sal marina", nameEn:"Edamame with sea salt",                           tag:"proteina", label:"Proteína", kcal:120 },
+    { name:"Batido de fresas y leche de avena", nameEn:"Strawberry and oat milk smoothie",                tag:"calcio",   label:"Calcio",   kcal:175 },
+    { name:"Nueces con chocolate negro 70%", nameEn:"Walnuts with 70% dark chocolate",                   tag:"hierro",   label:"Hierro",   kcal:170 },
   ]},
 ];
 
@@ -666,6 +736,43 @@ const MEAL_WHY = {
   "Edamame con sal marina":                           "Proteína vegetal completa + calcio. Snack rápido y nutritivo.",
   "Batido de fresas y leche de avena":                "Calcio + vitamina C + fibra. Dulce y ligero entre comidas.",
   "Nueces con chocolate negro 70%":                   "Hierro + magnesio + antioxidantes. El snack antojadizo más nutritivo.",
+};
+const MEAL_WHY_EN = {
+  "Avena con frutas rojas y semillas de chía": "Oats: iron and magnesium. Chia: omega-3 and calcium. Ideal to start the day.",
+  "Huevo revuelto con espinacas y tostada integral": "Complete protein + folate from spinach. Perfect in the 1st trimester.",
+  "Smoothie verde de plátano, espinaca y avena": "Folate from spinach + potassium from banana. Easy and nutritious with nausea.",
+  "Tostadas de aguacate con huevo poché": "Healthy fats + complete protein + choline essential for baby's brain.",
+  "Yogur griego con granola y frutos rojos": "Calcium + digestive probiotics + antioxidants. A balanced breakfast.",
+  "Lentejas con verduras y arroz integral": "Legume + grain = complete protein with folate. One of the best pregnancy dishes.",
+  "Ensalada de espinacas, nueces y queso feta": "Plant iron + healthy fats from walnuts + calcium from cheese.",
+  "Crema de brócoli con pan integral": "Broccoli is a leader in folate and plant calcium.",
+  "Bowl de quinoa con pollo y verduras asadas": "Complete protein from quinoa + lean chicken. Perfect combo for the 2nd trimester.",
+  "Pasta integral con tomate, albahaca y mozzarella": "Complex carbs + lycopene + calcium. Sustained energy.",
+  "Salmón al horno con quinoa y espárragos": "Omega-3 DHA for baby's brain. Quinoa: the only complete plant protein.",
+  "Pollo con batata asada y ensalada verde": "Lean protein + beta-carotene from sweet potato. Light and filling.",
+  "Tortilla de verduras con ensalada mixta": "Protein from egg + folate from vegetables. Light and nutritious for dinner.",
+  "Sopa de zanahoria con jengibre y tofu": "Beta-carotene + anti-inflammatory ginger + plant protein.",
+  "Panqueques de avena con miel y nueces": "Oats + egg protein + healthy fats from walnuts. Sweet and nutritious.",
+  "Bowl de frutas con yogur y semillas": "Antioxidants + calcium + omega-3. Light and filling for the first trimester.",
+  "Tostada integral con ricotta y fresas": "Calcium from ricotta + vitamin C from strawberries. Refreshing and quick.",
+  "Omelet de champiñones y queso": "Complete protein + vitamin D from mushrooms. Perfect in winter.",
+  "Batido de mango, zanahoria y jengibre": "Beta-carotene + anti-inflammatory ginger. Helps with first-trimester nausea.",
+  "Wrap de pollo con aguacate y lechuga": "Lean protein + healthy fats. Easy to prepare and take with you.",
+  "Sopa de garbanzos con espinacas": "Plant iron + folate. Perfect combo for neural development.",
+  "Arroz con salmón teriyaki y edamame": "Omega-3 + complete protein from edamame. Rich in DHA for baby's brain.",
+  "Ensalada mediterránea de garbanzos y pepino": "Plant iron + hydrating. Light for second-trimester heat.",
+  "Tacos de atún con aguacate y pico de gallo": "Omega-3 + healthy fats + vitamin C. Tasty and balanced.",
+  "Merluza al vapor con puré de calabaza": "Gentle protein + beta-carotene. Ideal for a light, digestible dinner.",
+  "Crema de lentejas rojas con cúrcuma": "Iron + natural anti-inflammatory. A warm, comforting dinner.",
+  "Pavo al horno con arroz y brócoli": "Lean protein + folate from broccoli. A nutritious pregnancy classic.",
+  "Risotto de champiñones con espinacas": "Iron + vitamin D. Creamy and satisfying without being heavy.",
+  "Tofu salteado con verduras y sésamo": "Calcium from tofu and sesame. Great vegan option for pregnancy.",
+  "Pechuga de pollo con ensalada de rúcula": "Lean protein + folate from arugula. Light, refreshing dinner.",
+  "Galletas de avena con arándanos": "Iron from oats + antioxidants. A sweet, nutritious snack.",
+  "Queso cottage con piña y semillas": "Calcium + vitamin C + omega-3. Refreshing and filling.",
+  "Edamame con sal marina": "Complete plant protein + calcium. A quick, nutritious snack.",
+  "Batido de fresas y leche de avena": "Calcium + vitamin C + fiber. Sweet and light between meals.",
+  "Nueces con chocolate negro 70%": "Iron + magnesium + antioxidants. The most nutritious craving-buster.",
 };
 
 const TRI_MEAL_REC = {
@@ -708,6 +815,13 @@ const CAT_BENEFIT = {
   "Cena":     "Digestión ligera · Favorece el sueño reparador",
   "Snacks":   "Mantiene el azúcar estable · Calma antojos sanos",
 };
+const CAT_BENEFIT_EN = {
+  "Desayuno": "Fights nausea · Sustained energy for the day",
+  "Almuerzo": "Optimal nutrition for your baby's cell development",
+  "Cena":     "Light digestion · Promotes restful sleep",
+  "Snacks":   "Keeps blood sugar stable · Calms healthy cravings",
+};
+const CAT_LABEL_EN = { "Desayuno":"Breakfast", "Almuerzo":"Lunch", "Cena":"Dinner", "Snacks":"Snacks" };
 const CAT_TIME = {
   "Desayuno": "7 – 9 AM",
   "Almuerzo": "12 – 2 PM",
@@ -781,9 +895,42 @@ const NUTRIENT_DETAIL = {
     tip: "Distribuye la proteína en cada comida; el cuerpo no la almacena",
   },
 };
+const NUTRIENT_DETAIL_EN = {
+  hierro: {
+    icon: "drop",
+    why: "Carries oxygen to your baby and prevents gestational anemia",
+    warning: "Intense fatigue can signal an iron deficiency",
+    sources: ["Spinach and chard", "Lentils and chickpeas", "Lean red meat"],
+    tip: "Combine with vitamin C (orange, kiwi) to triple absorption",
+  },
+  calcio: {
+    icon: "star",
+    why: "Builds your baby's bones and teeth; protects your bone density",
+    warning: "Nighttime cramps can signal a calcium deficiency",
+    sources: ["Yogurt and milk", "Broccoli and kale", "Almonds and sesame seeds"],
+    tip: "Avoid taking it together with iron: they compete for intestinal absorption",
+  },
+  folato: {
+    icon: "leaf",
+    why: "Essential for neural tube formation and proper cell division",
+    warning: "Critical in the first 12 weeks; keep taking your supplement",
+    sources: ["Avocado", "Fresh spinach", "Chickpeas and lentils"],
+    tip: "Folic acid supplements are more stable than dietary folate",
+  },
+  proteina: {
+    icon: "flame",
+    why: "Builds your developing baby's tissues, muscles, and organs",
+    warning: "Persistent unexplained nausea can signal a deficiency",
+    sources: ["Eggs (all amino acids)", "Salmon and sardines", "Quinoa (complete protein)"],
+    tip: "Spread protein across every meal; the body doesn't store it",
+  },
+};
 
 /* ── WaterTracker ─── */
 function WaterTracker() {
+  const wLang = getAppLang2();
+  const WT = wLang==="en" ? { title:"Hydration", goal:"Goal: 2.5 L · 10 glasses · pregnancy", mlToday:"ml today", mlLeft:"ml left", done:"done", addGlass:"+ glass" }
+    : { title:"Hidratación", goal:"Meta: 2.5 L · 10 vasos · embarazo", mlToday:"ml hoy", mlLeft:"ml restantes", done:"completado", addGlass:"+ vaso" };
   const todayKey = new Date().toISOString().slice(0,10);
   const [glasses, setGlasses] = React.useState(() => {
     try { if (localStorage.getItem("lume_water_date")===todayKey) return parseInt(localStorage.getItem("lume_water_g")||"0")||0; } catch {} return 0;
@@ -802,13 +949,13 @@ function WaterTracker() {
             <div className="nv3-water-icon">
               <svg width="12" height="15" viewBox="0 0 24 28" fill="#3478b0"><path d="M12 2C12 2 3 13 3 18.5a9 9 0 0018 0C21 13 12 2 12 2z"/></svg>
             </div>
-            Hidratación
+            {WT.title}
           </div>
-          <div className="nv3-water-sub">Meta: 2.5 L · 10 vasos · embarazo</div>
+          <div className="nv3-water-sub">{WT.goal}</div>
         </div>
         <div className="nv3-water-total">
           <div className="nv3-water-total-num">{glasses * 250}</div>
-          <div className="nv3-water-total-label">ml hoy</div>
+          <div className="nv3-water-total-label">{WT.mlToday}</div>
         </div>
       </div>
 
@@ -836,15 +983,15 @@ function WaterTracker() {
         <div className="nv3-water-info">
           <div>
             <div className="nv3-water-remain">{(10-glasses)*250}</div>
-            <div className="nv3-water-remain-label">ml restantes</div>
+            <div className="nv3-water-remain-label">{WT.mlLeft}</div>
           </div>
           <div>
             <div className="nv3-water-pct">{Math.round(pct*100)}%</div>
-            <div className="nv3-water-remain-label">completado</div>
+            <div className="nv3-water-remain-label">{WT.done}</div>
           </div>
           <div className="nv3-water-btns">
             <button onClick={rem} disabled={glasses<=0} className="nv3-water-btn minus">−</button>
-            <button onClick={add} disabled={glasses>=10} className="nv3-water-btn plus">+ vaso</button>
+            <button onClick={add} disabled={glasses>=10} className="nv3-water-btn plus">{WT.addGlass}</button>
           </div>
         </div>
       </div>
@@ -862,6 +1009,8 @@ function WaterTracker() {
 }
 
 const NTAGS = [{k:"hierro",l:"Hierro"},{k:"calcio",l:"Calcio"},{k:"folato",l:"Folato"},{k:"proteina",l:"Proteína"},{k:"hidrat",l:"Hidratación"}];
+const NTAGS_L_EN = {hierro:"Iron",calcio:"Calcium",folato:"Folate",proteina:"Protein",hidrat:"Hydration"};
+const NUTRIENT_GOALS_L_EN = {hierro:"Iron",calcio:"Calcium",folato:"Folate",proteina:"Protein"};
 const NG_META = {
   hierro:   { bg:"rgba(196,66,48,.07)",   shadow:"rgba(196,66,48,.18)"   },
   calcio:   { bg:"rgba(36,112,184,.07)",  shadow:"rgba(36,112,184,.18)"  },
@@ -884,6 +1033,45 @@ const SX_FOODS = {
 
 /* ── Nutricion ─── */
 function Nutricion({ onPlanPress }) {
+  const nutriLang = getAppLang2();
+  const NT = nutriLang === "en" ? {
+    eyebrow:"Meal plan", week:"Week", title:"Nutrition", kcalToday:"kcal today", foodsLogged:"foods logged today",
+    bienestarAi:"✦ Wellness · AI", customPlan:"Custom nutrition plan", aiGenerated:"AI-generated · adapted to your symptoms",
+    tabPlan:"Today's plan", tabNutri:"Nutrients", tabReg:"Log",
+    customMenu:"personalized menu", today:"Today", yesterday:"Yesterday", tomorrow:"Tomorrow",
+    days:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
+    tipOfDay:"Tip of the day", options:"options", add:"Add", hide:"Hide", whyFood:"Why this food?",
+    addOwnMeal:"Add your own meal", mealNamePh:"Meal name...", addToLog:"Add to log",
+    dailyTracking:"Daily tracking", keyNutrients:"Key nutrients", weekGoals:"Week 15 · Pregnancy-specific goals",
+    foodSources:"Food sources", absorptionTip:"Absorption tip",
+    noLogsYet:"No logs yet", noLogsSub:"Add meals from Today's plan and they'll appear here.", myFoods:"My foods",
+    missing:"Missing ", goalReached:"Goal reached ✓", goal:"goal", remove:"Remove",
+    catLabel: (c)=>CAT_LABEL_EN[c]||c,
+  } : {
+    eyebrow:"Plan alimentario", week:"Semana", title:"Nutrición", kcalToday:"kcal hoy", foodsLogged:"alimentos registrados hoy",
+    bienestarAi:"✦ Bienestar · IA", customPlan:"Plan nutricional a medida", aiGenerated:"Generado por IA · adaptado a tus síntomas",
+    tabPlan:"Plan del día", tabNutri:"Nutrientes", tabReg:"Registro",
+    customMenu:"menú personalizado", today:"Hoy", yesterday:"Ayer", tomorrow:"Mañana",
+    days:["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"],
+    tipOfDay:"Consejo del día", options:"opciones", add:"Añadir", hide:"Ocultar", whyFood:"¿Por qué este alimento?",
+    addOwnMeal:"Añadir tu propia comida", mealNamePh:"Nombre de la comida...", addToLog:"Añadir al registro",
+    dailyTracking:"Seguimiento diario", keyNutrients:"Nutrientes clave", weekGoals:"Semana 15 · Metas específicas del embarazo",
+    foodSources:"Fuentes alimentarias", absorptionTip:"Consejo de absorción",
+    noLogsYet:"Sin registros todavía", noLogsSub:"Añade comidas desde el Plan del día y aparecerán aquí.", myFoods:"Mis alimentos",
+    missing:"Faltan ", goalReached:"Meta alcanzada ✓", goal:"meta", remove:"Eliminar",
+    catLabel: (c)=>c,
+  };
+  const mealName = (m) => nutriLang==="en" ? (m.nameEn||m.name) : m.name;
+  const mealWhy = (m) => nutriLang==="en" ? MEAL_WHY_EN[m.name] : MEAL_WHY[m.name];
+  const displayMealName = (nm) => {
+    if (nutriLang!=="en") return nm;
+    for (const cat of MEAL_PLAN) { const found = cat.meals.find(x=>x.name===nm); if (found) return found.nameEn||nm; }
+    return nm;
+  };
+  const nutrientLabel = (k) => nutriLang==="en" ? (NUTRIENT_GOALS_L_EN[k]||k) : k;
+  const catBenefit = (c) => nutriLang==="en" ? (CAT_BENEFIT_EN[c]||"") : CAT_BENEFIT[c];
+  const nutrientDetail = (k) => nutriLang==="en" ? NUTRIENT_DETAIL_EN[k] : NUTRIENT_DETAIL[k];
+  const tagLabel = (k) => nutriLang==="en" ? (NTAGS_L_EN[k]||k) : k;
   const [tab, setTab] = React.useState("plan");
   const [dayOffset, setDayOffset] = React.useState(0);
   const [logged, setLogged] = React.useState(() => {
@@ -913,8 +1101,8 @@ function Nutricion({ onPlanPress }) {
   const RR=42, RC=2*Math.PI*RR, RD=(kcalPct/100)*RC;
 
   const getDayLabel = (off) => {
-    if(off===0) return "Hoy"; if(off===-1) return "Ayer"; if(off===1) return "Mañana";
-    const days=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+    if(off===0) return NT.today; if(off===-1) return NT.yesterday; if(off===1) return NT.tomorrow;
+    const days=NT.days;
     const d=new Date(); d.setDate(d.getDate()+off); return days[d.getDay()]+" "+d.getDate();
   };
 
@@ -963,8 +1151,8 @@ function Nutricion({ onPlanPress }) {
 
         <div className="nv3-hero-top">
           <div>
-            <div className="nv3-eyebrow">Plan alimentario · Semana 15</div>
-            <h1 className="nv3-title">Nutrición</h1>
+            <div className="nv3-eyebrow">{NT.eyebrow} · {NT.week} 15</div>
+            <h1 className="nv3-title">{NT.title}</h1>
           </div>
         </div>
 
@@ -995,7 +1183,7 @@ function Nutricion({ onPlanPress }) {
             </svg>
             <div className="nv3-cal-center">
               <div className="nv3-cal-num">{todayKcal||0}</div>
-              <div className="nv3-cal-unit">kcal hoy</div>
+              <div className="nv3-cal-unit">{NT.kcalToday}</div>
               <div className="nv3-cal-goal">/ {KCAL_GOAL}</div>
             </div>
           </div>
@@ -1009,7 +1197,7 @@ function Nutricion({ onPlanPress }) {
               return (
                 <div key={ng.k} className="nv3-hero-bar-row">
                   <div className="nv3-hero-bar-head">
-                    <span className="nv3-hero-bar-label">{ng.l}</span>
+                    <span className="nv3-hero-bar-label">{nutrientLabel(ng.k)}</span>
                     <span className="nv3-hero-bar-pct" style={{color:done?"#E6CFA1":"rgba(255,255,255,.5)"}}>{Math.round(pct)}%</span>
                   </div>
                   <div className="nv3-hero-bar-track">
@@ -1018,7 +1206,7 @@ function Nutricion({ onPlanPress }) {
                 </div>
               );
             })}
-            <div className="nv3-hero-meta">{logged.filter(r=>r.date===todayDate).length} alimentos registrados hoy</div>
+            <div className="nv3-hero-meta">{logged.filter(r=>r.date===todayDate).length} {NT.foodsLogged}</div>
           </div>
         </div>
       </div>
@@ -1031,9 +1219,9 @@ function Nutricion({ onPlanPress }) {
             <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M12 7c.6 3.4 1.6 4.4 5 5-3.4.6-4.4 1.6-5 5-.6-3.4-1.6-4.4-5-5 3.4-.6 4.4-1.6 5-5z"/></svg>
           </div>
           <div style={{ flex:1 }}>
-            <div style={{ fontSize:9.5, fontWeight:800, letterSpacing:".14em", textTransform:"uppercase", color:"rgba(200,255,220,.75)", marginBottom:3 }}>✦ Bienestar · IA</div>
-            <div style={{ fontSize:14.5, fontWeight:700, color:"#fff", lineHeight:1.2, marginBottom:2 }}>Plan nutricional a medida</div>
-            <div style={{ fontSize:11, color:"rgba(255,255,255,.6)" }}>Generado por IA · adaptado a tus síntomas</div>
+            <div style={{ fontSize:9.5, fontWeight:800, letterSpacing:".14em", textTransform:"uppercase", color:"rgba(200,255,220,.75)", marginBottom:3 }}>{NT.bienestarAi}</div>
+            <div style={{ fontSize:14.5, fontWeight:700, color:"#fff", lineHeight:1.2, marginBottom:2 }}>{NT.customPlan}</div>
+            <div style={{ fontSize:11, color:"rgba(255,255,255,.6)" }}>{NT.aiGenerated}</div>
           </div>
           <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="rgba(255,255,255,.6)" strokeWidth="2.2" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
         </button>
@@ -1042,9 +1230,9 @@ function Nutricion({ onPlanPress }) {
       {/* ══ TABS ══ */}
       <div className="nv3-tabs-wrap">
         <div className="nv3-tabs">
-          <button className={tab==="plan"?"on":""} onClick={()=>setTab("plan")}>Plan del día</button>
-          <button className={tab==="nutri"?"on":""} onClick={()=>setTab("nutri")}>Nutrientes</button>
-          <button className={tab==="reg"?"on":""} onClick={()=>setTab("reg")}>Registro</button>
+          <button className={tab==="plan"?"on":""} onClick={()=>setTab("plan")}>{NT.tabPlan}</button>
+          <button className={tab==="nutri"?"on":""} onClick={()=>setTab("nutri")}>{NT.tabNutri}</button>
+          <button className={tab==="reg"?"on":""} onClick={()=>setTab("reg")}>{NT.tabReg}</button>
         </div>
       </div>
 
@@ -1065,7 +1253,7 @@ function Nutricion({ onPlanPress }) {
               </button>
               <div style={{textAlign:"center"}}>
                 <div className="nv3-day-label">{getDayLabel(dayOffset)}</div>
-                <div className="nv3-day-sub">menú personalizado</div>
+                <div className="nv3-day-sub">{NT.customMenu}</div>
               </div>
               <button className="nv3-day-btn" onClick={()=>setDayOffset(d=>d+1)}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
@@ -1079,9 +1267,9 @@ function Nutricion({ onPlanPress }) {
               onPointerLeave={()=>setPressedTip(false)}
               style={{boxShadow:`0 14px 40px ${planMeta.shadow}`,borderColor:planMeta.color+"44",borderTop:`2px solid ${planMeta.color}55`,background:`linear-gradient(135deg,${planMeta.color}10,${planMeta.bg} 80%)`,transform:pressedTip?"scale(.972)":"scale(1)",transition:"transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .35s, background .4s"}}>
               <div className="nv3-tip-body">
-                <div className="nv3-tip-badge">Consejo del día</div>
-                <div className="nv3-tip-title">{TODAY_TIP.t}</div>
-                <div className="nv3-tip-text">{TODAY_TIP.d}</div>
+                <div className="nv3-tip-badge">{NT.tipOfDay}</div>
+                <div className="nv3-tip-title">{nutriLang==="en"?TODAY_TIP.tEn:TODAY_TIP.t}</div>
+                <div className="nv3-tip-text">{nutriLang==="en"?TODAY_TIP.dEn:TODAY_TIP.d}</div>
               </div>
               <div className="nv3-tip-ico"><AppIcon name="spark" size={20}/></div>
             </div>
@@ -1117,7 +1305,7 @@ function Nutricion({ onPlanPress }) {
                     {cm.img
                       ? <img src={cm.img} alt={cat.cat} style={{width:58,height:58,objectFit:"cover",borderRadius:12,flexShrink:0}}/>
                       : <span className="nv3-chip-ico">{cat.ico}</span>}
-                    <span className="nv3-chip-lbl">{cat.cat}</span>
+                    <span className="nv3-chip-lbl">{NT.catLabel(cat.cat)}</span>
                   </button>
                 );
               })}
@@ -1132,11 +1320,11 @@ function Nutricion({ onPlanPress }) {
                 <div key={cat.cat}>
                   <div className="nv3-cat-hdr">
                     <div>
-                      <div className="nv3-cat-title">{cat.ico} {cat.cat}</div>
-                      <div className="nv3-cat-time">{CAT_TIME[cat.cat]} · {dayMeals.length} opciones · ~{avgKcal} kcal</div>
+                      <div className="nv3-cat-title">{cat.ico} {NT.catLabel(cat.cat)}</div>
+                      <div className="nv3-cat-time">{CAT_TIME[cat.cat]} · {dayMeals.length} {NT.options} · ~{avgKcal} kcal</div>
                     </div>
                   </div>
-                  <div className="nv3-cat-benefit-bar" style={{borderLeftColor:catMeta.color+"88",background:catMeta.bg,boxShadow:`inset 3px 0 0 ${catMeta.color}55`,color:"#5a3a2a"}}>{CAT_BENEFIT[cat.cat]}</div>
+                  <div className="nv3-cat-benefit-bar" style={{borderLeftColor:catMeta.color+"88",background:catMeta.bg,boxShadow:`inset 3px 0 0 ${catMeta.color}55`,color:"#5a3a2a"}}>{catBenefit(cat.cat)}</div>
 
                   <div className="nv3-meals-list">
                     {dayMeals.map((m,i) => {
@@ -1157,17 +1345,17 @@ function Nutricion({ onPlanPress }) {
                             transition:"transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .25s",
                           }}>
                           <div className="nv3-meal-top">
-                            <div className="nv3-meal-name">{m.name}</div>
+                            <div className="nv3-meal-name">{mealName(m)}</div>
                             <button
                               className={"nv3-meal-add-btn"+(isAdded?" done":"")}
-                              onClick={()=>logMeal(m)} aria-label="Añadir">
+                              onClick={()=>logMeal(m)} aria-label={NT.add}>
                               {isAdded
                                 ? <AppIcon name="check" size={14}/>
                                 : <AppIcon name="plus" size={14}/>}
                             </button>
                           </div>
                           <div className="nv3-meal-meta">
-                            <span className={"meal-tag "+m.tag}>{m.label}</span>
+                            <span className={"meal-tag "+m.tag}>{tagLabel(m.tag)}</span>
                             <span className="nv3-meal-kcal">{m.kcal} kcal</span>
                             {prep !== "0 min" && <span className="nv3-meal-prep">⏱ {prep}</span>}
                             {(()=>{
@@ -1185,7 +1373,7 @@ function Nutricion({ onPlanPress }) {
                           {MEAL_WHY[m.name] && (
                             <button className="nv3-why-toggle" onClick={()=>setExpandedMeal(isExp?null:m.name)}>
                               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 12v5"/></svg>
-                              {isExp ? "Ocultar" : "¿Por qué este alimento?"}
+                              {isExp ? NT.hide : NT.whyFood}
                               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
                                 style={{transform:isExp?"rotate(180deg)":"",transition:"transform .3s",marginLeft:"auto"}}>
                                 <path d="M6 9l6 6 6-6"/>
@@ -1195,7 +1383,7 @@ function Nutricion({ onPlanPress }) {
                           {isExp && MEAL_WHY[m.name] && (
                             <div className="nv3-why-box" style={{borderColor:(ng?.color||"#A8492A")+"44",background:(ng?.color||"#A8492A")+"08"}}>
                               <div className="nv3-why-dot" style={{background:ng?.color||"#A8492A"}}></div>
-                              <div>{MEAL_WHY[m.name]}</div>
+                              <div>{mealWhy(m)}</div>
                             </div>
                           )}
                         </div>
@@ -1214,10 +1402,10 @@ function Nutricion({ onPlanPress }) {
               style={{boxShadow:`0 18px 48px ${planMeta.shadow}`,border:`1.5px solid ${planMeta.color}40`,borderTop:`2.5px solid ${planMeta.color}70`,transform:pressedCustom?"scale(.978)":"scale(1)",transition:"transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .3s"}}>
               <div className="nv3-custom-title">
                 <AppIcon name="plus" size={15}/>
-                Añadir tu propia comida
+                {NT.addOwnMeal}
               </div>
               <input className="app-field" style={{marginBottom:10}}
-                placeholder="Nombre de la comida..."
+                placeholder={NT.mealNamePh}
                 value={custom} onChange={e=>setCustom(e.target.value)}/>
               <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:12}}>
                 {NTAGS.map(t => (
@@ -1226,11 +1414,11 @@ function Nutricion({ onPlanPress }) {
                     style={{cursor:"pointer",border:customTag===t.k?"2px solid currentColor":"1px solid transparent",
                       padding:"5px 12px",fontWeight:customTag===t.k?700:600,
                       opacity:customTag===t.k?1:.7,transition:"all .15s"}}
-                    onClick={()=>setCustomTag(t.k)}>{t.l}</button>
+                    onClick={()=>setCustomTag(t.k)}>{tagLabel(t.k)}</button>
                 ))}
               </div>
               <button className="btn btn-primary" style={{width:"100%",justifyContent:"center",opacity:!custom.trim()?.5:1}}
-                onClick={logCustom}>Añadir al registro</button>
+                onClick={logCustom}>{NT.addToLog}</button>
             </div>
           </div>
         )}
@@ -1241,13 +1429,13 @@ function Nutricion({ onPlanPress }) {
             <WaterTracker/>
 
             <div className="nv3-section-hdr">
-              <div className="nv3-section-eyebrow">Seguimiento diario</div>
-              <div className="nv3-section-title">Nutrientes clave</div>
-              <div className="nv3-section-sub">Semana 15 · Metas específicas del embarazo</div>
+              <div className="nv3-section-eyebrow">{NT.dailyTracking}</div>
+              <div className="nv3-section-title">{NT.keyNutrients}</div>
+              <div className="nv3-section-sub">{NT.weekGoals}</div>
             </div>
 
             {NUTRIENT_GOALS.map(ng => {
-              const det = NUTRIENT_DETAIL[ng.k];
+              const det = nutrientDetail(ng.k);
               const n = logged.filter(m=>m.tag===ng.k).length;
               const val = Math.min(ng.goal, n*ng.contrib);
               const pct = Math.min(100,(val/ng.goal)*100);
@@ -1273,7 +1461,7 @@ function Nutricion({ onPlanPress }) {
                     </div>
                     {/* Info */}
                     <div style={{flex:1,minWidth:0}}>
-                      <div className="nv3-nc-name" style={{color:ng.color}}><AppIcon name={det?.icon||"spark"} size={22}/> {ng.l}</div>
+                      <div className="nv3-nc-name" style={{color:ng.color}}><AppIcon name={det?.icon||"spark"} size={22}/> {nutrientLabel(ng.k)}</div>
                       <div className="nv3-nc-why">{det?.why}</div>
                       <div className="nv3-nc-amount">{val} / {ng.goal} {ng.unit}</div>
                     </div>
@@ -1286,14 +1474,14 @@ function Nutricion({ onPlanPress }) {
                   {/* Expandido */}
                   {isOpen && det && (
                     <div className="nv3-nc-body">
-                      <div className="nv3-nc-section-lbl">Fuentes alimentarias</div>
+                      <div className="nv3-nc-section-lbl">{NT.foodSources}</div>
                       <div className="nv3-nc-sources">
                         {det.sources.map((s,i) => (
                           <div key={i} className="nv3-nc-source">{s}</div>
                         ))}
                       </div>
                       <div className="nv3-nc-tip-box" style={{borderColor:ng.color+"44",background:ng.color+"09"}}>
-                        <div style={{fontSize:9.5,fontWeight:700,letterSpacing:".12em",textTransform:"uppercase",color:ng.color,marginBottom:5}}>Consejo de absorción</div>
+                        <div style={{fontSize:9.5,fontWeight:700,letterSpacing:".12em",textTransform:"uppercase",color:ng.color,marginBottom:5}}>{NT.absorptionTip}</div>
                         <div style={{fontSize:12.5,color:"var(--ink-soft)",lineHeight:1.55}}>{det.tip}</div>
                       </div>
                       {det.warning && (
@@ -1338,7 +1526,7 @@ function Nutricion({ onPlanPress }) {
 
                 {/* Kcal + texto */}
                 <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontSize:9.5,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:"#a08070",marginBottom:6}}>Hoy · {todayDate}</div>
+                  <div style={{fontSize:9.5,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:"#a08070",marginBottom:6}}>{NT.today} · {todayDate}</div>
                   <div style={{display:"flex",alignItems:"baseline",gap:6}}>
                     <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:52,fontWeight:700,color:"#3d1a0e",lineHeight:1,letterSpacing:"-.02em"}}>{todayKcal||0}</div>
                     <div style={{fontSize:13,color:"#a08070",fontWeight:500,marginBottom:4}}>kcal</div>
@@ -1353,7 +1541,7 @@ function Nutricion({ onPlanPress }) {
                   }}>
                     <div style={{width:6,height:6,borderRadius:"50%",background:todayKcal>=KCAL_GOAL?"#2e8a4a":"#A8492A",flexShrink:0}}></div>
                     <span style={{fontSize:11,fontWeight:600,color:todayKcal>=KCAL_GOAL?"#2e8a4a":"#A8492A"}}>
-                      {todayKcal<KCAL_GOAL?"Faltan "+(KCAL_GOAL-todayKcal)+" kcal":"Meta alcanzada ✓"}
+                      {todayKcal<KCAL_GOAL?NT.missing+(KCAL_GOAL-todayKcal)+" kcal":NT.goalReached}
                     </span>
                   </div>
                 </div>
@@ -1398,7 +1586,7 @@ function Nutricion({ onPlanPress }) {
                   return (
                     <div key={ng.k}>
                       <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}>
-                        <span style={{fontSize:10.5,fontWeight:700,color:ng.color}}>{ng.l}</span>
+                        <span style={{fontSize:10.5,fontWeight:700,color:ng.color}}>{nutrientLabel(ng.k)}</span>
                         <span style={{fontSize:10,fontWeight:700,color:pct>=80?ng.color:"#c0a090"}}>{Math.round(pct)}%</span>
                       </div>
                       <div style={{height:5,background:"rgba(0,0,0,.06)",borderRadius:99,overflow:"hidden"}}>
@@ -1416,12 +1604,12 @@ function Nutricion({ onPlanPress }) {
             {Object.keys(byDate).length===0 ? (
               <div className="nv3-empty">
                 <div className="nv3-empty-ico"><AppIcon name="leaf" size={26}/></div>
-                <div className="nv3-empty-title">Sin registros todavía</div>
-                <div className="nv3-empty-sub">Añade comidas desde el Plan del día y aparecerán aquí.</div>
+                <div className="nv3-empty-title">{NT.noLogsYet}</div>
+                <div className="nv3-empty-sub">{NT.noLogsSub}</div>
               </div>
             ) : (
               <div>
-                <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:700,color:"#3d1a0e",marginBottom:12,padding:"0 2px"}}>Mis alimentos</div>
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:700,color:"#3d1a0e",marginBottom:12,padding:"0 2px"}}>{NT.myFoods}</div>
                 {Object.entries(byDate).map(([date, items]) => {
                   const dayKcal=items.reduce((s,r)=>s+(r.kcal||0),0);
                   const isToday=date===todayDate;
@@ -1474,15 +1662,15 @@ function Nutricion({ onPlanPress }) {
                                 <div key={r.id} style={{display:"flex",alignItems:"center",gap:12,padding:"13px 16px",borderBottom:i<cItems.length-1?`1px solid ${meta.color}12`:"none"}}>
                                   <div style={{width:4,height:38,borderRadius:99,background:ng?.color||"#A8492A",flexShrink:0,boxShadow:`0 0 8px ${ng?.color||"#A8492A"}55`}}></div>
                                   <div style={{flex:1,minWidth:0}}>
-                                    <div style={{fontSize:13,fontWeight:600,color:"#3d1a0e",lineHeight:1.35}}>{r.name}</div>
+                                    <div style={{fontSize:13,fontWeight:600,color:"#3d1a0e",lineHeight:1.35}}>{displayMealName(r.name)}</div>
                                     <div style={{display:"flex",gap:6,alignItems:"center",marginTop:5,flexWrap:"wrap"}}>
-                                      <span className={"meal-tag "+r.tag}>{r.label}</span>
+                                      <span className={"meal-tag "+r.tag}>{tagLabel(r.tag)}</span>
                                       {r.kcal>0 && <span style={{fontSize:10.5,color:"#a08070",fontWeight:600}}>{r.kcal} kcal</span>}
                                       {!isToday && <span style={{fontSize:10,color:"#c0a090"}}>{r.date}</span>}
                                     </div>
                                   </div>
                                   {isToday && (
-                                    <button className="nv3-reg-del" onClick={()=>deleteLog(r.id)} aria-label="Eliminar">
+                                    <button className="nv3-reg-del" onClick={()=>deleteLog(r.id)} aria-label={NT.remove}>
                                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
                                     </button>
                                   )}
@@ -2069,7 +2257,7 @@ function CheckoutScreen({ goBack, planId, onSuccess }) {
               {trialDays>0 && (
               <div style={{display:"flex",justifyContent:"space-between"}}>
                 <span style={{fontSize:12.5,color:"#8a6a5a"}}>Prueba gratuita ({trialDays} días)</span>
-                <span style={{fontSize:12.5,fontWeight:700,color:"#2e8a4a"}}>0,00€</span>
+                <span style={{fontSize:12.5,fontWeight:700,color:"#2e8a4a"}}>$0.00</span>
               </div>)}
               <div style={{display:"flex",justifyContent:"space-between"}}>
                 <span style={{fontSize:12.5,color:"#8a6a5a"}}>{trialDays>0 ? `Primer cobro (día ${trialDays+1})` : "Cobro hoy"}</span>
