@@ -114,6 +114,21 @@ const EXERCISE_ASSETS = {
   },
 };
 
+const EXERCISE_ASSETS_EN = {
+  1:  { ...EXERCISE_ASSETS[1],  muscles: ["Diaphragm","Core"] },
+  2:  { ...EXERCISE_ASSETS[2],  muscles: ["Legs","Cardio","Posture"] },
+  3:  { ...EXERCISE_ASSETS[3],  muscles: ["Back","Core","Spine"] },
+  4:  { ...EXERCISE_ASSETS[4],  muscles: ["Hips","Glutes","Piriformis"] },
+  5:  { ...EXERCISE_ASSETS[5],  muscles: ["Quads","Glutes","Hamstrings"] },
+  6:  { ...EXERCISE_ASSETS[6],  muscles: ["Full body","Shoulders","Back"] },
+  7:  { ...EXERCISE_ASSETS[7],  muscles: ["Pelvic floor","Perineum"] },
+  8:  { ...EXERCISE_ASSETS[8],  muscles: ["Core","Back","Glutes"] },
+  9:  { ...EXERCISE_ASSETS[9],  muscles: ["Pelvis","Hip","Relaxation"] },
+  10: { ...EXERCISE_ASSETS[10], muscles: ["Quads","Pelvis","Adductors"] },
+  11: { ...EXERCISE_ASSETS[11], muscles: ["Pelvis","Back","Balance"] },
+  12: { ...EXERCISE_ASSETS[12], muscles: ["Respiratory","Relaxation","Mind"] },
+};
+
 // ── Breathing wave SVG (animated via React state for breathe exercises) ──
 function BreathWave({t, color}) {
   const br = Math.sin(t * Math.PI * 2);
@@ -153,14 +168,14 @@ function ComingSoonFrame({exercise, accent}) {
             {exercise.title}
           </div>
           <div style={{fontSize:12, color:"#a08070", lineHeight:1.5}}>
-            Contenido visual en preparación
+            {getAppLang2()==="en" ? "Visual content coming soon" : "Contenido visual en preparación"}
           </div>
         </div>
         <div style={{
           fontSize:11, fontWeight:700, padding:"6px 16px", borderRadius:99,
           background:`${accent}10`, border:`1px solid ${accent}20`, color:accent
         }}>
-          Próximamente
+          {getAppLang2()==="en" ? "Coming soon" : "Próximamente"}
         </div>
       </div>
     </div>
@@ -175,8 +190,11 @@ function AnatomicPlayer({exercise, onClose}) {
   const [playing, setPlaying] = React.useState(false);
   const [step, setStep]       = React.useState(0);
   const videoRef = React.useRef(null);
+  const apLang = getAppLang2();
+  const AP_T = apLang==="en" ? { musclesWorked:"Muscles worked", howTo:"How to do it", prev:"Previous", next:"Next", done:"Done" }
+                              : { musclesWorked:"Músculos trabajados", howTo:"Cómo hacerlo", prev:"Anterior", next:"Siguiente", done:"Completado" };
 
-  const asset  = EXERCISE_ASSETS[exercise.id];
+  const asset  = (apLang==="en" ? EXERCISE_ASSETS_EN : EXERCISE_ASSETS)[exercise.id];
   const accent = asset ? asset.color : "#A8492A";
 
   // Control video playback
@@ -192,7 +210,10 @@ function AnatomicPlayer({exercise, onClose}) {
     "Respiratorio":"#3A8070","Cardio":"#4A7A60","Espalda baja":"#8B5A9E",
     "Caderas / Glúteos":"#A8492A","Piernas / Glúteos":"#B8872A","Cuerpo completo":"#1A6A8A",
     "Suelo pélvico":"#C4506A","Core / Espalda":"#7A6040","Pelvis / Mente":"#6A4A9E",
-    "Piernas / Pelvis":"#3A8070","Pelvis / Espalda":"#8B5A9E"
+    "Piernas / Pelvis":"#3A8070","Pelvis / Espalda":"#8B5A9E",
+    "Respiratory":"#3A8070","Lower back":"#8B5A9E","Hips / Glutes":"#A8492A","Legs / Glutes":"#B8872A",
+    "Full body":"#1A6A8A","Pelvic floor":"#C4506A","Core / Back":"#7A6040","Pelvis / Mind":"#6A4A9E",
+    "Legs / Pelvis":"#3A8070","Pelvis / Back":"#8B5A9E"
   };
   const col = MUSCLE_COLORS[exercise.muscle] || "#B8872A";
 
@@ -345,7 +366,7 @@ function AnatomicPlayer({exercise, onClose}) {
               <div style={{width:28,height:28,borderRadius:9,background:`linear-gradient(135deg,${accent},${accent}99)`,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 4px 10px ${accent}45`,flexShrink:0}}>
                 <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
               </div>
-              <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:"#5a3a2a",textTransform:"uppercase"}}>Músculos trabajados</div>
+              <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:"#5a3a2a",textTransform:"uppercase"}}>{AP_T.musclesWorked}</div>
             </div>
             <div style={{display:"flex",flexWrap:"wrap",gap:7}}>
               {muscleList.map((m,i) => (
@@ -380,7 +401,7 @@ function AnatomicPlayer({exercise, onClose}) {
               <div style={{width:28,height:28,borderRadius:9,background:`linear-gradient(135deg,${accent},${accent}99)`,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 4px 10px ${accent}45`,flexShrink:0}}>
                 <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
               </div>
-              <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:accent,textTransform:"uppercase"}}>Cómo hacerlo</div>
+              <div style={{fontSize:10.5,fontWeight:800,letterSpacing:".1em",color:accent,textTransform:"uppercase"}}>{AP_T.howTo}</div>
             </div>
             <div style={{fontSize:11,fontWeight:800,color:accent,background:`${accent}12`,border:`1px solid ${accent}22`,padding:"3px 10px",borderRadius:99}}>{step+1} / {exercise.steps.length}</div>
           </div>
@@ -457,13 +478,13 @@ function AnatomicPlayer({exercise, onClose}) {
           <button onClick={()=>setStep(s=>Math.max(0,s-1))} disabled={step===0} className="ex-nav-btn"
             style={{flex:1,padding:"14px",borderRadius:99,border:`1px solid ${accent}15`,cursor:step===0?"not-allowed":"pointer",background:"rgba(255,255,255,.75)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",color:"#8a6a5a",fontFamily:"inherit",fontSize:13,fontWeight:700,opacity:step===0?0.3:1,boxShadow:"0 4px 14px rgba(0,0,0,.06)",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
             <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-            Anterior
+            {AP_T.prev}
           </button>
           <button onClick={()=>setStep(s=>Math.min(exercise.steps.length-1,s+1))} disabled={step===exercise.steps.length-1} className="ex-nav-btn"
             style={{flex:1,padding:"14px",borderRadius:99,border:"none",cursor:step===exercise.steps.length-1?"default":"pointer",background:step===exercise.steps.length-1?`linear-gradient(135deg,${accent}60,${accent}40)`:`linear-gradient(135deg,${accent},${accent}CC)`,color:"#fff",fontFamily:"inherit",fontSize:13,fontWeight:800,boxShadow:step===exercise.steps.length-1?"none":`0 8px 24px ${accent}55`,display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
             {step===exercise.steps.length-1
-              ? <><svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12l5 5L19 7"/></svg> Completado</>
-              : <>Siguiente <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></>
+              ? <><svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12l5 5L19 7"/></svg> {AP_T.done}</>
+              : <>{AP_T.next} <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></>
             }
           </button>
         </div>
