@@ -313,6 +313,7 @@ function LoginModal({ onClose, appHref, initialTab }) {
           if (name.trim()) localStorage.setItem("lume_nombre", name.trim());
           if (email.trim()) localStorage.setItem("lume_email", email.trim());
           localStorage.setItem("lume_plan", "esencial");
+          localStorage.removeItem("lume_onboarded"); // cuenta nueva: siempre debe pasar por onboarding en este dispositivo
         } catch {}
         window.location.href = "confirmacion.html";
         return;
