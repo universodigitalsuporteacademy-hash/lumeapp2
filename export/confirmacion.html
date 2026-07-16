@@ -237,8 +237,8 @@
   </div>
 
   <!-- Headline -->
-  <h1>¡Bienvenida a <span class="shimmer-text">Lumé</span>!</h1>
-  <p class="subtitle">Tu suscripción está activa. Empieza hoy con 7 días completamente gratis — tu embarazo merece lo mejor.</p>
+  <h1 id="h1Text">¡Bienvenida a <span class="shimmer-text">Lumé</span>!</h1>
+  <p class="subtitle" id="subText">Tu suscripción está activa. Empieza hoy con 7 días completamente gratis — tu embarazo merece lo mejor.</p>
 
   <!-- Plan pill -->
   <div class="plan-pill" id="planPill">
@@ -251,54 +251,54 @@
   <!-- Resumen -->
   <div class="summary-box">
     <div class="summary-row">
-      <span class="summary-label">Plan</span>
+      <span class="summary-label" id="lblPlan">Plan</span>
       <span class="summary-value" id="planName">Lumé Bienestar</span>
     </div>
     <div class="summary-row">
-      <span class="summary-label">Prueba gratuita</span>
-      <span class="summary-value green">7 días · 0,00€</span>
+      <span class="summary-label" id="lblTrial">Prueba gratuita</span>
+      <span class="summary-value green">7 días · $0.00</span>
     </div>
     <div class="summary-row">
-      <span class="summary-label">Primer cobro</span>
-      <span class="summary-value" id="firstCharge">9$/mes · día 8</span>
+      <span class="summary-label" id="lblCharge">Primer cobro</span>
+      <span class="summary-value" id="firstCharge">$9/mes · día 8</span>
     </div>
     <div class="summary-row">
-      <span class="summary-label">Confirmación enviada a</span>
-      <span class="summary-value" id="userEmail">tu@email.com</span>
+      <span class="summary-label" id="lblSentTo">Confirmación enviada a</span>
+      <span class="summary-value" id="userEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="aadedfeacfc7cbc3c684c9c5c7">[email&#160;protected]</a></span>
     </div>
   </div>
 
   <!-- Features -->
-  <div class="features-grid">
+  <div class="features-grid" id="featGrid">
     <div class="feature-item">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      Asistente IA 24/7
+      <span data-es="Asistente IA 24/7" data-en="24/7 AI assistant">Asistente IA 24/7</span>
     </div>
     <div class="feature-item">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a5 5 0 1 0 0 10A5 5 0 0 0 12 2z"/><path d="M6.3 14.5A9 9 0 0 0 3 21h18a9 9 0 0 0-3.3-6.5"/></svg>
-      Nutrición perinatal
+      <span data-es="Nutrición perinatal" data-en="Perinatal nutrition">Nutrición perinatal</span>
     </div>
     <div class="feature-item">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2.5" stroke-linecap="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-      Meditaciones prenatales
+      <span data-es="Meditaciones prenatales" data-en="Prenatal meditations">Meditaciones prenatales</span>
     </div>
     <div class="feature-item">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-      Música para tu bebé
+      <span data-es="Música para tu bebé" data-en="Music for your baby">Música para tu bebé</span>
     </div>
     <div class="feature-item">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-      Tracker semanal
+      <span data-es="Tracker semanal" data-en="Weekly tracker">Tracker semanal</span>
     </div>
     <div class="feature-item">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8492A" stroke-width="2.5" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      Modo pareja
+      <span data-es="Modo pareja" data-en="Partner mode">Modo pareja</span>
     </div>
   </div>
 
   <!-- CTA -->
-  <a href="app.html" class="cta-btn">Abrir Lumé →</a>
-  <a href="index.html" class="secondary-link">Ver todos los beneficios de tu plan</a>
+  <a href="app.html" class="cta-btn" id="ctaOpen">Abrir Lumé →</a>
+  <a href="index.html" class="secondary-link" id="linkBenefits">Ver todos los beneficios de tu plan</a>
 
   <!-- Guarantee -->
   <div class="guarantee-strip">
@@ -306,16 +306,39 @@
       <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/>
       <path d="M9 12l2 2 4-4"/>
     </svg>
-    Cancela antes del día 8 y no se realizará ningún cobro &nbsp;·&nbsp;
-    <a href="legal.html" style="color:#A8492A;font-weight:700;text-decoration:none;">Ver condiciones</a>
+    <span id="guaranteeText">Cancela antes del día 8 y no se realizará ningún cobro</span>&nbsp;·&nbsp;
+    <a href="legal.html" style="color:#A8492A;font-weight:700;text-decoration:none;" id="linkTerms">Ver condiciones</a>
   </div>
 </div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Idioma
+  try {
+    const lang = localStorage.getItem('lume_lang') || 'es';
+    if (lang === 'en') {
+      document.documentElement.lang = 'en';
+      document.title = 'Welcome to Lumé! — Confirmation';
+      document.getElementById('h1Text').innerHTML = 'Welcome to <span class="shimmer-text">Lumé</span>!';
+      document.getElementById('subText').textContent = 'Your subscription is active. Start today with 7 full days free — your pregnancy deserves the best.';
+      document.getElementById('lblPlan').textContent = 'Plan';
+      document.getElementById('lblTrial').textContent = 'Free trial';
+      document.getElementById('lblCharge').textContent = 'First charge';
+      document.getElementById('lblSentTo').textContent = 'Confirmation sent to';
+      document.querySelectorAll('.summary-row .green').forEach(function(el){ el.textContent = '7 days \u00b7 $0.00'; });
+      document.getElementById('featGrid').querySelectorAll('span[data-en]').forEach(function(el){ el.textContent = el.getAttribute('data-en'); });
+      document.getElementById('ctaOpen').textContent = 'Open Lumé →';
+      document.getElementById('linkBenefits').textContent = 'See all your plan benefits';
+      document.getElementById('guaranteeText').textContent = 'Cancel before day 8 and you will never be charged';
+      document.getElementById('linkTerms').textContent = 'See terms';
+    }
+  } catch(e) {}
+</script>
 
 <script>
   // Leer plan del localStorage
   try {
     const plan = localStorage.getItem('lume_plan') || 'bienestar';
-    const email = localStorage.getItem('lume_nombre') ? localStorage.getItem('lume_nombre') + '@email.com' : 'tu@email.com';
+    const email = localStorage.getItem('lume_email') || 'tu@email.com';
     const PLAN_DATA = {
       esencial:    { label:'Plan Esencial activo',    name:'Lumé Esencial',    charge:'Gratis · siempre' },
       bienestar:   { label:'Plan Bienestar activo',   name:'Lumé Bienestar',   charge:'9$/mes · día 8' },
