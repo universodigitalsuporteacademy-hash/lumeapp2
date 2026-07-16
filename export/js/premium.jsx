@@ -311,6 +311,7 @@ function LoginModal({ onClose, appHref, initialTab }) {
       if (tab === "registro") {
         try {
           if (name.trim()) localStorage.setItem("lume_nombre", name.trim());
+          if (email.trim()) localStorage.setItem("lume_email", email.trim());
           localStorage.setItem("lume_plan", "esencial");
         } catch {}
         window.location.href = "confirmacion.html";
