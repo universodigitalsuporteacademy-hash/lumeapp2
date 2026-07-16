@@ -8,7 +8,7 @@
  *
  * Instrucciones paso a paso: servidor/SUPABASE-LEEME.md
  */
-const SUPABASE_URL = "https://rbuunvnlerkrbfoqgkzx.supabase.co/rest/v1/";
+const SUPABASE_URL = "https://rbuunvnlerkrbfoqgkzx.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJidXVudm5sZXJrcmJmb3Fna3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNTY0ODYsImV4cCI6MjA5OTczMjQ4Nn0.ztH2O1Ly-DU2RhSIxobKciXxOlvemQaMNck8W0pYP18";
 
 let supabaseClient = null;
