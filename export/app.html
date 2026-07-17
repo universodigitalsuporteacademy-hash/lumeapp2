@@ -39,6 +39,20 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 
 /* ── Onboarding Screen ────────────────────────────────── */
 function OnboardingScreen({ onComplete }) {
+  const obLang = getAppLang2();
+  const OB_T = obLang==="en" ? {
+    yourName:"Your name", namePh:"What's your name?", continueBtn:"Continue →",
+    dueLabel:"Estimated due date", weekOf:(w)=>`Week ${w} of pregnancy · Trimester ${w<=13?1:w<=26?2:3}`,
+    startBtn:"Get started ✨", skip:"Skip for now",
+    step1Title:"Welcome to Lumé", step1Sub:"Your companion through the most important pregnancy of your life.",
+    step2Title:(n)=>`Hi, ${n||"mama"} 💛`, step2Sub:"Tell me when you're expecting your baby to personalize your journey.",
+  } : {
+    yourName:"Tu nombre", namePh:"¿Cómo te llamas?", continueBtn:"Continuar →",
+    dueLabel:"Fecha probable de parto", weekOf:(w)=>`Semana ${w} de embarazo · Trimestre ${w<=13?1:w<=26?2:3}`,
+    startBtn:"Comenzar ✨", skip:"Omitir por ahora",
+    step1Title:"Bienvenida a Lumé", step1Sub:"Tu compañera de viaje en el embarazo más importante de tu vida.",
+    step2Title:(n)=>`Hola, ${n||"mamá"} 💛`, step2Sub:"Cuéntame cuándo esperas a tu bebé para personalizar tu acompañamiento.",
+  };
   const [step, setStep] = React.useState(0);
   const [nombre, setNombre] = React.useState("");
   const [due, setDue] = React.useState("");
@@ -67,27 +81,32 @@ function OnboardingScreen({ onComplete }) {
 
   const steps = [
   {
-    title: "Bienvenida a Lumé",
-    sub: "Tu compañera de viaje en el embarazo más importante de tu vida.",
+    title: OB_T.step1Title,
+    sub: OB_T.step1Sub,
     field:
     <div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: "#a08070", marginBottom: 8, letterSpacing: ".05em" }}>Tu nombre</div>
-          <input value={nombre} onChange={(e) => setNombre(e.target.value)}
-      placeholder="¿Cómo te llamas?"
-      style={{ width: "100%", padding: "16px 18px", borderRadius: 16, border: "1.5px solid rgba(168,73,42,.2)",
-        background: "rgba(255,255,255,.7)", fontSize: 17, fontFamily: "inherit", color: "#3d1a0e",
-        outline: "none", boxSizing: "border-box", backdropFilter: "blur(12px)" }} />
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#a08070", marginBottom: 8, letterSpacing: ".05em" }}>{OB_T.yourName}</div>
+          <div style={{ position: "relative" }}>
+            <div style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", width: 26, height: 26, borderRadius: "50%", background: "linear-gradient(135deg,#A8492A,#C8952A)", display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <input value={nombre} onChange={(e) => setNombre(e.target.value)}
+      placeholder={OB_T.namePh} autoFocus
+      style={{ width: "100%", padding: "16px 18px 16px 52px", borderRadius: 16, border: "1.5px solid rgba(168,73,42,.28)",
+        background: "linear-gradient(160deg,rgba(255,255,255,.85),rgba(255,246,238,.65))", fontSize: 17, fontFamily: "inherit", color: "#3d1a0e",
+        outline: "none", boxSizing: "border-box", backdropFilter: "blur(12px)", boxShadow: "0 6px 20px rgba(168,73,42,.1), 0 1px 0 rgba(255,255,255,.8) inset" }} />
+          </div>
         </div>,
 
     canNext: nombre.trim().length > 0,
-    nextLabel: "Continuar →"
+    nextLabel: OB_T.continueBtn
   },
   {
-    title: `Hola, ${nombre || "mamá"} 💛`,
-    sub: "Cuéntame cuándo esperas a tu bebé para personalizar tu acompañamiento.",
+    title: OB_T.step2Title(nombre),
+    sub: OB_T.step2Sub,
     field:
     <div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: "#a08070", marginBottom: 8, letterSpacing: ".05em" }}>Fecha probable de parto</div>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#a08070", marginBottom: 8, letterSpacing: ".05em" }}>{OB_T.dueLabel}</div>
           <input type="date" value={due} onChange={(e) => setDue(e.target.value)}
       style={{ width: "100%", padding: "16px 18px", borderRadius: 16, border: "1.5px solid rgba(168,73,42,.2)",
         background: "rgba(255,255,255,.7)", fontSize: 16, fontFamily: "inherit", color: "#3d1a0e",
@@ -95,13 +114,13 @@ function OnboardingScreen({ onComplete }) {
           {due &&
       <div style={{ marginTop: 12, padding: "12px 16px", borderRadius: 12, background: "rgba(168,73,42,.08)",
         border: "1px solid rgba(168,73,42,.15)", fontSize: 13, color: "#A8492A", fontWeight: 600 }}>
-              Semana {calcWeeks(due)} de embarazo · Trimestre {calcWeeks(due) <= 13 ? 1 : calcWeeks(due) <= 26 ? 2 : 3}
+              {OB_T.weekOf(calcWeeks(due))}
             </div>
       }
         </div>,
 
     canNext: true,
-    nextLabel: "Comenzar ✨"
+    nextLabel: OB_T.startBtn
   }];
 
 
@@ -155,7 +174,7 @@ function OnboardingScreen({ onComplete }) {
 
       {step === 0 &&
       <button onClick={finish} style={{ marginTop: 14, background: "none", border: "none", cursor: "pointer",
-        fontSize: 13, color: "#a08070", fontFamily: "inherit" }}>Omitir por ahora</button>
+        fontSize: 13, color: "#a08070", fontFamily: "inherit" }}>{OB_T.skip}</button>
       }
     </div>);
 
@@ -163,6 +182,14 @@ function OnboardingScreen({ onComplete }) {
 
 /* ── AdMob Banner ───────────────────────────────────────── */
 function AdMobBanner({ onWatchAd, onDismiss }) {
+  const adLang = getAppLang2();
+  const AD_T = adLang==="en" ? {
+    ads:["Prenatal vitamins · recommended by midwives","Comfy maternity wear · free shipping","Maternity insurance · from €12/mo","Co-sleeping crib · Montessori & safe"],
+    sponsor:"MomNutrition · Sponsored", watchAd:"Watch ad",
+  } : {
+    ads:["Vitaminas prenatales · recomendadas por matronas","Ropa premamá cómoda · envío gratis","Seguro de maternidad · desde 12€/mes","Cuna colecho · montessori y segura"],
+    sponsor:"NutriciónMamá · Patrocinado", watchAd:"Ver anuncio",
+  };
   return (
     <div style={{
       position:"absolute", bottom:78, left:0, right:0, height:52,
@@ -176,14 +203,14 @@ function AdMobBanner({ onWatchAd, onDismiss }) {
         padding:"2px 5px",border:"1px solid #4285F4",borderRadius:3}}>Ad</div>
       <div style={{flex:1,minWidth:0}}>
         <div style={{fontSize:12,fontWeight:600,color:"#3d1a0e",lineHeight:1.2,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
-          {["Vitaminas prenatales · recomendadas por matronas","Ropa premamá cómoda · envío gratis","Seguro de maternidad · desde 12€/mes","Cuna colecho · montessori y segura"][Math.floor(Date.now()/30000)%4]}
+          {AD_T.ads[Math.floor(Date.now()/30000)%4]}
         </div>
-        <div style={{fontSize:10,color:"#a08070"}}>NutriciónMamá · Patrocinado</div>
+        <div style={{fontSize:10,color:"#a08070"}}>{AD_T.sponsor}</div>
       </div>
       <button onClick={onWatchAd} style={{flexShrink:0,padding:"6px 11px",borderRadius:99,border:"none",
         background:"linear-gradient(135deg,#A8492A,#8B3520)",color:"#fff",fontSize:10,fontWeight:700,
         cursor:"pointer",fontFamily:"inherit",boxShadow:"0 4px 12px rgba(168,73,42,.35)"}}>
-        Ver anuncio
+        {AD_T.watchAd}
       </button>
       <button onClick={onDismiss} style={{flexShrink:0,width:20,height:20,borderRadius:"50%",border:"none",
         background:"rgba(0,0,0,.07)",color:"#a08070",display:"flex",alignItems:"center",justifyContent:"center",
@@ -194,6 +221,18 @@ function AdMobBanner({ onWatchAd, onDismiss }) {
 
 /* ── Rewarded Video Modal ────────────────────────────────── */
 function RewardedVideoModal({ onClose, onReward }) {
+  const rvLang = getAppLang2();
+  const RV_T = rvLang==="en" ? {
+    sponsorName:"Mom Nutrition", sponsorSub:"Prenatal vitamins · Sponsored",
+    adPlaying:"Ad playing...", adDone:"Ad completed",
+    reward:"🎁 Reward", rewardTitle:"+3 AI Assistant chats", rewardSub:"Valid for the next 24 hours",
+    claim:"Claim reward!", skip:"Skip →", waitForReward:"or wait for the reward", waitToSkip:(t)=>`Wait ${t}s to skip`,
+  } : {
+    sponsorName:"Nutrición Mamá", sponsorSub:"Vitaminas prenatales · Patrocinado",
+    adPlaying:"Anuncio en reproducción...", adDone:"Anuncio completado",
+    reward:"🎁 Recompensa", rewardTitle:"+3 consultas al Asistente IA", rewardSub:"Válidas por las próximas 24 horas",
+    claim:"¡Reclamar recompensa!", skip:"Saltar →", waitForReward:"o espera a la recompensa", waitToSkip:(t)=>`Espera ${t}s para saltar`,
+  };
   const [time, setTime] = React.useState(5);
   const [canSkip, setCanSkip] = React.useState(false);
   const [done, setDone] = React.useState(false);
@@ -232,8 +271,8 @@ function RewardedVideoModal({ onClose, onReward }) {
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>
           </div>
           <div style={{flex:1}}>
-            <div style={{fontSize:15,fontWeight:700,color:"#fff",marginBottom:3}}>Nutrición Mamá</div>
-            <div style={{fontSize:12,color:"rgba(255,255,255,.5)"}}>Vitaminas prenatales · Patrocinado</div>
+            <div style={{fontSize:15,fontWeight:700,color:"#fff",marginBottom:3}}>{RV_T.sponsorName}</div>
+            <div style={{fontSize:12,color:"rgba(255,255,255,.5)"}}>{RV_T.sponsorSub}</div>
           </div>
           <div style={{width:36,height:36,borderRadius:"50%",background:"rgba(0,0,0,.4)",
             display:"flex",alignItems:"center",justifyContent:"center",
@@ -250,7 +289,7 @@ function RewardedVideoModal({ onClose, onReward }) {
           <div style={{textAlign:"center"}}>
             <div style={{fontSize:36,marginBottom:8,opacity:.5}}>▶</div>
             <div style={{fontSize:12,color:"rgba(255,255,255,.4)",fontWeight:600,letterSpacing:".06em",textTransform:"uppercase"}}>
-              {done ? "Anuncio completado" : "Anuncio en reproducción..."}
+              {done ? RV_T.adDone : RV_T.adPlaying}
             </div>
           </div>
           <div style={{position:"absolute",bottom:10,right:12,fontSize:9,color:"rgba(255,255,255,.25)",fontWeight:600}}>Google AdMob</div>
@@ -261,14 +300,14 @@ function RewardedVideoModal({ onClose, onReward }) {
           {done ? (
             <>
               <div style={{padding:"14px 16px",borderRadius:16,background:"rgba(200,149,42,.12)",border:"1px solid rgba(200,149,42,.25)"}}>
-                <div style={{fontSize:10,fontWeight:800,letterSpacing:".1em",textTransform:"uppercase",color:"#C8952A",marginBottom:4}}>🎁 Recompensa</div>
-                <div style={{fontSize:15,fontWeight:700,color:"#fff"}}>+3 consultas al Asistente IA</div>
-                <div style={{fontSize:11.5,color:"rgba(255,255,255,.45)",marginTop:2}}>Válidas por las próximas 24 horas</div>
+                <div style={{fontSize:10,fontWeight:800,letterSpacing:".1em",textTransform:"uppercase",color:"#C8952A",marginBottom:4}}>{RV_T.reward}</div>
+                <div style={{fontSize:15,fontWeight:700,color:"#fff"}}>{RV_T.rewardTitle}</div>
+                <div style={{fontSize:11.5,color:"rgba(255,255,255,.45)",marginTop:2}}>{RV_T.rewardSub}</div>
               </div>
               <button onClick={claim} style={{padding:"15px",borderRadius:16,border:"none",
                 background:"linear-gradient(135deg,#A8492A,#C8952A)",color:"#fff",fontSize:15,fontWeight:800,
                 cursor:"pointer",fontFamily:"inherit",boxShadow:"0 12px 32px rgba(168,73,42,.45)"}}>
-                ¡Reclamar recompensa!
+                {RV_T.claim}
               </button>
             </>
           ) : (
@@ -276,12 +315,12 @@ function RewardedVideoModal({ onClose, onReward }) {
               {canSkip && (
                 <button onClick={onClose} style={{flex:1,padding:"14px",borderRadius:14,border:"1px solid rgba(255,255,255,.15)",
                   background:"rgba(255,255,255,.06)",color:"rgba(255,255,255,.7)",fontSize:13,fontWeight:700,
-                  cursor:"pointer",fontFamily:"inherit"}}>Saltar →</button>
+                  cursor:"pointer",fontFamily:"inherit"}}>{RV_T.skip}</button>
               )}
               <div style={{flex:2,padding:"14px",borderRadius:14,border:"1px solid rgba(255,255,255,.08)",
                 background:"rgba(255,255,255,.04)",textAlign:"center"}}>
                 <div style={{fontSize:11,color:"rgba(255,255,255,.4)",fontWeight:600}}>
-                  {canSkip ? "o espera a la recompensa" : `Espera ${time}s para saltar`}
+                  {canSkip ? RV_T.waitForReward : RV_T.waitToSkip(time)}
                 </div>
               </div>
             </div>
@@ -294,13 +333,33 @@ function RewardedVideoModal({ onClose, onReward }) {
 }
 
 function App() {
+  const appLang = getAppLang2();
+  const APP_T = appLang==="en" ? {
+    playing:"Playing", stop:"Stop", notifications:"Notifications", markRead:"Mark all read",
+    noNotifs:"No notifications", dirSection:"Visual direction", style:"Style",
+    pregnancySection:"Pregnancy", week:"Week", demoSection:"Demo", premiumMode:"Premium mode",
+    notifSeed:[
+      { id: 1, text: "Your baby is the size of an avocado this week 🥑", time: "Now", read: false },
+      { id: 2, text: "Remember to log your weight this week", time: "1h ago", read: false },
+      { id: 3, text: "Tip: Iron + vitamin C = better absorption", time: "Today", read: true },
+    ],
+  } : {
+    playing:"Reproduciendo", stop:"Detener", notifications:"Notificaciones", markRead:"Marcar leídas",
+    noNotifs:"Sin notificaciones", dirSection:"Dirección visual", style:"Estilo",
+    pregnancySection:"Embarazo", week:"Semana", demoSection:"Demo", premiumMode:"Modo Premium",
+    notifSeed:[
+      { id: 1, text: "Tu bebé tiene el tamaño de un aguacate esta semana 🥑", time: "Ahora", read: false },
+      { id: 2, text: "Recuerda registrar tu peso esta semana", time: "Hace 1h", read: false },
+      { id: 3, text: "Consejo: Hierro + vitamina C = mejor absorción", time: "Hoy", read: true },
+    ],
+  };
   const [t, setTweak] = useTweaks({ ...TWEAK_DEFAULTS, dir: INITIAL_DIR });
   const [audioPlaying, setAudioPlaying] = React.useState(false);
   const [audioLabel, setAudioLabel] = React.useState('');
   React.useEffect(() => {
     const handler = (e) => {
       setAudioPlaying(e.detail.playing);
-      if (e.detail.playing) setAudioLabel(window._LUME_AUDIO_LABEL || 'Reproduciendo');
+      if (e.detail.playing) setAudioLabel(window._LUME_AUDIO_LABEL || APP_T.playing);
     };
     window.addEventListener('lume-audio', handler);
     return () => window.removeEventListener('lume-audio', handler);
@@ -352,11 +411,7 @@ function App() {
   });
   const [notifOpen, setNotifOpen] = React.useState(false);
   const [notifs, setNotifs] = React.useState(() => {
-    try {return JSON.parse(localStorage.getItem("lume_notifs") || JSON.stringify([
-      { id: 1, text: "Tu bebé tiene el tamaño de un aguacate esta semana 🥑", time: "Ahora", read: false },
-      { id: 2, text: "Recuerda registrar tu peso esta semana", time: "Hace 1h", read: false },
-      { id: 3, text: "Consejo: Hierro + vitamina C = mejor absorción", time: "Hoy", read: true }]
-      ));} catch {return [];}
+    try {return JSON.parse(localStorage.getItem("lume_notifs") || JSON.stringify(APP_T.notifSeed));} catch {return [];}
   });
   const unreadCount = notifs.filter((n) => !n.read).length;
 
@@ -366,14 +421,14 @@ function App() {
     try {localStorage.setItem("lume_notifs", JSON.stringify(updated));} catch {}
   };
 
+  const push = React.useCallback((name) => setSubScreen(name), []);
+  const pop = React.useCallback(() => setSubScreen(null), []);
+  const goToTab = React.useCallback((name) => {setSubScreen(null);setTab(name);}, []);
+
   React.useEffect(() => {
     window.__lumeGoCheckout = (planId, annual) => { try{localStorage.setItem('lume_checkout_plan', planId);localStorage.setItem('lume_checkout_billing', annual ? 'annual' : 'monthly');}catch{} push('checkout'); };
     return () => { delete window.__lumeGoCheckout; };
   }, [push]);
-
-  const push = React.useCallback((name) => setSubScreen(name), []);
-  const pop = React.useCallback(() => setSubScreen(null), []);
-  const goToTab = React.useCallback((name) => {setSubScreen(null);setTab(name);}, []);
 
   React.useEffect(() => {
     document.documentElement.setAttribute("data-dir", t.dir);
@@ -400,8 +455,8 @@ function App() {
           </div>
         </IOSDevice>
         <TweaksPanel title="Tweaks">
-          <TweakSection label="Dirección visual" />
-          <TweakRadio label="Estilo" value={t.dir}
+          <TweakSection label={APP_T.dirSection} />
+          <TweakRadio label={APP_T.style} value={t.dir}
           options={[{ value: "aura", label: "Aura" }, { value: "sereno", label: "Sereno" }, { value: "fresco", label: "Fresco" }]}
           onChange={(v) => setTweak("dir", v)} />
         </TweaksPanel>
@@ -416,18 +471,18 @@ function App() {
         citas: () => <CitasScreen goBack={pop} />,
         sintomas: () => <SintomasScreen goBack={pop} />,
         recompensas: () => <RecompensasScreen goBack={pop} />,
-        ultrasonidos: () => <UltrasonidosScreen goBack={pop} />,
+        ultrasonidos: () => <UltrasonidosScreen goBack={pop} goToTab={goToTab} />,
         peso: () => <PesoScreen goBack={pop} />,
-        ajustes: () => <AjustesScreen goBack={pop} />,
+        ajustes: () => <AjustesScreen goBack={pop} goToTab={goToTab} />,
         patadas: () => <KickTrackerScreen goBack={pop} />,
-        fotos: () => <FotosScreen goBack={pop} />,
+        fotos: () => <FotosScreen goBack={pop} goToTab={goToTab} />,
         meditaciones: () => <MeditacionesScreen goBack={pop} goToTab={goToTab} />,
         ejercicios: () => <EjerciciosScreen goBack={pop} goToTab={goToTab} />,
         contenido: () => <ContenidoSemanalScreen goBack={pop} goToTab={goToTab} />,
         diario: () => <DiarioScreen goBack={pop} goToTab={goToTab} />,
         expertos: () => <ExpertosScreen goBack={pop} goToTab={goToTab} />,
         pareja: () => <ParejaScreen goBack={pop} goToTab={goToTab} />,
-        historial: () => <HistorialScreen goBack={pop} />,
+        historial: () => <HistorialScreen goBack={pop} goToTab={goToTab} />,
         nombres: () => <Nombres goBack={pop} />,
         "nutri-plan": () => <NutricionPersonalizadaScreen goBack={pop} goToTab={goToTab} />,
         "musica-bebe": () => <MusicaBebeScreen goBack={pop} goToTab={goToTab} />,
@@ -439,11 +494,11 @@ function App() {
     }
     const tabs = {
       inicio: () => <Inicio week={week} setWeek={setWeek} push={push} goToTab={goToTab} unreadCount={unreadCount} onBell={() => setNotifOpen(true)} />,
-      ajustes: () => <AjustesScreen goBack={() => { setSubScreen(null); setTab("inicio"); }} setWeek={setWeek} />,
+      ajustes: () => <AjustesScreen goBack={() => { setSubScreen(null); setTab("inicio"); }} setWeek={setWeek} goToTab={goToTab} />,
       nombres: () => <Nombres />,
       nutricion: () => <Nutricion onPlanPress={() => push("nutri-plan")} />,
       premium: () => <Premium onActivate={() => {try {localStorage.setItem("lume_premium", "true");} catch {}}} />,
-      asistente: () => <Asistente />,
+      asistente: () => <Asistente goToTab={goToTab} />,
       mas: () => typeof MasScreen !== 'undefined' ? <MasScreen push={push} goToTab={goToTab} week={week} /> : null
     };
     const fn = tabs[tab];
@@ -458,16 +513,16 @@ function App() {
       borderBottom: "1px solid rgba(168,73,42,.1)", borderRadius: "0 0 28px 28px",
       boxShadow: "0 24px 60px rgba(30,10,4,.28)" }}>
         <div style={{ padding: "52px 20px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 24, fontWeight: 700, color: "#3d1a0e" }}>Notificaciones</div>
+          <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 24, fontWeight: 700, color: "#3d1a0e" }}>{APP_T.notifications}</div>
           <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-            {unreadCount > 0 && <button onClick={markAllRead} style={{ fontSize: 12, fontWeight: 700, color: "#A8492A", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" }}>Marcar leídas</button>}
+            {unreadCount > 0 && <button onClick={markAllRead} style={{ fontSize: 12, fontWeight: 700, color: "#A8492A", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" }}>{APP_T.markRead}</button>}
             <button onClick={() => setNotifOpen(false)} style={{ width: 32, height: 32, borderRadius: "50%", border: "none", background: "rgba(168,73,42,.1)", color: "#A8492A", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
             </button>
           </div>
         </div>
         <div style={{ padding: "0 16px 20px", display: "flex", flexDirection: "column", gap: 8 }}>
-          {notifs.length === 0 && <div style={{ textAlign: "center", padding: "24px", color: "#a08070", fontSize: 14 }}>Sin notificaciones</div>}
+          {notifs.length === 0 && <div style={{ textAlign: "center", padding: "24px", color: "#a08070", fontSize: 14 }}>{APP_T.noNotifs}</div>}
           {notifs.map((n) =>
         <div key={n.id} style={{ display: "flex", gap: 12, padding: "14px 16px", borderRadius: 16,
           background: n.read ? "rgba(255,255,255,.4)" : "rgba(168,73,42,.07)",
@@ -506,11 +561,11 @@ function App() {
                 <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".1em", color: "rgba(255,255,255,.5)", textTransform: "uppercase" }}>Reproduciendo</div>
+                <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".1em", color: "rgba(255,255,255,.5)", textTransform: "uppercase" }}>{APP_T.playing}</div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: "#fff" }}>{audioLabel}</div>
               </div>
               <button onClick={stopGlobalAudio} style={{ padding: "6px 14px", borderRadius: 99, border: "1px solid rgba(255,255,255,.22)", background: "rgba(255,255,255,.1)", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
-                Detener
+                {APP_T.stop}
               </button>
             </div>
           }
@@ -518,15 +573,15 @@ function App() {
       </IOSDevice>
 
       <TweaksPanel title="Tweaks">
-        <TweakSection label="Dirección visual" />
-        <TweakRadio label="Estilo" value={t.dir}
+        <TweakSection label={APP_T.dirSection} />
+        <TweakRadio label={APP_T.style} value={t.dir}
         options={[{ value: "aura", label: "Aura" }, { value: "sereno", label: "Sereno" }, { value: "fresco", label: "Fresco" }]}
         onChange={(v) => setTweak("dir", v)} />
-        <TweakSection label="Embarazo" />
-        <TweakSlider label="Semana" value={week} min={5} max={40} step={1}
+        <TweakSection label={APP_T.pregnancySection} />
+        <TweakSlider label={APP_T.week} value={week} min={5} max={40} step={1}
         onChange={(v) => {setWeek(v);setTweak("week", v);}} />
-        <TweakSection label="Demo" />
-        <TweakToggle label="Modo Premium" value={!!localStorage.getItem("lume_premium")}
+        <TweakSection label={APP_T.demoSection} />
+        <TweakToggle label={APP_T.premiumMode} value={!!localStorage.getItem("lume_premium")}
         onChange={(v) => {try {if (v) localStorage.setItem("lume_premium", "true");else localStorage.removeItem("lume_premium");window.location.reload();} catch {}}} />
       </TweaksPanel>
     </div>);
