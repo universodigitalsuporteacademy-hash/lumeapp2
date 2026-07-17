@@ -552,7 +552,7 @@ function Nombres({ goBack }) {
                   no
                 </div>
                 <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 99, background: "rgba(255,255,255,.5)", border: `1.5px solid ${g.color}`, color: g.color, fontFamily: "'Cormorant Garamond',serif", fontStyle: "italic", fontSize: 15, fontWeight: 600, boxShadow: `0 0 12px ${g.color}66, inset 0 0 12px ${g.color}1a` }}>
-                  me gusta
+                  {NM_T.like.toLowerCase()}
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                 </div>
               </div>
@@ -1754,15 +1754,67 @@ const PLANS = [
     ] },
 ];
 
+const PLANS_EN = [
+  { id:"esencial",   name:"Essential",    price:"Free", sub:"",     color:"#a08070",
+    features:[
+      "Weekly baby tracker (weeks 4–40)",
+      "Medical appointment log",
+      "Symptoms & wellness journal",
+      "Weight tracking with chart",
+      "Photo gallery (up to 6)",
+      "Kick tracker",
+      "Ultrasounds (up to 2)",
+      "Baby names (up to 10 favorites)",
+      "Rewards & points",
+      "Glow AI assistant (3 questions/day)",
+    ] },
+  { id:"bienestar",  name:"Wellness",   price:"$9",     sub:"/mo", color:"#A8492A", badge:"Most popular",
+    features:[
+      "Everything in Essential",
+      "Unlimited Glow AI assistant",
+      "AI-personalized nutrition plan",
+      "Guided prenatal meditations",
+      "Music for your baby",
+      "Combined meditation + music",
+      "Trimester-safe exercises",
+      "Weekly premium content guide",
+      "Pregnancy diary",
+      "Unlimited ultrasounds",
+      "Partner mode",
+      "── Coming soon ──",
+      "Childbirth prep classes",
+    ] },
+  { id:"profesional",name:"Professional", price:"$19",    sub:"/mo", color:"#C8952A", badge:"✦ Premium",
+    features:[
+      "Everything in Wellness",
+      "Frequency meditation for babies",
+      "Exportable medical history PDF",
+      "Early access to new features",
+      "24/7 priority support",
+      "── Coming soon ──",
+      "Consultations with committee experts",
+      "Postpartum & newborn tracking",
+      "Medical dashboard shared with your doctor",
+      "Baby mode: first months",
+      "Partner clinic network",
+    ] },
+];
+
+function plansFor(lang) { return lang==="en" ? PLANS_EN : PLANS; }
+
 function Premium({ onActivate }) {
+  const lang = getAppLang2();
+  const PLANS_L = plansFor(lang);
   const [selPlan, setSelPlan] = React.useState("bienestar");
   const [annual, setAnnual] = React.useState(false);
   const [pressedCta, setPressedCta] = React.useState(false);
   const [openFaq, setOpenFaq] = React.useState(null);
   const [activated, setActivated] = React.useState(() => { try { return !!localStorage.getItem("lume_premium"); } catch { return false; } });
-  const plan = PLANS.find(p=>p.id===selPlan);
+  const plan = PLANS_L.find(p=>p.id===selPlan);
 
-  const ANNUAL_DISCOUNT = { bienestar: { price:"$6.25", moPer:"/mes · $75/año", saving:"31%" }, profesional:{ price:"$12", moPer:"/mes · $144/año", saving:"37%" } };
+  const ANNUAL_DISCOUNT = lang==="en"
+    ? { bienestar: { price:"$6.25", moPer:"/mo · $75/yr", saving:"31%" }, profesional:{ price:"$12", moPer:"/mo · $144/yr", saving:"37%" } }
+    : { bienestar: { price:"$6.25", moPer:"/mes · $75/año", saving:"31%" }, profesional:{ price:"$12", moPer:"/mes · $144/año", saving:"37%" } };
   const annualInfo = annual && ANNUAL_DISCOUNT[selPlan];
   const displayPrice = annualInfo ? annualInfo.price : plan.price;
   const displaySub   = annualInfo ? annualInfo.moPer : plan.sub;
@@ -1773,20 +1825,53 @@ function Premium({ onActivate }) {
     setActivated(true);
   };
 
-  const TRUST = [
+  const TRUST = lang==="en" ? [
+    { icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>, label:"7-day free trial" },
+    { icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>, label:"Clinical guides" },
+    { icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>, label:"GDPR" },
+    { icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>, label:"Cancel anytime" },
+  ] : [
     { icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>, label:"7 días gratis" },
     { icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>, label:"Guías clínicas" },
     { icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>, label:"RGPD" },
     { icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>, label:"Cancela fácil" },
   ];
 
-  const FAQ = [
+  const FAQ = lang==="en" ? [
+    { q:"When is the first charge?", a:"Only after the 7-day free trial. If you cancel before then, nothing is charged." },
+    { q:"Can I change plans later?", a:"Yes, you can upgrade or downgrade anytime from Settings. Changes apply on the next billing cycle." },
+    { q:"Is my data safe?", a:"All health data is encrypted in transit and at rest. We never sell or share it. We comply with GDPR." },
+  ] : [
     { q:"¿Cuándo se hace el primer cobro?", a:"Solo después de los 7 días de prueba gratuita. Si cancelas antes, no se carga nada." },
     { q:"¿Puedo cambiar de plan más adelante?", a:"Sí, puedes subir o bajar de plan en cualquier momento desde Ajustes. Los cambios se aplican en el siguiente ciclo." },
     { q:"¿Mis datos están seguros?", a:"Todos los datos de salud se cifran en tránsito y en reposo. Nunca los vendemos ni compartimos. Cumplimos RGPD." },
   ];
 
-  const COMPARE = [
+  const COMPARE = lang==="en" ? [
+    { f:"Weekly baby tracker",                esen:true,    bien:true,   pro:true   },
+    { f:"Medical appointment log",            esen:true,    bien:true,   pro:true   },
+    { f:"Symptoms & journal",                 esen:true,    bien:true,   pro:true   },
+    { f:"Weight tracking",                    esen:true,    bien:true,   pro:true   },
+    { f:"Photo gallery",                     esen:"6 max", bien:"∞",   pro:"∞"    },
+    { f:"Kick tracker",                       esen:true,    bien:true,   pro:true   },
+    { f:"Ultrasounds",                        esen:"2 max", bien:"∞",   pro:"∞"    },
+    { f:"Baby names",                        esen:true,    bien:true,   pro:true   },
+    { f:"Rewards & points",                   esen:true,    bien:true,   pro:true   },
+    { f:"Glow AI assistant",                  esen:"3/day", bien:"∞",   pro:"∞"    },
+    { f:"Basic nutrition",                   esen:true,    bien:true,   pro:true   },
+    { f:"AI nutrition plan",                  esen:false,   bien:true,   pro:true   },
+    { f:"Prenatal meditations",               esen:false,   bien:true,   pro:true   },
+    { f:"Music for your baby",               esen:false,   bien:true,   pro:true   },
+    { f:"Meditation + music",                esen:false,   bien:true,   pro:true   },
+    { f:"Trimester exercises",                esen:false,   bien:true,   pro:true   },
+    { f:"Weekly premium content",             esen:false,   bien:true,   pro:true   },
+    { f:"Pregnancy diary",                   esen:false,   bien:true,   pro:true   },
+    { f:"Partner mode",                       esen:false,   bien:true,   pro:true   },
+    { f:"Expert consultations",               esen:false,   bien:false,  pro:"Soon" },
+    { f:"Frequencies for babies",             esen:false,   bien:false,  pro:true   },
+    { f:"Medical history PDF",                esen:false,   bien:false,  pro:true   },
+    { f:"24/7 priority support",              esen:false,   bien:false,  pro:true   },
+  ] : [
     { f:"Tracker bebé semanal",              esen:true,    bien:true,   pro:true   },
     { f:"Registro de citas médicas",          esen:true,    bien:true,   pro:true   },
     { f:"Síntomas y bitácora",                esen:true,    bien:true,   pro:true   },
@@ -1825,8 +1910,8 @@ function Premium({ onActivate }) {
       {activated && (
         <div style={{background:"linear-gradient(90deg,rgba(46,138,74,.12),rgba(46,138,74,.06))",borderBottom:"1px solid rgba(46,138,74,.22)",padding:"52px 20px 12px",display:"flex",alignItems:"center",gap:10}}>
           <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="#2e8a4a" strokeWidth="2.2" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg>
-          <span style={{fontSize:13,fontWeight:700,color:"#2e6a3a"}}>Plan {plan.name} activo</span>
-          <button onClick={()=>setActivated(false)} style={{marginLeft:"auto",fontSize:11,color:"#A8492A",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>Ver todos los planes →</button>
+          <span style={{fontSize:13,fontWeight:700,color:"#2e6a3a"}}>{lang==="en"?`${plan.name} plan active`:`Plan ${plan.name} activo`}</span>
+          <button onClick={()=>setActivated(false)} style={{marginLeft:"auto",fontSize:11,color:"#A8492A",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>{lang==="en"?"See all plans →":"Ver todos los planes →"}</button>
         </div>
       )}
 
@@ -1839,18 +1924,18 @@ function Premium({ onActivate }) {
           <div style={{display:"inline-flex",alignItems:"center",gap:7,padding:"5px 14px",borderRadius:99,
             background:"rgba(212,175,80,.12)",border:"1px solid rgba(212,175,80,.28)",marginBottom:18}}>
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,80,.9)" strokeWidth="2.5" strokeLinecap="round"><path d="M12 3c.6 3.8 1.6 4.8 5.4 5.4-3.8.6-4.8 1.6-5.4 5.4-.6-3.8-1.6-4.8-5.4-5.4C10.4 7.8 11.4 6.8 12 3Z"/></svg>
-            <span style={{fontSize:11,fontWeight:700,color:"rgba(212,175,80,.9)",letterSpacing:".05em"}}>Acceso anticipado · Beta 2026</span>
+            <span style={{fontSize:11,fontWeight:700,color:"rgba(212,175,80,.9)",letterSpacing:".05em"}}>{lang==="en"?"Early access · Beta 2026":"Acceso anticipado · Beta 2026"}</span>
           </div>
           <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:34,fontWeight:700,color:"#fff5ee",lineHeight:1.15,letterSpacing:"-.02em",marginBottom:10}}>
-            Tu embarazo merece<br/><em style={{color:"rgba(212,175,80,.9)"}}>lo mejor.</em>
+            {lang==="en" ? <>Your pregnancy deserves<br/><em style={{color:"rgba(212,175,80,.9)"}}>the best.</em></> : <>Tu embarazo merece<br/><em style={{color:"rgba(212,175,80,.9)"}}>lo mejor.</em></>}
           </div>
           <p style={{fontSize:13.5,color:"rgba(255,245,238,.6)",lineHeight:1.65,maxWidth:260,margin:"0 auto 24px"}}>
-            Acompañamiento premium semana a semana, con rigor y calidez.
+            {lang==="en" ? "Premium week-by-week companionship, with rigor and warmth." : "Acompañamiento premium semana a semana, con rigor y calidez."}
           </p>
           {/* Toggle anual/mensual */}
           <div style={{display:"inline-flex",alignItems:"center",gap:12,padding:"6px 8px",borderRadius:99,
             background:"rgba(255,255,255,.08)",border:"1px solid rgba(255,255,255,.12)"}}>
-            <span onClick={()=>setAnnual(false)} style={{fontSize:12,fontWeight:600,color:annual?"rgba(255,255,255,.4)":"rgba(255,255,255,.9)",padding:"4px 10px",cursor:"pointer"}}>Mensual</span>
+            <span onClick={()=>setAnnual(false)} style={{fontSize:12,fontWeight:600,color:annual?"rgba(255,255,255,.4)":"rgba(255,255,255,.9)",padding:"4px 10px",cursor:"pointer"}}>{lang==="en"?"Monthly":"Mensual"}</span>
             <button onClick={()=>setAnnual(a=>!a)} style={{
               width:44,height:24,borderRadius:99,border:"none",cursor:"pointer",
               background:annual?"linear-gradient(90deg,#A8492A,#C8952A)":"rgba(255,255,255,.18)",
@@ -1858,9 +1943,9 @@ function Premium({ onActivate }) {
               <div style={{position:"absolute",top:3,left:annual?22:3,width:18,height:18,borderRadius:"50%",
                 background:"#fff",boxShadow:"0 2px 6px rgba(0,0,0,.25)",transition:"left .22s cubic-bezier(.34,1.56,.64,1)"}}/>
             </button>
-            <span onClick={()=>setAnnual(true)} style={{fontSize:12,fontWeight:600,color:annual?"rgba(255,255,255,.9)":"rgba(255,255,255,.4)",padding:"4px 4px 4px 0",cursor:"pointer"}}>Anual</span>
+            <span onClick={()=>setAnnual(true)} style={{fontSize:12,fontWeight:600,color:annual?"rgba(255,255,255,.9)":"rgba(255,255,255,.4)",padding:"4px 4px 4px 0",cursor:"pointer"}}>{lang==="en"?"Annual":"Anual"}</span>
             {annual&&<span style={{fontSize:10,fontWeight:800,color:"#C8952A",background:"rgba(200,149,42,.2)",
-              padding:"2px 8px",borderRadius:99,border:"1px solid rgba(200,149,42,.3)"}}>Ahorra hasta 37%</span>}
+              padding:"2px 8px",borderRadius:99,border:"1px solid rgba(200,149,42,.3)"}}>{lang==="en"?"Save up to 37%":"Ahorra hasta 37%"}</span>}
           </div>
         </div>
       </div>
@@ -1869,7 +1954,7 @@ function Premium({ onActivate }) {
 
         {/* PLAN CARDS */}
         <div style={{display:"flex",flexDirection:"column",gap:10}}>
-          {PLANS.map(p => {
+          {PLANS_L.map(p => {
             const on = selPlan===p.id;
             const aInfo = annual && ANNUAL_DISCOUNT[p.id];
             return (
@@ -1892,14 +1977,14 @@ function Premium({ onActivate }) {
                     {p.badge&&<span style={{fontSize:9,fontWeight:800,color:p.color,background:`${p.color}15`,
                       padding:"2px 8px",borderRadius:99,border:`1px solid ${p.color}30`}}>{p.badge}</span>}
                   </div>
-                  <span style={{fontSize:12,color:"#a08070"}}>{p.id==="esencial"?"Herramientas esenciales de seguimiento":p.id==="bienestar"?"IA, nutrición, meditación y más":"Todo + expertos y funciones pro"}</span>
+                  <span style={{fontSize:12,color:"#a08070"}}>{p.id==="esencial"?(lang==="en"?"Essential tracking tools":"Herramientas esenciales de seguimiento"):p.id==="bienestar"?(lang==="en"?"AI, nutrition, meditation & more":"IA, nutrición, meditación y más"):(lang==="en"?"Everything + experts & pro features":"Todo + expertos y funciones pro")}</span>
                 </div>
                 <div style={{textAlign:"right",flexShrink:0}}>
                   <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:700,color: on ? p.color : "#a08070",lineHeight:1}}>
                     {aInfo?aInfo.price:p.price}
                   </div>
-                  <div style={{fontSize:10,color:"#b09080"}}>{aInfo?aInfo.moPer:p.sub||"gratis"}</div>
-                  {aInfo&&<div style={{fontSize:9,fontWeight:800,color:"#2e8a4a",marginTop:2}}>Ahorra {aInfo.saving}</div>}
+                  <div style={{fontSize:10,color:"#b09080"}}>{aInfo?aInfo.moPer:p.sub||(lang==="en"?"free":"gratis")}</div>
+                  {aInfo&&<div style={{fontSize:9,fontWeight:800,color:"#2e8a4a",marginTop:2}}>{lang==="en"?"Save":"Ahorra"} {aInfo.saving}</div>}
                 </div>
               </button>
             );
@@ -1926,7 +2011,7 @@ function Premium({ onActivate }) {
             <div style={{padding:"14px 18px 12px",borderBottom:`1px solid ${plan.color}15`,
               background:`linear-gradient(135deg,${plan.color}08,transparent)`}}>
               <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:plan.color}}>
-                Incluido en {plan.name}
+                {lang==="en"?`Included in ${plan.name}`:`Incluido en ${plan.name}`}
               </div>
             </div>
             <div style={{padding:"12px 18px 16px",display:"flex",flexDirection:"column",gap:9}}>
@@ -1942,7 +2027,7 @@ function Premium({ onActivate }) {
                         ? <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke={plan.color} strokeWidth="2.5" strokeLinecap="round" opacity=".5"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>
                         : <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke={plan.color} strokeWidth="3.5" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg>}
                     </div>
-                    <span style={{fontSize:12.5,color:"#3d1a0e",fontStyle:isSoon?"italic":"normal",lineHeight:1.35,fontWeight:f.startsWith("Todo")?600:400}}>{f}</span>
+                    <span style={{fontSize:12.5,color:"#3d1a0e",fontStyle:isSoon?"italic":"normal",lineHeight:1.35,fontWeight:(f.startsWith("Todo")||f.startsWith("Everything"))?600:400}}>{f}</span>
                   </div>
                 );
               })}
@@ -1955,13 +2040,13 @@ function Premium({ onActivate }) {
           border:"1px solid rgba(255,255,255,.85)",borderRadius:22,overflow:"hidden",
           boxShadow:"0 8px 28px rgba(168,73,42,.07)"}}>
           <div style={{padding:"14px 16px 10px",borderBottom:"1px solid rgba(168,73,42,.07)"}}>
-            <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.7}}>Comparar planes</div>
+            <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.7}}>{lang==="en"?"Compare plans":"Comparar planes"}</div>
           </div>
           {/* Header */}
           <div style={{display:"grid",gridTemplateColumns:"1fr 60px 60px 60px",padding:"8px 16px",
             borderBottom:"1px solid rgba(168,73,42,.06)",background:"rgba(168,73,42,.02)"}}>
             <div/>
-            {PLANS.map(p=>(
+            {PLANS_L.map(p=>(
               <div key={p.id} style={{textAlign:"center",fontSize:10,fontWeight:800,color:selPlan===p.id?p.color:"#a08070",letterSpacing:".04em"}}>{p.name.slice(0,4)}</div>
             ))}
           </div>
@@ -1989,7 +2074,7 @@ function Premium({ onActivate }) {
             ))}
           </div>
           <p style={{fontSize:14,color:"#5a3a2a",lineHeight:1.7,fontStyle:"italic",marginBottom:16}}>
-            "El asistente de Lumé me respondió a las 3am cuando tenía miedo. No me sentí sola en ningún momento del embarazo."
+            {lang==="en" ? "\u201cLum\u00e9's assistant answered me at 3am when I was scared. I never felt alone during my pregnancy.\u201d" : "\u201cEl asistente de Lum\u00e9 me respondi\u00f3 a las 3am cuando ten\u00eda miedo. No me sent\u00ed sola en ning\u00fan momento del embarazo.\u201d"}
           </p>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <div style={{width:38,height:38,borderRadius:"50%",background:"linear-gradient(135deg,#C8952A,#A8492A)",
@@ -1998,7 +2083,7 @@ function Premium({ onActivate }) {
             </div>
             <div>
               <div style={{fontSize:13,fontWeight:700,color:"#3d1a0e"}}>María G.</div>
-              <div style={{fontSize:11,color:"#a08070"}}>Plan Bienestar · Semana 34</div>
+              <div style={{fontSize:11,color:"#a08070"}}>{lang==="en"?"Wellness plan · Week 34":"Plan Bienestar · Semana 34"}</div>
             </div>
             <div style={{marginLeft:"auto",padding:"3px 10px",borderRadius:99,background:"rgba(168,73,42,.08)",
               border:"1px solid rgba(168,73,42,.14)",fontSize:10,fontWeight:700,color:"#A8492A"}}>Beta</div>
@@ -2010,7 +2095,7 @@ function Premium({ onActivate }) {
           border:"1px solid rgba(255,255,255,.82)",borderRadius:22,overflow:"hidden",
           boxShadow:"0 6px 20px rgba(168,73,42,.06)"}}>
           <div style={{padding:"14px 18px 10px",borderBottom:"1px solid rgba(168,73,42,.06)"}}>
-            <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.7}}>Preguntas frecuentes</div>
+            <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.7}}>{lang==="en"?"Frequently asked questions":"Preguntas frecuentes"}</div>
           </div>
           {FAQ.map((item,i)=>(
             <div key={i} style={{borderBottom:i<FAQ.length-1?"1px solid rgba(168,73,42,.06)":"none"}}>
@@ -2039,8 +2124,8 @@ function Premium({ onActivate }) {
             <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="#2e8a4a" strokeWidth="2.2" strokeLinecap="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
           </div>
           <div>
-            <div style={{fontSize:13,fontWeight:700,color:"#2e6a3a",marginBottom:2}}>7 días completamente gratis</div>
-            <div style={{fontSize:11.5,color:"#4a8a5a",lineHeight:1.5}}>Sin tarjeta requerida en Esencial. Para planes de pago, cancela antes del día 8 sin ningún cargo.</div>
+            <div style={{fontSize:13,fontWeight:700,color:"#2e6a3a",marginBottom:2}}>{lang==="en"?"7 days completely free":"7 días completamente gratis"}</div>
+            <div style={{fontSize:11.5,color:"#4a8a5a",lineHeight:1.5}}>{lang==="en"?"No card required on Essential. For paid plans, cancel before day 8 at no charge.":"Sin tarjeta requerida en Esencial. Para planes de pago, cancela antes del día 8 sin ningún cargo."}</div>
           </div>
         </div>
 
@@ -2053,7 +2138,7 @@ function Premium({ onActivate }) {
         {selPlan==="esencial" ? (
           <button onClick={activate} style={{width:"100%",padding:"16px",borderRadius:99,border:"none",cursor:"pointer",
             background:"rgba(160,128,112,.25)",color:"#7a5a4a",fontWeight:700,fontSize:15,fontFamily:"inherit"}}>
-            Continuar con Esencial gratis
+            {lang==="en"?"Continue with Essential free":"Continuar con Esencial gratis"}
           </button>
         ) : (
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
@@ -2066,10 +2151,10 @@ function Premium({ onActivate }) {
                 fontSize:16,fontWeight:800,color:"#fff5ee",
                 transform:pressedCta?"scale(.96)":"scale(1)",
                 transition:"transform .18s cubic-bezier(.34,1.56,.64,1)"}}>
-              {plan.id==="bienestar" && !annual ? <>Probar {plan.name} 7 días gratis →</> : <>Elegir {plan.name} →</>}
+              {plan.id==="bienestar" && !annual ? (lang==="en" ? <>Try {plan.name} 7 days free →</> : <>Probar {plan.name} 7 días gratis →</>) : (lang==="en" ? <>Choose {plan.name} →</> : <>Elegir {plan.name} →</>)}
             </button>
             <div style={{textAlign:"center",fontSize:12,color:"#a08070"}}>
-              Luego <strong style={{color:"#3d1a0e"}}>{displayPrice}{displaySub}</strong> · Cancela cuando quieras
+              {lang==="en" ? <>Then <strong style={{color:"#3d1a0e"}}>{displayPrice}{displaySub}</strong> · Cancel anytime</> : <>Luego <strong style={{color:"#3d1a0e"}}>{displayPrice}{displaySub}</strong> · Cancela cuando quieras</>}
             </div>
           </div>
         )}
@@ -2081,7 +2166,9 @@ function Premium({ onActivate }) {
 
 /* ── CHECKOUT SCREEN ── */
 function CheckoutScreen({ goBack, planId, onSuccess }) {
-  const plan = PLANS.find(p=>p.id===planId) || PLANS[1];
+  const lang = getAppLang2();
+  const PLANS_L = plansFor(lang);
+  const plan = PLANS_L.find(p=>p.id===planId) || PLANS_L[1];
   const isAnnual = (() => { try { return localStorage.getItem("lume_checkout_billing") === "annual"; } catch { return false; } })();
   const [step, setStep] = React.useState("form"); // form | processing | done
   const [card, setCard] = React.useState("");
@@ -2093,17 +2180,17 @@ function CheckoutScreen({ goBack, planId, onSuccess }) {
   const trialDays = (plan.id==="bienestar" && !isAnnual) ? 7 : 0;
   const ANNUAL_TOTAL = { bienestar: "$75", profesional: "$144" };
   const displayPrice = isAnnual ? (ANNUAL_TOTAL[plan.id] || plan.price) : plan.price;
-  const displaySub = isAnnual ? "/año" : plan.sub;
+  const displaySub = isAnnual ? (lang==="en"?"/yr":"/año") : plan.sub;
 
   const fmtCard = v => v.replace(/\D/g,"").slice(0,16).replace(/(\d{4})/g,"$1 ").trim();
   const fmtExpiry = v => { const d=v.replace(/\D/g,"").slice(0,4); return d.length>2?d.slice(0,2)+"/"+d.slice(2):d; };
 
   const validate = () => {
     const e={};
-    if(!name.trim()) e.name="Nombre requerido";
-    if(card.replace(/\s/g,"").length<16) e.card="Número de tarjeta incompleto";
-    if(expiry.length<5) e.expiry="Fecha incorrecta";
-    if(cvv.length<3) e.cvv="CVV incorrecto";
+    if(!name.trim()) e.name = lang==="en" ? "Name required" : "Nombre requerido";
+    if(card.replace(/\s/g,"").length<16) e.card = lang==="en" ? "Incomplete card number" : "Número de tarjeta incompleto";
+    if(expiry.length<5) e.expiry = lang==="en" ? "Invalid date" : "Fecha incorrecta";
+    if(cvv.length<3) e.cvv = lang==="en" ? "Invalid CVV" : "CVV incorrecto";
     setErrors(e);
     return Object.keys(e).length===0;
   };
@@ -2128,25 +2215,25 @@ function CheckoutScreen({ goBack, planId, onSuccess }) {
       <div style={{width:80,height:80,borderRadius:"50%",background:"linear-gradient(135deg,rgba(46,138,74,.15),rgba(46,138,74,.08))",border:"2px solid rgba(46,138,74,.35)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:24,animation:"bounceIn .5s cubic-bezier(.34,1.56,.64,1)"}}>
         <svg viewBox="0 0 24 24" width={36} height={36} fill="none" stroke="#2e8a4a" strokeWidth="2.2" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg>
       </div>
-      <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:700,color:"#3d1a0e",marginBottom:10,textAlign:"center"}}>Bienvenida a Lumé {plan.name}</div>
-      <p style={{fontSize:14,color:"#8a6a5a",textAlign:"center",lineHeight:1.65,marginBottom:28,maxWidth:280}}>{trialDays>0 ? <>Tu suscripción está activa. El primer cobro será en {trialDays} días. Puedes cancelar antes sin coste.</> : <>Tu suscripción está activa. Gracias por unirte a Lumé {plan.name}.</>}</p>
+      <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:700,color:"#3d1a0e",marginBottom:10,textAlign:"center"}}>{lang==="en"?`Welcome to Lumé ${plan.name}`:`Bienvenida a Lumé ${plan.name}`}</div>
+      <p style={{fontSize:14,color:"#8a6a5a",textAlign:"center",lineHeight:1.65,marginBottom:28,maxWidth:280}}>{trialDays>0 ? (lang==="en" ? <>Your subscription is active. The first charge will be in {trialDays} days. You can cancel before then at no cost.</> : <>Tu suscripción está activa. El primer cobro será en {trialDays} días. Puedes cancelar antes sin coste.</>) : (lang==="en" ? <>Your subscription is active. Thanks for joining Lumé {plan.name}.</> : <>Tu suscripción está activa. Gracias por unirte a Lumé {plan.name}.</>)}</p>
       <div style={{width:"100%",maxWidth:320,background:"rgba(255,255,255,.65)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,.88)",borderRadius:20,padding:"18px 20px",marginBottom:24,boxShadow:"0 8px 28px rgba(168,73,42,.1)"}}>
         <div style={{display:"flex",justifyContent:"space-between",marginBottom:10}}>
-          <span style={{fontSize:13,color:"#8a6a5a"}}>Plan</span>
+          <span style={{fontSize:13,color:"#8a6a5a"}}>{lang==="en"?"Plan":"Plan"}</span>
           <span style={{fontSize:13,fontWeight:700,color:"#3d1a0e"}}>Lumé {plan.name}</span>
         </div>
         {trialDays>0 && (
         <div style={{display:"flex",justifyContent:"space-between",marginBottom:10}}>
-          <span style={{fontSize:13,color:"#8a6a5a"}}>Prueba gratuita</span>
-          <span style={{fontSize:13,fontWeight:700,color:"#2e8a4a"}}>{trialDays} días</span>
+          <span style={{fontSize:13,color:"#8a6a5a"}}>{lang==="en"?"Free trial":"Prueba gratuita"}</span>
+          <span style={{fontSize:13,fontWeight:700,color:"#2e8a4a"}}>{trialDays} {lang==="en"?"days":"días"}</span>
         </div>)}
         <div style={{display:"flex",justifyContent:"space-between",paddingTop:10,borderTop:"1px solid rgba(168,73,42,.1)"}}>
-          <span style={{fontSize:13,color:"#8a6a5a"}}>{trialDays>0 ? "Primer cobro" : "Cobro hoy"}</span>
+          <span style={{fontSize:13,color:"#8a6a5a"}}>{trialDays>0 ? (lang==="en"?"First charge":"Primer cobro") : (lang==="en"?"Charged today":"Cobro hoy")}</span>
           <span style={{fontSize:13,fontWeight:700,color:"#3d1a0e"}}>{displayPrice}{displaySub}</span>
         </div>
       </div>
       <button onClick={()=>{ if(onSuccess)onSuccess(); goBack(); }} style={{width:"100%",maxWidth:320,padding:"16px",borderRadius:99,border:"none",background:"linear-gradient(90deg,#A8492A,#8B3520)",color:"#fff5ee",fontWeight:800,fontSize:15,cursor:"pointer",fontFamily:"inherit",boxShadow:"0 12px 32px rgba(168,73,42,.38)"}}>
-        Ir a mi embarazo →
+        {lang==="en"?"Go to my pregnancy →":"Ir a mi embarazo →"}
       </button>
     </div>
   );
@@ -2160,8 +2247,8 @@ function CheckoutScreen({ goBack, planId, onSuccess }) {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
           </button>
           <div style={{flex:1}}>
-            <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.65,marginBottom:2}}>Pago seguro · Stripe</div>
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:600,color:"#3d1a0e"}}>Finalizar suscripción</div>
+            <div style={{fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",color:"#A8492A",opacity:.65,marginBottom:2}}>{lang==="en"?"Secure payment · Stripe":"Pago seguro · Stripe"}</div>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:600,color:"#3d1a0e"}}>{lang==="en"?"Complete subscription":"Finalizar suscripción"}</div>
           </div>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(168,73,42,.5)" strokeWidth="1.8" strokeLinecap="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/></svg>
         </div>
@@ -2173,7 +2260,7 @@ function CheckoutScreen({ goBack, planId, onSuccess }) {
         <div style={{borderRadius:20,overflow:"hidden",border:`1.5px solid ${plan.color}30`,boxShadow:`0 8px 28px ${plan.color}12`}}>
           <div style={{padding:"16px 18px",background:`linear-gradient(135deg,${plan.color}cc,${plan.color}99)`,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
             <div>
-              <div style={{fontSize:10,fontWeight:800,letterSpacing:".1em",textTransform:"uppercase",color:"rgba(255,255,255,.7)",marginBottom:2}}>Plan seleccionado</div>
+              <div style={{fontSize:10,fontWeight:800,letterSpacing:".1em",textTransform:"uppercase",color:"rgba(255,255,255,.7)",marginBottom:2}}>{lang==="en"?"Selected plan":"Plan seleccionado"}</div>
               <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:700,color:"#fff5ee"}}>Lumé {plan.name}</div>
             </div>
             <div style={{textAlign:"right"}}>
@@ -2184,15 +2271,15 @@ function CheckoutScreen({ goBack, planId, onSuccess }) {
           <div style={{background:"rgba(255,255,255,.7)",backdropFilter:"blur(16px)",padding:"12px 18px",display:"flex",gap:16,flexWrap:"wrap"}}>
             <div style={{display:"flex",alignItems:"center",gap:6}}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2e8a4a" strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg>
-              <span style={{fontSize:12,fontWeight:600,color:"#3d1a0e"}}>{trialDays>0 ? `${trialDays} días gratis` : "Pago inmediato"}</span>
+              <span style={{fontSize:12,fontWeight:600,color:"#3d1a0e"}}>{trialDays>0 ? (lang==="en"?`${trialDays} days free`:`${trialDays} días gratis`) : (lang==="en"?"Immediate payment":"Pago inmediato")}</span>
             </div>
             <div style={{display:"flex",alignItems:"center",gap:6}}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2e8a4a" strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg>
-              <span style={{fontSize:12,fontWeight:600,color:"#3d1a0e"}}>Cancela cuando quieras</span>
+              <span style={{fontSize:12,fontWeight:600,color:"#3d1a0e"}}>{lang==="en"?"Cancel anytime":"Cancela cuando quieras"}</span>
             </div>
             <div style={{display:"flex",alignItems:"center",gap:6}}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2e8a4a" strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg>
-              <span style={{fontSize:12,fontWeight:600,color:"#3d1a0e"}}>Sin compromiso</span>
+              <span style={{fontSize:12,fontWeight:600,color:"#3d1a0e"}}>{lang==="en"?"No commitment":"Sin compromiso"}</span>
             </div>
           </div>
         </div>
@@ -2202,8 +2289,8 @@ function CheckoutScreen({ goBack, planId, onSuccess }) {
             <div style={{width:56,height:56,borderRadius:"50%",background:`linear-gradient(135deg,${plan.color}22,${plan.color}0a)`,border:`2px solid ${plan.color}30`,display:"flex",alignItems:"center",justifyContent:"center",animation:"spin 1s linear infinite"}}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={plan.color} strokeWidth="2.2" strokeLinecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>
             </div>
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:600,color:"#3d1a0e"}}>Procesando pago…</div>
-            <div style={{fontSize:13,color:"#a08070",textAlign:"center"}}>Conectando con Stripe de forma segura</div>
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:600,color:"#3d1a0e"}}>{lang==="en"?"Processing payment…":"Procesando pago…"}</div>
+            <div style={{fontSize:13,color:"#a08070",textAlign:"center"}}>{lang==="en"?"Securely connecting with Stripe":"Conectando con Stripe de forma segura"}</div>
             <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
           </div>
         ) : (
@@ -2212,19 +2299,19 @@ function CheckoutScreen({ goBack, planId, onSuccess }) {
             <div style={{background:"rgba(255,255,255,.65)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,.88)",borderRadius:22,padding:"20px",boxShadow:"0 8px 28px rgba(168,73,42,.08)"}}>
               <div style={{fontSize:10,fontWeight:800,letterSpacing:".15em",textTransform:"uppercase",color:"#A8492A",marginBottom:16,display:"flex",alignItems:"center",gap:8}}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
-                Datos de pago
+                {lang==="en"?"Payment details":"Datos de pago"}
               </div>
               <div style={{display:"flex",flexDirection:"column",gap:13}}>
                 {/* Nombre */}
                 <div>
-                  <label style={labelStyle}>Nombre en la tarjeta</label>
-                  <input value={name} onChange={e=>setName(e.target.value)} placeholder="María García" style={fieldStyle(errors.name)}
+                  <label style={labelStyle}>{lang==="en"?"Name on card":"Nombre en la tarjeta"}</label>
+                  <input value={name} onChange={e=>setName(e.target.value)} placeholder={lang==="en"?"Jane Doe":"María García"} style={fieldStyle(errors.name)}
                     onFocus={e=>e.target.style.borderColor="#A8492A"} onBlur={e=>e.target.style.borderColor=errors.name?"#e05a3a":"rgba(168,73,42,.18)"}/>
                   {errors.name&&<div style={{fontSize:11,color:"#e05a3a",marginTop:4}}>{errors.name}</div>}
                 </div>
                 {/* Número tarjeta */}
                 <div>
-                  <label style={labelStyle}>Número de tarjeta</label>
+                  <label style={labelStyle}>{lang==="en"?"Card number":"Número de tarjeta"}</label>
                   <div style={{position:"relative"}}>
                     <input value={card} onChange={e=>setCard(fmtCard(e.target.value))} placeholder="1234 5678 9012 3456" style={{...fieldStyle(errors.card),paddingRight:52}}
                       onFocus={e=>e.target.style.borderColor="#A8492A"} onBlur={e=>e.target.style.borderColor=errors.card?"#e05a3a":"rgba(168,73,42,.18)"}/>
@@ -2237,8 +2324,8 @@ function CheckoutScreen({ goBack, planId, onSuccess }) {
                 {/* Expiry + CVV */}
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
                   <div>
-                    <label style={labelStyle}>Caducidad</label>
-                    <input value={expiry} onChange={e=>setExpiry(fmtExpiry(e.target.value))} placeholder="MM/AA" style={fieldStyle(errors.expiry)}
+                    <label style={labelStyle}>{lang==="en"?"Expiry":"Caducidad"}</label>
+                    <input value={expiry} onChange={e=>setExpiry(fmtExpiry(e.target.value))} placeholder={lang==="en"?"MM/YY":"MM/AA"} style={fieldStyle(errors.expiry)}
                       onFocus={e=>e.target.style.borderColor="#A8492A"} onBlur={e=>e.target.style.borderColor=errors.expiry?"#e05a3a":"rgba(168,73,42,.18)"}/>
                     {errors.expiry&&<div style={{fontSize:11,color:"#e05a3a",marginTop:4}}>{errors.expiry}</div>}
                   </div>
@@ -2256,11 +2343,11 @@ function CheckoutScreen({ goBack, planId, onSuccess }) {
             <div style={{background:"rgba(255,255,255,.5)",backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",border:"1px solid rgba(168,73,42,.1)",borderRadius:18,padding:"14px 16px",display:"flex",flexDirection:"column",gap:8}}>
               {trialDays>0 && (
               <div style={{display:"flex",justifyContent:"space-between"}}>
-                <span style={{fontSize:12.5,color:"#8a6a5a"}}>Prueba gratuita ({trialDays} días)</span>
+                <span style={{fontSize:12.5,color:"#8a6a5a"}}>{lang==="en"?`Free trial (${trialDays} days)`:`Prueba gratuita (${trialDays} días)`}</span>
                 <span style={{fontSize:12.5,fontWeight:700,color:"#2e8a4a"}}>$0.00</span>
               </div>)}
               <div style={{display:"flex",justifyContent:"space-between"}}>
-                <span style={{fontSize:12.5,color:"#8a6a5a"}}>{trialDays>0 ? `Primer cobro (día ${trialDays+1})` : "Cobro hoy"}</span>
+                <span style={{fontSize:12.5,color:"#8a6a5a"}}>{trialDays>0 ? (lang==="en"?`First charge (day ${trialDays+1})`:`Primer cobro (día ${trialDays+1})`) : (lang==="en"?"Charged today":"Cobro hoy")}</span>
                 <span style={{fontSize:12.5,fontWeight:700,color:"#3d1a0e"}}>{displayPrice}{displaySub}</span>
               </div>
             </div>
@@ -2268,7 +2355,7 @@ function CheckoutScreen({ goBack, planId, onSuccess }) {
             {/* SEGURIDAD */}
             <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,opacity:.55}}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8a6a5a" strokeWidth="2" strokeLinecap="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/></svg>
-              <span style={{fontSize:11,color:"#8a6a5a"}}>Pago cifrado con SSL · Gestionado por Stripe</span>
+              <span style={{fontSize:11,color:"#8a6a5a"}}>{lang==="en"?"SSL-encrypted payment · Handled by Stripe":"Pago cifrado con SSL · Gestionado por Stripe"}</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8a6a5a" strokeWidth="2" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             </div>
 
@@ -2282,10 +2369,10 @@ function CheckoutScreen({ goBack, planId, onSuccess }) {
                 fontFamily:"inherit",fontSize:16,fontWeight:800,color:"#fff5ee",
                 transform:press?"scale(.96)":"scale(1)",
                 transition:"transform .18s cubic-bezier(.34,1.56,.64,1)"}}>
-              {trialDays>0 ? `Activar ${trialDays} días gratis →` : "Confirmar pago →"}
+              {trialDays>0 ? (lang==="en"?`Activate ${trialDays} days free →`:`Activar ${trialDays} días gratis →`) : (lang==="en"?"Confirm payment →":"Confirmar pago →")}
             </button>
             <p style={{textAlign:"center",fontSize:11,color:"#a08070",margin:0,lineHeight:1.5}}>
-              {trialDays>0 ? <>No se hará ningún cobro hoy. Cancela antes del día {trialDays+1} sin coste. </> : <>Se cobrará el importe total hoy. Cancela cuando quieras. </>}<a href="legal.html" target="_blank" style={{color:"#A8492A",textDecoration:"none",fontWeight:600}}>Condiciones</a>
+              {trialDays>0 ? (lang==="en" ? <>You won't be charged today. Cancel before day {trialDays+1} at no cost. </> : <>No se hará ningún cobro hoy. Cancela antes del día {trialDays+1} sin coste. </>) : (lang==="en" ? <>The full amount will be charged today. Cancel anytime. </> : <>Se cobrará el importe total hoy. Cancela cuando quieras. </>)}<a href="legal.html" target="_blank" style={{color:"#A8492A",textDecoration:"none",fontWeight:600}}>{lang==="en"?"Terms":"Condiciones"}</a>
             </p>
           </>
         )}
