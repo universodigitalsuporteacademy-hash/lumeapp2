@@ -1539,7 +1539,7 @@ function PesoScreen({ goBack }) {
 
 /* ── AJUSTES ─── */
 /* ── AJUSTES ─── */
-function AjustesScreen({ goBack, setWeek }) {
+function AjustesScreen({ goBack, setWeek, goToTab }) {
   const ajLang = getAppLang2();
   const AT = ajLang==="en" ? {
     yourAccount:"Your account", settings:"Settings", weekOf:"Week ", pts:" pts", premium:"✦ Premium",
@@ -1930,7 +1930,7 @@ function AjustesScreen({ goBack, setWeek }) {
                 <div style={{fontSize:12.5,color:"#5a3a2a",lineHeight:1.6,marginBottom:12}}>
                   {AT.unlockMsg}<strong>{AT.unlockBold}</strong>{AT.unlockRest}
                 </div>
-                <button onClick={()=>goBack&&goBack()} style={{width:"100%",padding:"12px",borderRadius:99,border:"none",cursor:"pointer",
+                <button onClick={()=>{ if(goToTab){ goToTab("premium"); } else if(goBack){ goBack(); } }} style={{width:"100%",padding:"12px",borderRadius:99,border:"none",cursor:"pointer",
                   background:"linear-gradient(90deg,#A8492A,#8B3520)",color:"#fff5ee",fontFamily:"inherit",
                   fontSize:13.5,fontWeight:800,boxShadow:"0 8px 24px rgba(168,73,42,.38)"}}>
                   {AT.tryFree}
